@@ -14,13 +14,3 @@ jobs:
       - run:
           name: Make PDF
           command: make initdir pdf
-      # - run:
-      #     name: Greeting
-      #     command: echo Hello, world.
-      # - run:
-      #     name: Print the Current Time
-      #     command: date
-general:
-  branches:
-    ignore:
-      - master
