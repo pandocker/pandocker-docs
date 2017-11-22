@@ -156,10 +156,10 @@ platex系で構わないひとは叩き台にしてもいいと思います。
 構築したものが`pandocker`というわけです。実際は共通部分の`pandocker-base`とリポジトリ追いかけ部分の`pandocker`に
 分かれています。以下にDocker Hubのアドレスを置いておきます。
 
-- k4zuki/pandocker-base
-    - https://github.com/K4zuki/pandocker-base
-- k4zuki/pandocker:
-    - https://github.com/K4zuki/pandocker
+- pandocker/pandocker-base
+    - https://github.com/pandocker/pandocker-base
+- pandocker/pandocker:
+    - https://github.com/pandocker/pandocker
 
 安直ビルドなのでイメージサイズが重めです。**737 MB** だそうです。
 
@@ -174,7 +174,7 @@ Dockerの入手・導入は容易です。
 
 ちゃんと動くようにしたあと、イメージをダウンロードしてきます。
 ```sh
-docker pull k4zuki/pandocker
+docker pull pandocker/pandocker
 ```
 
 ### 原稿リポジトリを作る
@@ -182,15 +182,22 @@ docker pull k4zuki/pandocker
 ### 出力する
 # Appendix {-}
 ### Dockerfile {-}
+\\newpage
+\\Startlandscape
 [`pandocker-base`のDockerfile](pandocker-base/Dockerfile){.listingtable type=dockerfile}
 
 [`pandocker`のDockerfile](pandocker/Dockerfile){.listingtable type=dockerfile}
+\\Stoplandscape
+### CircleCI {-}
+[.circleci/config.yml](.circleci/config.yml){.listingtable type=yaml}
 
 # 更新履歴 {-}
 ## Revision1.0（C93）
 
 - 前作の技術書典３での売れ行きは衝撃だった。75％は記録的（注：総部数20）
 - 次は自作python製PandocフィルタをPyPiに登録する and/or CIビルドの構築かな。CircleCIが候補に挙がってる
-- 最終目標はmarkdownを書いてコミットしてプッシュするとCIされてHTML／PDFがGitHubのリリースページに置かれる
+- 最終目標はmarkdownを書いてコミットしてプッシュすると
+    1. CIされて [X]
+    1. HTML／PDFがGitHubのリリースページに置かれる [ ]
 というところまでです。きっと誰かすでに実現してるしそうでなくても参考情報はいっぱいあるので助かってます:)
 - Windowsｪ...
