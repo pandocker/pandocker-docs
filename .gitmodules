@@ -1,6 +1,6 @@
 [submodule "pandocker-base"]
 	path = pandocker-base
-	url = https://github.com/K4zuki/pandocker-base.git
+	url = https://github.com/pandocker/pandocker-base.git
 [submodule "pandocker"]
 	path = pandocker
-	url = https://github.com/K4zuki/pandocker.git
+	url = https://github.com/pandocker/pandocker.git
