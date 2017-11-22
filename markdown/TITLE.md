@@ -184,7 +184,7 @@ docker pull k4zuki/pandocker
 ### Dockerfile {-}
 [`pandocker-base`のDockerfile](pandocker-base/Dockerfile){.listingtable type=dockerfile}
 
-[`pandocker`のDockerfile](Dockerfile){.listingtable type=dockerfile}
+[`pandocker`のDockerfile](pandocker/Dockerfile){.listingtable type=dockerfile}
 
 # 更新履歴 {-}
 ## Revision1.0（C93）
