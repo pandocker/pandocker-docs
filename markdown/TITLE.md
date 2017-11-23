@@ -129,6 +129,7 @@ alignment: DCCD
 ## リポジトリにタグを打つようにした
 `pandoc_misc`の環境はgitによる管理はあっても今まで自分の自分による自分のためのものだったので、
 内容は結構適当でした。`pandocker`のビルド時に`pandoc_misc`リポジトリの特定タグを参照するように
+Dockerfileを編集し、更新があるたびに書き換えるようにしています。
 
 # Dockerイメージを使ってHTML/PDFを出力する（本編）
 ## _pandocker_ Dockerイメージ
@@ -232,6 +233,23 @@ $ git commit -m"initial commit"
 - PDF出力：`docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make pdf`
 - 成果物を消す：`docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make clean`
 
+# CIサービスを使う
+## プロバイダ選定：TravisCI vs. CircleCI
+この本の原稿リポジトリではCircleCIを採用していますが、同じことができるならTravisCIのほうが
+情報が多くていいかもしれません。
+CIでやるべきことは
+
+1. Dockerイメージをpullして起動する
+1. リポジトリをチェックアウトする（クローンする）
+1. HTML/PDFをコンパイルする
+1. 成果物をGitHubリリースページにアップロードする
+
+の４点です。成果物のアップロードはWebなAPI[^github-release-api]を使えばできるようですが、
+やり方がさっぱりわからないのでghr[^github-release]というGolang系のプロジェクトの成果を使っています。
+
+[^github-release-api]: https://developer.github.com/v3/repos/releases/#create-a-release
+[^github-release]: https://github.com/tcnksm/ghr
+
 # Appendix {-}
 ### Dockerfile {-}
 \\newpage
@@ -248,7 +266,7 @@ $ git commit -m"initial commit"
 [.circleci/config.yml](.circleci/config.yml){.listingtable type=yaml}
 
 # 更新履歴 {-}
-## Revision1.0（C93）
+## Revision1.0（C93） {-}
 
 - 前作の技術書典３での売れ行きは衝撃だった。75％は記録的（注：総部数20）
 - 次は自作python製PandocフィルタをPyPiに登録する and/or CIビルドの構築かな。CircleCIが候補に挙がってる
