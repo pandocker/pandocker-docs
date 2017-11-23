@@ -17,11 +17,12 @@
           \____\______/
 ```
 
-このドキュメントは、技術書典3にて発表した「私的Markdown-PDF変換環境を紹介する本」の続編に当たる本です。
-~~前作の売れ行きが予想を上回って冬コミ在庫が心許ない事になったので続編を書くことにしました~~
-前作の予告通りDockerイメージを構築するところまでうまく行ったので、その報告です。
+このドキュメントは、技術書典3にて発表した「私的Markdown-PDF変換環境を紹介する本」の続編に
+当たる本[^compiled-by-docker]です。~~前作の売れ行きが予想を上回って冬コミ在庫が心許ない事になったので
+続編を書くことにしました~~前作の予告通りDockerイメージの構築とCircleCIによるGithubリリースの
+自動更新までうまく行ったので、その報告です。
 
-もちろんこの本もDockerイメージを使ってコンパイルされました。
+[^compiled-by-docker]: もちろんこの本もDockerイメージを使ってコンパイルされました。
 
 #### 前回までの「私的Markdown-PDF変換環境を紹介する本」（海外ドラマ風紹介文） {-}
 前作では、_Unix環境を対象に_ 筆者が構築したPandoc式PDFドキュメント制作環境とその機能について、
@@ -32,34 +33,34 @@ PandocおよびPandocフィルタをインストールし、その他便利コ�
 #### 反省事項？と改善事項と制限事項 {-}
 前作を書き上げてからもWindows環境を無視するのはいかがなものかという心の葛藤[^windows-lol]が
 ありました。これはやっぱりOS依存性が低いやり方[^os-independent]としてDockerイメージ
-を公開して使ってもらえばいいんじゃないかと。
+を公開して使ってもらえばいいんじゃないかと。さらにCIシステムの構築例を挙げておけば、
+Windowsでも使えるだろう、ということで、CircleCIを使ってみました[^why-not-travis]。
 
-しかしWindowsでDocker導入ってこれもまたどうかと思って実際に会社の**Windows7PC**での導入実験を行ったところ、
+[^why-not-travis]: この手のCIといえばTravisなのですがDockerを使うのが簡単なのか
+よくわからなかったのでこっちにしました
+
+ところで、WindowsでDocker導入って使えるんだろうかと思って実際に会社の**Windows7PC**での導入実験を行ったところ、
 やっぱり環境依存があるっぽいです[^windows-hell]。残念ですがWindowsユーザさんは
 **Fall Creators Update(2017)を適用したWindow10PC**を使って下さい。WSLは不要というかちゃんと動かないらしいので
 対象外です。
 
 **と思ったのですが筆者のDocker for Windows環境ではどーーーーーしてもホストのドライブがマウントできず実験が
-続行できませんでした。ということで本作でもWindowsは対象外にします。Windows10ユーザさんは前作の内容に則って
-WSL上のUbuntuを使ってください。**あるいは今後筆者がCIビルド環境を起こすまでお待ち下さい。
-C93は無理っぽいから技術書典４とかでお会いしましょう。
-
-Linux/Macユーザさんは前作での実績もあるし問題はほぼないものと思います。
-
-筆者が確認したOSはUbuntu16.04LTS/MacOS Sierraです。
+続行できませんでした。ということDockerの使用についてWindowsは対象外にします。**
+LinuxはもとよりMacもローカルでDockerを動かすのは簡単でした[^unix-env]。
 
 [^windows-lol]: Windowsとかずっとオープンβ()だし無視しようよ（悪魔~~天使~~）
 vs.
 一応会社でも使えるしやっといたほうがいいですよ（天使~~悪魔~~）
 [^os-independent]: JAVA（笑）か？
 [^windows-hell]: 自分のマシンはNGでラボのマシンはOKだったのでリモートで動かしてる。Windowsきらい。
+[^unix-env]: 筆者が確認したOSはUbuntu16.04LTS/MacOS Sierraです。
 
 # 前作からの`pandoc_misc`改良点
-## 等幅フォントの第一候補をSource Code Proに変更
+## HTML出力：等幅フォントの第一候補をSource Code Proに変更
 とくにMacで思った通りのフォントになっていなかったので、最近流行りのSourceCodeProを最初に探すように
 CSSを更新しました。最終的に`monospaced`を指すのは変わらないので問題はないと思います。
 
-## ページを横長にする（ランドスケープ）
+## PDF出力：ページを横長にする（ランドスケープ）
 PDF出力のときに横長の表を引用するのが楽になりました。実現のためにTeXテンプレートに手を入れています。
 `\\Startlandscape`と`\\Stoplandscape`の間の区間は横長ページになります。
 
@@ -92,9 +93,9 @@ table-width: 1.0
 前作で紹介したソースコード引用フィルタですが、インライン表記版を追加しました。
 画像ではなく普通のハイパーリンク表記を使います。頭に`!`がつかない方です。
 この表記をするときは前後に空行を追加し、同じ行にリンク以外何もない状態にする必要があります。
-さらに、ソースコードの一部を引用することもできるようになりました。引用元ファイルの`from`行目から
-`to`行目を引用します。`from=5`、`to=12`のとき５行目から１２行目を引用します。引用された部分の最後の空行は、
-HTML出力ではそのままですが、PDF出力ではTeXによって詰められてしまいます。
+さらに、範囲引用することもできるようになりました。引用元ファイルの`from`行目から
+`to`行目を引用します。`from=5`、`to=12`のとき５行目から１２行目を引用します。
+引用された部分の最後が空行だった場合は、HTML出力ではそのままですが、PDF出力ではTeXによって詰められてしまいます。
 また、classを廃止しtypeに統一するなどオプションの統廃合を行いました。
 
 ```table
@@ -126,7 +127,8 @@ alignment: DCCD
 次の文章
 
 ## リポジトリにタグを打つようにした
-`pandoc_misc`の環境はgitによる管理はあっても今まで自分の自分による自分のためのものだったので、内容は結構適当でした。
+`pandoc_misc`の環境はgitによる管理はあっても今まで自分の自分による自分のためのものだったので、
+内容は結構適当でした。`pandocker`のビルド時に`pandoc_misc`リポジトリの特定タグを参照するように
 
 # Dockerイメージを使ってHTML/PDFを出力する（本編）
 ## _pandocker_ Dockerイメージ
@@ -158,14 +160,17 @@ platex系で構わないひとは叩き台にしてもいいと思います。
 
 - pandocker/pandocker-base
     - https://github.com/pandocker/pandocker-base
+    - https://hub.docker.com/r/k4zuki/pandocker-base
 - pandocker/pandocker:
     - https://github.com/pandocker/pandocker
+    - https://hub.docker.com/r/k4zuki/pandocker
 
-安直ビルドなのでイメージサイズが重めです。**737 MB** だそうです。
+安直ビルドなのでイメージサイズが重めです。圧縮されたときでも**737 MB** だそうです。
+ローカルに展開すると2GB程度です。
 
 [^pandocker-alpine]: https://github.com/K4zuki/pandocker-alpine ほとんどメンテされてません
 
-## pandockerを使う
+## pandockerをローカルで使う
 ### インストールする
 Dockerの入手・導入は容易です。
 
@@ -174,12 +179,59 @@ Dockerの入手・導入は容易です。
 
 ちゃんと動くようにしたあと、イメージをダウンロードしてきます。
 ```sh
-docker pull pandocker/pandocker
+docker pull k4zuki/pandocker
+```
+これでもう動くと思います。以下のコマンドでシェルが出てくればOKです。
+```sh
+docker run --rm -it k4zuki/pandocker
 ```
 
 ### 原稿リポジトリを作る
+
+前作と同様に `$HOME/workspace/Mybook` を例に説明していきます。最初にディレクトリを作成しそこに移動します。
+```sh
+mkdir -p ~/workspace/Mybook
+cd ~/workspace/Mybook
+```
+
+ここで次のコマンドを入れると一式がインストールされます。
+```sh
+docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make -f /var/pandoc_misc/Makefile init
+```
+
+原稿リポジトリのディレクトリ構造は前作でも説明しましたが、以下のようになっています。
+```
+~/workspace/MyBook
+|-- Makefile
+|-- Out/
+|-- images/
+|-- markdown/
+|   |-- TITLE.md
+|   `-- config.yaml
+`-- data/
+    |-- bitfields/
+    |-- bitfield16/
+    `-- waves/
+```
+gitリポジトリとして初期化します。
+```sh
+$ git init
+$ git add .
+$ git commit -m"initial commit"
+```
+
+この時点で`docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make`とするとコンパイルが走ります。
+
 ### 原稿を書く
+前作と同様に書いていきます。pandoc_miscの改善点は順次pandockerに反映されていきますので、
+定期的に`docker pull k4zuki/pandocker`するといいかもしれません。バグっぽいものはgithubで報告してください。
+
 ### 出力する
+
+- HTML出力：`docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make`
+- PDF出力：`docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make pdf`
+- 成果物を消す：`docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make clean`
+
 # Appendix {-}
 ### Dockerfile {-}
 \\newpage
