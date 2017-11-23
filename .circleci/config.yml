@@ -17,4 +17,9 @@ jobs:
 
       - run:
           name: Deploy
-          command: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME `git rev-parse --short HEAD` Out/
+          command: ghr --version
+            # -t $GITHUB_TOKEN \
+            # -u $CIRCLE_PROJECT_USERNAME \
+            # -r $CIRCLE_PROJECT_REPONAME \
+            # `git rev-parse --short HEAD` \
+            # Out/
