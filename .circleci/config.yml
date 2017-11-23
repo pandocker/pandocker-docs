@@ -16,10 +16,14 @@ jobs:
           command: make initdir pdf
 
       - run:
+          name: Deploy preparation
+          command: ghr --version; ls Out;git rev-parse --short HEAD;
+      - run:
           name: Deploy
-          command: ghr --version; ls Out;git rev-parse --short HEAD; ghr \
-            -t $GITHUB_TOKEN \
-            -u $CIRCLE_PROJECT_USERNAME \
-            -r $CIRCLE_PROJECT_REPONAME \
-            `git rev-parse --short HEAD` \
+          command: |
+            ghr
+            -t $GITHUB_TOKEN
+            -u $CIRCLE_PROJECT_USERNAME
+            -r $CIRCLE_PROJECT_REPONAME
+            `git rev-parse --short HEAD` 
             Out/
