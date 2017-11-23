@@ -250,7 +250,7 @@ CIでやるべきことは
 [^github-release-api]: https://developer.github.com/v3/repos/releases/#create-a-release
 [^github-release]: https://github.com/tcnksm/ghr
 
-# Appendix {-}
+# Appendix
 ### Dockerfile {-}
 \\newpage
 \\Startlandscape
