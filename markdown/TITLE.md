@@ -259,6 +259,8 @@ CIでやるべきことは
 
 [`pandocker`のDockerfile](pandocker/Dockerfile){.listingtable type=dockerfile}
 
+[`pandocker-alpine`のDockerfile](pandocker-alpine/Dockerfile){.listingtable type=dockerfile}
+
 \\Stoplandscape
 
 ### CircleCI {-}
