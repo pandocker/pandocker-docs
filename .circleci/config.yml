@@ -20,10 +20,4 @@ jobs:
           command: ghr --version; ls Out;git rev-parse --short HEAD;
       - run:
           name: Deploy
-          command: |
-            ghr
-            -t $GITHUB_TOKEN
-            -u $CIRCLE_PROJECT_USERNAME
-            -r $CIRCLE_PROJECT_REPONAME
-            `git rev-parse --short HEAD` 
-            Out/
+          command: ghr `git rev-parse --short HEAD` Out/TARGET.pdf -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME
