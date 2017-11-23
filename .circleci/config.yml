@@ -20,4 +20,4 @@ jobs:
           command: ghr --version; ls Out;git rev-parse --short HEAD;
       - run:
           name: Deploy
-          command: ghr -replace revision-0.0.1 Out/TARGET.pdf 
+          command: ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME revision-0.0.1 Out/TARGET.pdf 
