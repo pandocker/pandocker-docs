@@ -134,11 +134,13 @@ alignment: DCCD
 Dockerfileを編集し、更新があるたびに書き換えるようにしています。
 
 # Dockerイメージを使ってHTML/PDFを出力する（本編）
-## _pandocker-*_ Dockerイメージ
+## _pandocker-\\*_ Dockerイメージ
+
 とりあえず動くようになったDockerイメージ「`pandocker`」の解説をしていきます。
 
 ### ベースイメージ選定の歴史：Alpine→Ubuntu→Alpine
 #### ニコイチ作戦です！（Alpine） {-}
+
 どうやらAlpine LinuxっていうBusyBoxベースの軽量イメージを改造して使うのが最近の流行らしいんですよね。
 たしかに組み込みで権威のある（？）Busybox系なら軽量です。Pandocフィルタが動作する環境は
 PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/NodeJS4系LTS）なら
@@ -157,6 +159,7 @@ PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/
     - https://hub.docker.com/r/paperist/alpine-texlive-ja/
 
 #### 近距離からの確実な撃破を目指しましょう（Ubuntu） {-}
+
 とりあえず動くものを作っておいて入れ替える作戦に切り替えて、実績のあるUbuntu16.04ベースで安直に
 構築したものが`pandocker`というわけです。実際は共通部分の`pandocker-base`とリポジトリ追いかけ部分の`pandocker`に
 分かれています。以下にDocker Hubのアドレスを置いておきます。
@@ -171,9 +174,8 @@ PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/
 安直ビルドなのでイメージサイズが重めです。圧縮されたときでも**737 MB** だそうです。
 ローカルに展開すると2GB程度です。安直でも動くのでAppendixにDockerfile全文を引用しておきます。
 
-[^pandocker-alpine]: https://github.com/K4zuki/pandocker-alpine ほとんどメンテされてません
-
 #### もっとニコイチ作戦です！（Alpine） {-}
+
 pandockerが安定してきたのでAlpineベースのイメージを作る検討を再開しました。
 Alpine Linuxも今時のディストリなのでUbuntuでいうaptのような仕組み"APK"を持っています。
 OSの開発版と安定版とでパッケージ群を分けるのも同様です。LaTeX系のapkパッケージは開発版に
