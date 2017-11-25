@@ -116,13 +116,15 @@ alignment: DCCD
 `````markdown
 前の文章
 
-[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
+[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 \\
+#lst:inline-listingtable-sample}
 
 次の文章
 `````
 前の文章
 
-[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
+[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 \\
+#lst:inline-listingtable-sample}
 
 次の文章
 
@@ -132,21 +134,20 @@ alignment: DCCD
 Dockerfileを編集し、更新があるたびに書き換えるようにしています。
 
 # Dockerイメージを使ってHTML/PDFを出力する（本編）
-## _pandocker_ Dockerイメージ
+## _pandocker-*_ Dockerイメージ
 とりあえず動くようになったDockerイメージ「`pandocker`」の解説をしていきます。
 
-### ベースイメージの選定：Alpine vs. Ubuntu
+### ベースイメージ選定の歴史：Alpine→Ubuntu→Alpine
+#### ニコイチ作戦です！（Alpine） {-}
 どうやらAlpine LinuxっていうBusyBoxベースの軽量イメージを改造して使うのが最近の流行らしいんですよね。
-たしかに組み込みで権威のある（？）Busybox系なら軽量です。Pandocフィルタが動作する環境はPythonやらNodeJSやらは新しめの
-バージョン（Python3.5+/NodeJS4系LTS）ならいけるようなので、めんどくさいTeXと発表したばっかのPandoc2.0を
-どうにかすればいいという目論見でした。それは概ねうまく行っていて、先達の成果をニコイチしてそれなりのところまで
-構築した[^pandocker-alpine]んですが、xelatexがglibc付近でコアダンプしてうまく動かずPDFを作れないので
-実験を中断しました[^base-images]。いちおうDockerfileをAppendixに足しておきます。
+たしかに組み込みで権威のある（？）Busybox系なら軽量です。Pandocフィルタが動作する環境は
+PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/NodeJS4系LTS）なら
+いけるようなので、めんどくさいTeXと発表したばっかのPandoc2.0をどうにかすればいいという
+目論見でした。それは概ねうまく行っていて、先達の成果をニコイチしてそれなりのところまで
+構築したんですが、そのときはxelatexがglibc付近でコアダンプしてうまく動かずPDFを作れないので
+一旦実験を中断しました。
 
-[^base-images]: 先達の名誉のために付け足しておくと、_`platex`は動きます_。
-platex系で構わないひとは叩き台にしてもいいと思います。
-
-参考になったAlpineベースのイメージ：
+ニコイチ作戦で参考になったAlpineベースのイメージ：
 
 - skyzyx/alpine-pandoc
     - https://github.com/skyzyx/alpine-pandoc
@@ -155,6 +156,7 @@ platex系で構わないひとは叩き台にしてもいいと思います。
     - https://github.com/Paperist/docker-alpine-texlive-ja
     - https://hub.docker.com/r/paperist/alpine-texlive-ja/
 
+#### 近距離からの確実な撃破を目指しましょう（Ubuntu） {-}
 とりあえず動くものを作っておいて入れ替える作戦に切り替えて、実績のあるUbuntu16.04ベースで安直に
 構築したものが`pandocker`というわけです。実際は共通部分の`pandocker-base`とリポジトリ追いかけ部分の`pandocker`に
 分かれています。以下にDocker Hubのアドレスを置いておきます。
@@ -167,9 +169,25 @@ platex系で構わないひとは叩き台にしてもいいと思います。
     - https://hub.docker.com/r/k4zuki/pandocker
 
 安直ビルドなのでイメージサイズが重めです。圧縮されたときでも**737 MB** だそうです。
-ローカルに展開すると2GB程度です。
+ローカルに展開すると2GB程度です。安直でも動くのでAppendixにDockerfile全文を引用しておきます。
 
 [^pandocker-alpine]: https://github.com/K4zuki/pandocker-alpine ほとんどメンテされてません
+
+#### もっとニコイチ作戦です！（Alpine） {-}
+pandockerが安定してきたのでAlpineベースのイメージを作る検討を再開しました。
+Alpine Linuxも今時のディストリなのでUbuntuでいうaptのような仕組み"APK"を持っています。
+OSの開発版と安定版とでパッケージ群を分けるのも同様です。LaTeX系のapkパッケージは開発版に
+しか用意されていない/次期安定版から用意される？のでそこから入手することを考えます。
+この方法でTeXLiveを入れているイメージが見つかったので参考にしました。
+
+- mattmahn/latex
+    - https://github.com/mattmahn/docker-latex
+    - https://hub.docker.com/r/mattmahn/latex/~/dockerfile
+
+参考にしたDockerfileではベースイメージをAlpine:latest（現在はlatest=3.6）にしてありますが、
+latestが指すバージョンは更新されていきます。したがって`pandocker-alpine`は初めから3.6を
+指定してあります。また、このイメージでは`texlive-full`で全パッケージを一気に入れていますが、
+`pandocker-alpine`は（とりあえず）`texlive-xetex`パッケージのみをインストールしました。
 
 ## pandockerをローカルで使う
 ### インストールする
