@@ -60,7 +60,33 @@ vs.
 とくにMacで思った通りのフォントになっていなかったので、最近流行りのSourceCodeProを最初に探すように
 CSSを更新しました。最終的に`monospaced`を指すのは変わらないので問題はないと思います。
 
-## PDF出力：ページを横長にする（ランドスケープ）
+## PDF出力：TeXライブラリを追加
+### すこしだけ自由度のあるTeX使用
+PandocパーサはMarkdown内にインラインTeXがあってもある程度処理してくれます[^inline-tex]が、`\\begin{package}`
+や`\\end{package}`が使えずにいました。この点を若干改善するようにTeXテンプレートを更新し、
+`\\Begin{package}`と`\\End{package}`に挟まれたMarkdown記述には`package`というTeXパッケージの
+効果が適用されるようになります。
+どうやらこの改良でも`\\Begin{package}[options]`はうまくいかないようです。当面はオプションがつかない
+TeXパッケージ（かつTeXテンプレートに採用されているもの）のみの対応になります。
+
+以下のようなパッケージが適用できます。
+
+- tcolorbox
+    - 文章の周りに枠がつきます。文章の長さがページ幅を超える場合は詰め込みを試みるようです。
+    - 枠内の文章がページをまたがると切り落とされてしまいます。
+- tikz
+    - すごい図形描画パッケージらしいです。
+- mdframed（tikzつき）
+    - tcolorbox同様に文章の周りに枠がつきます。文章の長さがページ幅を超える場合は
+    自動的に改行されます。
+    - オプションを与えるとよりかっこいい枠が作れるらしいです。が、オプションがつけられないので
+    デフォルトの地味な細い線枠になってしまいます。
+    - 枠内の文章がページをまたがっても大丈夫です
+
+[^inline-tex]: すくなくとも`\\newpage`は効きます。どうやら括弧がつかないコマンドなら
+いけるんではないかなと
+
+## ページを横長にする（ランドスケープ）
 PDF出力のときに横長の表を引用するのが楽になりました。実現のためにTeXテンプレートに手を入れています。
 `\\Startlandscape`と`\\Stoplandscape`の間の区間は横長ページになります。
 
@@ -89,7 +115,7 @@ table-width: 1.0
 ```
 \\Stoplandscape
 
-## ソースコード引用フィルタを拡張
+## ソースコード引用フィルタ"ListingTable.py"を拡張
 前作で紹介したソースコード引用フィルタですが、インライン表記版を追加しました。
 画像ではなく普通のハイパーリンク表記を使います。頭に`!`がつかない方です。
 この表記をするときは前後に空行を追加し、同じ行にリンク以外何もない状態にする必要があります。
@@ -98,11 +124,18 @@ table-width: 1.0
 引用された部分の最後が空行だった場合は、HTML出力ではそのままですが、PDF出力ではTeXによって詰められてしまいます。
 また、classを廃止しtypeに統一するなどオプションの統廃合を行いました。
 
+~ところで、すでにHaskell製の同様のフィルタがあるようです。~
+
 ```table
 ---
 caption: ListingTableフィルタオプション改
 markdown: True
 alignment: DCCD
+width:
+  - 0.15
+  - 0.15
+  - 0.15
+  - 0.55
 ---
 オプション,省略可能,デフォルト値,意味
 `source`^[ブロック表記のとき。インライン表記ではURL部で指定する],N,,ソースファイル名(フルパス)
@@ -116,15 +149,13 @@ alignment: DCCD
 `````markdown
 前の文章
 
-[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 \\
-#lst:inline-listingtable-sample}
+[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
 
 次の文章
 `````
 前の文章
 
-[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 \\
-#lst:inline-listingtable-sample}
+[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
 
 次の文章
 
@@ -161,8 +192,9 @@ PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/
 #### 近距離からの確実な撃破を目指しましょう（Ubuntu） {-}
 
 とりあえず動くものを作っておいて入れ替える作戦に切り替えて、実績のあるUbuntu16.04ベースで安直に
-構築したものが`pandocker`というわけです。実際は共通部分の`pandocker-base`とリポジトリ追いかけ部分の`pandocker`に
-分かれています。以下にDocker Hubのアドレスを置いておきます。
+構築したものが`pandocker`というわけです。実際は共通部分の`pandocker-base`と
+リポジトリ追いかけ部分の`pandocker`に分かれています。
+以下にDocker Hubのアドレスを置いておきます。
 
 - pandocker/pandocker-base
     - https://github.com/pandocker/pandocker-base
@@ -187,9 +219,14 @@ OSの開発版と安定版とでパッケージ群を分けるのも同様です
     - https://hub.docker.com/r/mattmahn/latex/~/dockerfile
 
 参考にしたDockerfileではベースイメージをAlpine:latest（現在はlatest=3.6）にしてありますが、
-latestが指すバージョンは更新されていきます。したがって`pandocker-alpine`は初めから3.6を
-指定してあります。また、このイメージでは`texlive-full`で全パッケージを一気に入れていますが、
+latestが指すバージョンは更新されていきます。意図しないバージョンのイメージを
+使われたくないので`pandocker-alpine`は初めから3.6を指定してあります。
+また、このイメージでは`texlive-full`で全`texlive-*`パッケージを一気に入れていますが、
 `pandocker-alpine`は（とりあえず）`texlive-xetex`パッケージのみをインストールしました。
+
+`pandocker-alpine`は現在も継続して実験中です。ほぼできあがっています。
+圧縮時460MBで優秀です。ただ、重要なPandocフィルタ`pandoc-crossref`が動かなくて
+メイン交代には至っていません。当面は`pandocker`(安直Ubuntuベース)を使ってください。
 
 ## pandockerをローカルで使う
 ### インストールする
