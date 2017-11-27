@@ -304,6 +304,11 @@ CIでやるべきことは
 の４点です。成果物のアップロードはWebなAPI[^github-release-api]を使えばできるようですが、
 やり方がさっぱりわからないのでghr[^github-release]というGolang系のプロジェクトの成果を使っています。
 
+CircleCI の文法はこちらを参考にしました。
+
+- CircleCI 2.0でAndroidライブラリの自動デプロイ on \@Qiita
+    - <https://qiita.com/bassaer/items/6b9aedae4571d59f0fdf>
+
 [^github-release-api]: https://developer.github.com/v3/repos/releases/#create-a-release
 [^github-release]: https://github.com/tcnksm/ghr
 
