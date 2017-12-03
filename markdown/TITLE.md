@@ -56,14 +56,14 @@ vs.
 [^unix-env]: 筆者が確認したOSはUbuntu16.04LTS/MacOS Sierraです。
 
 # 前作からの`pandoc_misc`改良点
-## HTML出力：等幅フォントの第一候補をSource Code Proに変更
+## HTML用：等幅フォントの第一候補をSource Code Proに変更
 とくにMacで思った通りのフォントになっていなかったので、最近流行りのSourceCodeProを最初に探すように
 CSSを更新しました。最終的に`monospaced`を指すのは変わらないので問題はないと思います。
 
-## PDF出力：TeXライブラリを追加
-### `\\begin{package}` と `\\end{package}`が使えるようになった
-もともとPandocパーサはMarkdown内にインラインTeXがあってもある程度処理してくれます[^inline-tex]が、
-`\\begin{package}`や`\\end{package}`が使えずにいました。この点を若干改善するようにTeXテンプレートを更新し、
+## PDF用：TeXライブラリを追加
+### すこしだけ自由度のあるTeX使用
+PandocパーサはMarkdown内にインラインTeXがあってもある程度処理してくれます[^inline-tex]が、`\\begin{package}`
+や`\\end{package}`が使えずにいました。この点を若干改善するようにTeXテンプレートを更新し、
 `\\Begin{package}`と`\\End{package}`に挟まれたMarkdown記述には`package`というTeXパッケージの
 効果が適用されるようになります。
 どうやらこの改良でも`\\Begin{package}[options]`はうまくいかないようです。当面はオプションがつかない
