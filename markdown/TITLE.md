@@ -208,25 +208,61 @@ PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/
 
 #### もっとニコイチ作戦です！（Alpine） {-}
 
-pandockerが安定してきたのでAlpineベースのイメージを作る検討を再開しました。
+pandockerが安定してきたのでAlpineベースのイメージを作る検討を再開しました。マイナーなディストリということなのでしょうか、
+ちょっと情報が少なくてインストールに難儀するものもありました。
+
+**pandoc-crossrefｳｺﾞｶﾈｰ問題**
+
+pandoc-crossrefフィルタの新バージョン0.3.0.0のビルド済バイナリが、何らかのライブラリ不足で動きませんでした。
+Alpine3.7用のapkパッケージにcabalがあったので、`cabal install pandoc-crossref`してできあがったバイナリを抽出し、
+DockerfileのリポジトリにおいてCOPYコマンドで導入する形にしました。バイナリが68MBもあったのでGitHubから
+「LFS使ったほうがいいんでは」などと警告されました。でもcabal installでやたら時間がかかるのとインストール先を
+`/usr/local/bin`にしたかったので今のところ力技にしています。
+
+**PhantomJS ｳｺﾞｶﾈｰ問題**
+
+なぜなのかさっぱりわかりませんがPhantomJSをnpmから入れるとクラッシュします。
+このせいでWavedromが動かなくて困りました。Alpine3.3から問題があったみたいで、Alpineフォーラムでスレッドが立ったり
+してます[^alpine-phantomjs-thread]。
+検索中にビルド済パッケージとインストール方法が書いてあったので[^phantomized]採用してます。
+この方法ではPhantomJSのバイナリは用意されず周辺ライブラリ群が用意されるだけっぽいです。`npm install phantomjs-prebuilt`
+などで別個にインストールする必要があります。
+
+[^alpine-phantomjs-thread]: https://forum.alpinelinux.org/forum/general-discussion/installing-phantomjs-alpine-33
+[^phantomized]: https://github.com/dustinblackman/phantomized/releases/tag/2.1.1a
+
+**LaTeX on Alpine問題**
+
 Alpine Linuxも今時のディストリなのでUbuntuでいうaptのような仕組み"APK"を持っています。
-OSの開発版と安定版とでパッケージ群を分けるのも同様です。LaTeX系のapkパッケージは開発版に
-しか用意されていない/次期安定版から用意される？のでそこから入手することを考えます。
-この方法でTeXLiveを入れているイメージが見つかったので参考にしました。
+OSの開発版と安定版とでパッケージ群を分けるのも同様です。LaTeX系のapkパッケージはここ2〜3年議論されています
+が不足があるようで2017年12月の3.7でも採用されず、3.8に持ち越しになりました[^alpine-texlive]。
+3.8のリリースは2018年らしいので、当面は開発版のリポジトリから入手して自力で不足を補うか、
+ソースからビルドするしかないようです。
+
+[^alpine-texlive]:https://bugs.alpinelinux.org/issues/4514
+
+いまのpandocker-alpineは一部パッケージを3.7（元edge）から入手し、texlive-*をedgeから入手するようになっています。
+この方法は以下のリポジトリを参考にしています：
 
 - mattmahn/latex
     - https://github.com/mattmahn/docker-latex
     - https://hub.docker.com/r/mattmahn/latex/~/dockerfile
 
-参考にしたDockerfileではベースイメージをAlpine:latest（現在はlatest=3.6）にしてありますが、
-latestが指すバージョンは更新されていきます。意図しないバージョンのイメージを
+参考にしたDockerfileではベースイメージをAlpine:latestにしてありますが、
+latestが指すバージョンは更新されていきます（2017年12月半ばからlatest=3.7）。意図しないバージョンのイメージを
 使われたくないので`pandocker-alpine`は初めから3.6を指定してあります。
+
 また、このイメージでは`texlive-full`で全`texlive-*`パッケージを一気に入れていますが、
 `pandocker-alpine`は（とりあえず）`texlive-xetex`パッケージのみをインストールしました。
 
+**もうちょっとなんだけどね**
+
 `pandocker-alpine`は現在も継続して実験中です。ほぼできあがっています。
-圧縮時460MBで優秀です。ただ、重要なPandocフィルタ`pandoc-crossref`が動かなくて
+圧縮時440MBで優秀です。各種エラーを克服しましたがTeXのコンパイルが動かないのでPDFが出力できず、
 メイン交代には至っていません。当面は`pandocker`(安直Ubuntuベース)を使ってください。
+
+[^congrats0300]: 最近pandoc-2.0系に対応するpandoc-crossref-0.3.0.0が正式リリースされ、
+cabalから導入できるようになりました。めでたい
 
 ## pandockerをローカルで使う
 ### インストールする
@@ -333,9 +369,7 @@ CircleCI の文法はこちらを参考にしました。
 ## Revision1.0（C93） {-}
 
 - 前作の技術書典３での売れ行きは衝撃だった。75％は記録的（注：総部数20）
-- 次は自作python製PandocフィルタをPyPiに登録する and/or CIビルドの構築かな。CircleCIが候補に挙がってる
-- 最終目標はmarkdownを書いてコミットしてプッシュすると
-    1. CIされて [X]
-    1. HTML／PDFがGitHubのリリースページに置かれる [ ]
-というところまでです。きっと誰かすでに実現してるしそうでなくても参考情報はいっぱいあるので助かってます:)
 - Windowsｪ...
+- Alpine Linuxが12月半ばにバージョンアップしやがったので説明がややこしくなったｗ
+- この本を出したあと野郎としていたことがほぼ終わってしまったので足しときましたｗ
+- 最終章まだ見てないからTVシリーズと劇場版から引用したよ
