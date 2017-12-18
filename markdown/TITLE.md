@@ -22,6 +22,9 @@
 続編を書くことにしました~~前作の予告通りDockerイメージの構築とCircleCIによるGithubリリースの
 自動更新までうまく行ったので、その報告です。
 
+この本では、前作の反省点、前作からの改良点、Dockerイメージの構築あれこれに加え、
+Pythonパッケージを作ってみた報告、さらに実際に構築した・しているDockerfileを付録として載せます。
+
 [^compiled-by-docker]: もちろんこの本もDockerイメージを使ってコンパイルされました。
 
 #### 前回までの「私的Markdown-PDF変換環境を紹介する本」（海外ドラマ風紹介文） {-}
@@ -86,7 +89,7 @@ TeXパッケージ（かつTeXテンプレートに採用されているもの�
 [^inline-tex]: すくなくとも`\\newpage`は効きます。どうやら括弧がつかないコマンドなら
 いけるんではないかなと
 
-## ページを横長にする（ランドスケープ）
+## PDF用：ページを横長にする（ランドスケープ）
 PDF出力のときに横長の表を引用するのが楽になりました。実現のためにTeXテンプレートに手を入れています。
 `\\Startlandscape`と`\\Stoplandscape`の間の区間は横長ページになります。
 
@@ -108,7 +111,7 @@ width: 1.0
 \\Startlandscape
 ```table
 ---
-caption: 'SSCI_SPI_LCD BOM テーブル（抜粋）'
+caption: SSCI_SPI_LCD BOM テーブル（抜粋）
 include: "data/SSCI_SPI_LCD.csv"
 table-width: 1.0
 ---
@@ -158,6 +161,85 @@ width:
 [Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
 
 次の文章
+
+## 自作Python製フィルタをPyPIに登録した
+この本のメインの内容はDocker周りのことなのでこれはおまけなのですが、pandoc_misc内に用意されてきた
+Python製自作フィルタ一式を`pandocker-pandoc-filters`という名前でPyPIに登録しました。
+これでpandoc_miscとは別系統の管理が可能になりました。いくつかのブログ記事及び本家ドキュメント
+を参考に、練習用サーバ・本番サーバにアップデートするところまでやってみました。
+
+参考にしたブログは以下：
+
+1. Pythonで作成したライブラリを、PyPIに公開/アップロードする
+    - <https://qiita.com/icoxfog417/items/edba14600323df6bf5e0>
+1. PyPIにパッケージを登録する方法(2017/9時点)
+    - <https://qiita.com/hisato-kawaji/items/97e33a0e00dfdab7f34e>
+
+参考にした本家ドキュメントページ（抜粋）：
+
+1. <https://packaging.python.org/guides/using-testpypi>
+1. <https://packaging.python.org/guides/migrating-to-pypi-org>
+
+### ユーザ登録する
+
+以下からユーザ登録します
+
+- 練習サーバ：https://test.pypi.org/account/register/
+- 本番サーバ：https://pypi.python.org/pypi?%3Aaction=register_form
+
+`$HOME/.pypirc`として以下のようなファイルを用意します。
+
+```
+[distutils]
+index-servers=
+    pypi
+    testpypi
+
+[pypi]
+username: <username>
+password: <password>
+
+[testpypi]
+repository: https://test.pypi.org/legacy/
+username: <username>
+password: <password>
+```
+
+### GitHubリポジトリを用意する
+
+pandoc_miscリポジトリから分岐して https://github.com/K4zuki/pandocker-filters
+というリポジトリを作りました。
+
+```
+pandocker-filters
+|--- LICENSE
+|--- README.md
+|--- pandoc_pandocker_filters
+|    |--- BitField.py
+|    |--- ListingTable.py
+|    |--- RotateImage.py
+|    |--- __init__.py
+|    |--- bitfield_inline.py
+|    |--- filter.py
+|    |--- listingtable_inline.py
+|    |--- rotateimage_inline.py
+|    |--- rotatesvg.py
+|    `--- wavedrom_inline.py
+|--- setup.cfg
+`--- setup.py
+```
+
+### その他の準備
+`twine`をインストールします。ようするにアップローダだと思います。
+
+- `pip install twine`
+
+### アーカイブにする
+
+python setup.py sdist
+
+### 練習サーバにアップロードする
+### 本番サーバにアップロードする & Dockerfileに仕込む
 
 ## リポジトリにタグを打つようにした
 `pandoc_misc`の環境はgitによる管理はあっても今まで自分の自分による自分のためのものだったので、
@@ -213,11 +295,15 @@ pandockerが安定してきたのでAlpineベースのイメージを作る検�
 
 **pandoc-crossrefｳｺﾞｶﾈｰ問題**
 
-pandoc-crossrefフィルタの新バージョン0.3.0.0のビルド済バイナリが、何らかのライブラリ不足で動きませんでした。
+pandoc-crossrefフィルタの新バージョン0.3.0.0[^congrats0300]のビルド済バイナリが、
+何らかのライブラリ不足で動きませんでした。
 Alpine3.7用のapkパッケージにcabalがあったので、`cabal install pandoc-crossref`してできあがったバイナリを抽出し、
 DockerfileのリポジトリにおいてCOPYコマンドで導入する形にしました。バイナリが68MBもあったのでGitHubから
 「LFS使ったほうがいいんでは」などと警告されました。でもcabal installでやたら時間がかかるのとインストール先を
 `/usr/local/bin`にしたかったので今のところ力技にしています。
+
+[^congrats0300]: 最近pandoc-2.0系に対応するpandoc-crossref-0.3.0.0が正式リリースされ、
+cabalから導入できるようになりました。めでたい
 
 **PhantomJS ｳｺﾞｶﾈｰ問題**
 
@@ -260,9 +346,6 @@ latestが指すバージョンは更新されていきます（2017年12月半�
 `pandocker-alpine`は現在も継続して実験中です。ほぼできあがっています。
 圧縮時440MBで優秀です。各種エラーを克服しましたがTeXのコンパイルが動かないのでPDFが出力できず、
 メイン交代には至っていません。当面は`pandocker`(安直Ubuntuベース)を使ってください。
-
-[^congrats0300]: 最近pandoc-2.0系に対応するpandoc-crossref-0.3.0.0が正式リリースされ、
-cabalから導入できるようになりました。めでたい
 
 ## pandockerをローカルで使う
 ### インストールする
