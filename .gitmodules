@@ -9,4 +9,4 @@
 	url = https://github.com/pandocker/pandocker-alpine.git
 [submodule "pandocker-filters"]
 	path = pandocker-filters
-	url = git@github.com:K4zuki/pandocker-filters.git
+	url = https://github.com/K4zuki/pandocker-filters.git
