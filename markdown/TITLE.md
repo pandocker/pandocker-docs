@@ -162,7 +162,7 @@ width:
 
 次の文章
 
-## 自作Python製フィルタをPyPIに登録した
+## 自作Python製フィルタをPyPIに登録した~~（けど必要なかった）~~
 この本のメインの内容はDocker周りのことなのでこれはおまけなのですが、pandoc_misc内に用意されてきた
 Python製自作フィルタ一式を`pandocker-pandoc-filters`という名前でPyPIに登録しました。
 これでpandoc_miscとは別系統の管理が可能になりました。いくつかのブログ記事及び本家ドキュメント
@@ -208,7 +208,10 @@ password: <password>
 ### GitHubリポジトリを用意する
 
 pandoc_miscリポジトリから分岐して https://github.com/K4zuki/pandocker-filters
-というリポジトリを作りました。
+というリポジトリを作りました。pandoc_pandocker_filtersディレクトリ以下が実際にパッケージ
+としてインストールされます。このディレクトリ名はPythonモジュールとして参照されるため、
+`-`を使いたいときも`_`にしなければなりません。pypiに登録したあとでpipを使って検索するときは
+`_`を`-`にすれば見つかります。
 
 ```
 pandocker-filters
@@ -230,16 +233,61 @@ pandocker-filters
 ```
 
 ### その他の準備
-`twine`をインストールします。ようするにアップローダだと思います。
 
-- `pip install twine`
+- `twine`をインストールします。ようするにアップローダです。
+    - `pip install twine`
+- setup.py および setup.cfg を用意します。
+    - バージョン情報を変数として用意して、setup()に渡します。このバージョン番号と
+      リポジトリのタグを一致させるようにします。pypiはすでにアップロードされたバージョン
+      と同バージョンのアーカイブを受けつけない上に勝手にバージョンを上げてしまいます。
+
+      ```listingtable
+      source: pandocker-filters/setup.py
+      title: "setup.py（抜粋）"
+      type: python
+      from: 4
+      to: 4
+      ---
+      ```
+      ```listingtable
+      source: pandocker-filters/setup.py
+      title: "setup.py（抜粋）"
+      type: python
+      from: 37
+      to: 41
+      ---
+      ```
+    - Pythonスクリプトを実行ファイルとして使いたいのでentry_points セクションに列挙します。
+      ```listingtable
+      source: pandocker-filters/setup.py
+      title: "setup.py（抜粋）"
+      type: python
+      from: 56
+      to: 66
+      ---
+      ```
 
 ### アーカイブにする
 
-python setup.py sdist
+`python setup.py sdist`とするとdistディレクトリ内にtar.gzアーカイブが生成されます。
 
 ### 練習サーバにアップロードする
-### 本番サーバにアップロードする & Dockerfileに仕込む
+
+- pypircの設定を使う場合：`twine upload --skip-existing --repository testpypi dist/*`
+- サーバURLを直接指定する場合：`twine upload --repository-url https://test.pypi.org/legacy/ dist/*`
+
+### 本番サーバにアップロードする
+
+`twine upload --skip-existing --repository pypi dist/*`
+
+### じつは別のやり方があった
+正直なところpypiに登録までするのは気が引けていたんですが構わず突き進んでしまっていました。
+リファレンスいっぱいあった・あるし。でもよく考えたらgitリポジトリを直接指定できる・すればいいんですよね
+
+ということでディレクトリ構造を合わせてあればpypiに登録せずとも
+`pip install git+https://<リポジトリURL>`でインストールできます。
+
+- `pip install git+https://github.com/K4zuki/pandocker-filters.git`
 
 ## リポジトリにタグを打つようにした
 `pandoc_misc`の環境はgitによる管理はあっても今まで自分の自分による自分のためのものだったので、
@@ -441,6 +489,32 @@ CircleCI の文法はこちらを参考にしました。
 [`pandocker`のDockerfile](pandocker/Dockerfile){.listingtable type=dockerfile}
 
 [`pandocker-alpine`のDockerfile](pandocker-alpine/Dockerfile){.listingtable type=dockerfile}
+
+### Web Hook Tree {-}
+今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーをいかに示しておきます。
+主に自分のためです。
+
+```{.plantuml im_out="img"}
+@startuml
+(pandoc_misc)
+(pandocker)
+(pandocker-base)
+(pandocker-alpine)
+(pandocker-filters)
+(pandocker-docs)
+
+(pandoc_misc) --> (pandocker) : hook by git commit(core program)
+(pandoc_misc) --> (pandocker-alpine) : hook by git commit(core program)
+(pandocker-filters) -> (pandocker-base) : hook by git commit(python module)
+(pandocker-filters) -> (pandocker-alpine) : hook by git commit(python module)
+(pandocker-base) -> (pandocker) : Docker image dependency
+
+(pandocker-base) .. (pandocker-docs) : git submodule
+(pandocker) .. (pandocker-docs) : git submodule
+(pandocker-alpine) .. (pandocker-docs) : git submodule
+(pandocker-filters) .. (pandocker-docs) : git submodule
+@enduml
+```
 
 \\Stoplandscape
 
