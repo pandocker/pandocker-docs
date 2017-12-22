@@ -210,8 +210,8 @@ password: <password>
 pandoc_miscリポジトリから分岐して https://github.com/K4zuki/pandocker-filters
 というリポジトリを作りました。pandoc_pandocker_filtersディレクトリ以下が実際にパッケージ
 としてインストールされます。このディレクトリ名はPythonモジュールとして参照されるため、
-`-`を使いたいときも`_`にしなければなりません。pypiに登録したあとでpipを使って検索するときは
-`_`を`-`にすれば見つかります。
+"-"を使いたいときも"_"にしなければなりません。pypiに登録したあとでpipを使って検索するときは
+"_"を"-"にすれば見つかります。
 
 ```
 pandocker-filters
@@ -243,15 +243,15 @@ pandocker-filters
 
       ```listingtable
       source: pandocker-filters/setup.py
-      title: "setup.py（抜粋）"
+      title: "setup.py バージョン宣言部"
       type: python
-      from: 4
-      to: 4
+      from: 3
+      to: 5
       ---
       ```
       ```listingtable
       source: pandocker-filters/setup.py
-      title: "setup.py（抜粋）"
+      title: "setup.py バージョン引数部"
       type: python
       from: 37
       to: 41
@@ -285,9 +285,11 @@ pandocker-filters
 リファレンスいっぱいあった・あるし。でもよく考えたらgitリポジトリを直接指定できる・すればいいんですよね
 
 ということでディレクトリ構造を合わせてあればpypiに登録せずとも
-`pip install git+https://<リポジトリURL>`でインストールできます。
 
+- `pip install git+https://<リポジトリURL>`
 - `pip install git+https://github.com/K4zuki/pandocker-filters.git`
+
+でインストールできます。
 
 ## リポジトリにタグを打つようにした
 `pandoc_misc`の環境はgitによる管理はあっても今まで自分の自分による自分のためのものだったので、
@@ -295,12 +297,10 @@ pandocker-filters
 Dockerfileを編集し、更新があるたびに書き換えるようにしています。
 
 # Dockerイメージを使ってHTML/PDFを出力する（本編）
-## _pandocker-\\*_ Dockerイメージ
-
 とりあえず動くようになったDockerイメージ「`pandocker`」の解説をしていきます。
 
-### ベースイメージ選定の歴史：Alpine→Ubuntu→Alpine
-#### ニコイチ作戦です！（Alpine） {-}
+## ベースイメージ選定の歴史：Alpine→Ubuntu→Alpine
+### ニコイチ作戦です！（Alpine） {-}
 
 どうやらAlpine LinuxっていうBusyBoxベースの軽量イメージを改造して使うのが最近の流行らしいんですよね。
 たしかに組み込みで権威のある（？）Busybox系なら軽量です。Pandocフィルタが動作する環境は
@@ -312,14 +312,31 @@ PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/
 
 ニコイチ作戦で参考になったAlpineベースのイメージ：
 
-- skyzyx/alpine-pandoc
+- `skyzyx/alpine-pandoc`
     - https://github.com/skyzyx/alpine-pandoc
     - https://hub.docker.com/r/skyzyx/alpine-pandoc/
-- paperist/alpine-texlive-ja
+- `paperist/alpine-texlive-ja`
     - https://github.com/Paperist/docker-alpine-texlive-ja
     - https://hub.docker.com/r/paperist/alpine-texlive-ja/
 
-#### 近距離からの確実な撃破を目指しましょう（Ubuntu） {-}
+#### 細かい経緯 {-}
+
+`paperist/alpine-texlive-ja`をdocker pullしてきてxelatexを走らせようとすると
+```
+bash-4.4# xelatex
+xelatex: error while loading shared libraries: libfontconfig.so.1: cannot open shared object file: No such file or directory
+```
+といってfontconfigがないと叱られるので
+`apk add fontconfig fontfonfig-dev`によって解決します。そのあと再挑戦すると今度は
+```
+bash-4.4# xelatex
+xelatex: Relink `/lib/libz.so.1' with `/usr/glibc-compat/lib/libc.so.6' for IFUNC symbol `memchr'
+Segmentation fault
+```
+というお叱りを受けます。AlpineLinuxは最近glibcではなくmusl libcに切り替えたらしく、それによってglibcを使った
+プログラムが壊れまくっているようです。xelatexも影響を受けているということですね。
+
+### 近距離からの確実な撃破を目指しましょう（Ubuntu） {-}
 
 とりあえず動くものを作っておいてAlpine系に応用して入れ替える作戦に切り替えて、実績のあるUbuntu16.04ベースで安直に
 構築したものが`pandocker`というわけです。実際は共通部分の`pandocker-base`と
@@ -336,12 +353,12 @@ PythonやらNodeJSやらについては新しめのバージョン（Python3.5+/
 安直ビルドなのでイメージサイズが重めです。圧縮されたときでも**737 MB** だそうです。
 ローカルに展開すると2GB程度です。安直でも動くのでAppendixにDockerfile全文を引用しておきます。
 
-#### もっとニコイチ作戦です！（Alpine） {-}
+### もっとニコイチ作戦です！（Alpine） {-}
 
 pandockerが安定してきたのでAlpineベースのイメージを作る検討を再開しました。マイナーなディストリということなのでしょうか、
 ちょっと情報が少なくてインストールに難儀するものもありました。
 
-**pandoc-crossrefｳｺﾞｶﾈｰ問題**
+#### pandoc-crossrefｳｺﾞｶﾈｰ問題 {-}
 
 pandoc-crossrefフィルタの新バージョン0.3.0.0[^congrats0300]のビルド済バイナリが、
 何らかのライブラリ不足で動きませんでした。
@@ -353,7 +370,7 @@ DockerfileのリポジトリにおいてCOPYコマンドで導入する形にし
 [^congrats0300]: 最近pandoc-2.0系に対応するpandoc-crossref-0.3.0.0が正式リリースされ、
 cabalから導入できるようになりました。めでたい
 
-**PhantomJS ｳｺﾞｶﾈｰ問題**
+#### PhantomJS ｳｺﾞｶﾈｰ問題 {-}
 
 なぜなのかさっぱりわかりませんがPhantomJSをnpmから入れるとクラッシュします。
 このせいでWavedromが動かなくて困りました。Alpine3.3から問題があったみたいで、Alpineフォーラムでスレッドが立ったり
@@ -365,7 +382,7 @@ cabalから導入できるようになりました。めでたい
 [^alpine-phantomjs-thread]: https://forum.alpinelinux.org/forum/general-discussion/installing-phantomjs-alpine-33
 [^phantomized]: https://github.com/dustinblackman/phantomized/releases/tag/2.1.1a
 
-**LaTeX on Alpine問題**
+#### LaTeX on Alpine問題 {-}
 
 Alpine Linuxも今時のディストリなのでUbuntuでいうaptのような仕組み"APK"を持っています。
 OSの開発版と安定版とでパッケージ群を分けるのも同様です。LaTeX系のapkパッケージはここ2〜3年議論されています
@@ -373,7 +390,7 @@ OSの開発版と安定版とでパッケージ群を分けるのも同様です
 3.8のリリースは2018年らしいので、当面は開発版のリポジトリから入手して自力で不足を補うか、
 ソースからビルドするしかないようです。
 
-[^alpine-texlive]:https://bugs.alpinelinux.org/issues/4514
+[^alpine-texlive]: https://bugs.alpinelinux.org/issues/4514
 
 いまのpandocker-alpineは一部パッケージを3.7（元edge）から入手し、texlive-*をedgeから入手するようになっています。
 この方法は以下のリポジトリを参考にしています：
@@ -389,11 +406,12 @@ latestが指すバージョンは更新されていきます（2017年12月半�
 また、このイメージでは`texlive-full`で全`texlive-*`パッケージを一気に入れていますが、
 `pandocker-alpine`は（とりあえず）`texlive-xetex`パッケージのみをインストールしました。
 
-**もうちょっとなんだけどね**
+#### まとめ：もうちょっとなんだけどね {-}
 
-`pandocker-alpine`は現在も継続して実験中です。ほぼできあがっています。
+`pandocker-alpine`は現在も継続して実験中です。
 圧縮時440MBで優秀です。各種エラーを克服しましたがTeXのコンパイルが動かないのでPDFが出力できず、
 メイン交代には至っていません。当面は`pandocker`(安直Ubuntuベース)を使ってください。
+DockerfileをAppendixに置いておきます。
 
 ## pandockerをローカルで使う
 ### インストールする
@@ -468,14 +486,31 @@ CIでやるべきことは
 1. HTML/PDFをコンパイルする
 1. 成果物をGitHubリリースページにアップロードする
 
-の４点です。成果物のアップロードはWebなAPI[^github-release-api]を使えばできるようですが、
-やり方がさっぱりわからないのでghr[^github-release]というGolang系のプロジェクトの成果を使っています。
+の４点です。CircleCI の文法はこちらを参考にしました。
 
-CircleCI の文法はこちらを参考にしました。
-
-- CircleCI 2.0でAndroidライブラリの自動デプロイ on \@Qiita
+- CircleCI 2.0でAndroidライブラリの自動デプロイ on \\@Qiita
     - <https://qiita.com/bassaer/items/6b9aedae4571d59f0fdf>
 
+## config.ymlの書き方
+CircleCI version2.x の書き方[^circleci-versions]で考えます。
+まずDockerイメージ上でビルドするという宣言をします。Dockerイメージにk4zuki/pandockerを指定します。
+これによって\\
+`docker pull k4zuki/pandocker` → `docker run k4zuki/pandocker` と等価な状態になります。
+
+[](.circleci/config.yml){.listingtable type=yaml from=1 to=5}
+
+つぎにイメージ上で行う実際のビルド方法を記述していきます。`checkout`の位置でgitリポジトリが
+cloneされてきます。このときsubmoduleには手を付けないのでその記述を追加してあります。
+
+[](.circleci/config.yml){.listingtable type=yaml from=5 to=16}
+
+ここまででPDFとHTMLができあがっているはずなので、GitHubのリリースページにアップロードします。
+成果物のアップロードはWebなAPI[^github-release-api]を使えばできるようですが、
+やり方がさっぱりわからないのでghr[^github-release]というGolang系のプロジェクトの成果を使っています。
+
+[](.circleci/config.yml){.listingtable type=yaml from=18}
+
+[^circleci-versions]: ググってるとversion1.xとごちゃまぜなので探しにくいです。
 [^github-release-api]: https://developer.github.com/v3/repos/releases/#create-a-release
 [^github-release]: https://github.com/tcnksm/ghr
 
@@ -490,8 +525,10 @@ CircleCI の文法はこちらを参考にしました。
 
 [`pandocker-alpine`のDockerfile](pandocker-alpine/Dockerfile){.listingtable type=dockerfile}
 
+\\Stoplandscape
+
 ### Web Hook Tree {-}
-今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーをいかに示しておきます。
+今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
 主に自分のためです。
 
 ```{.plantuml im_out="img"}
@@ -516,8 +553,6 @@ CircleCI の文法はこちらを参考にしました。
 @enduml
 ```
 
-\\Stoplandscape
-
 ### CircleCI {-}
 
 [.circleci/config.yml](.circleci/config.yml){.listingtable type=yaml}
@@ -528,5 +563,8 @@ CircleCI の文法はこちらを参考にしました。
 - 前作の技術書典３での売れ行きは衝撃だった。75％は記録的（注：総部数20）
 - Windowsｪ...
 - Alpine Linuxが12月半ばにバージョンアップしやがったので説明がややこしくなったｗ
-- この本を出したあとやろうとしていたことがほぼ終わってしまったので足しときましたｗ
+- 次はpandoc_miscをpipからインストールできるようにpythonize(?)する、かも
+- aafigureというditaaっぽいやつを見つけた。Pandocフィルタはドイツの大学？が作ってるらしい。
+参考にしてpandocker-filtersに足します。
 - 最終章まだ見てないからTVシリーズと劇場版から引用したよ
+- TeXのverbatimまわりでバグってるっぽいのを見つけましたがC94または技術書典４までに直します。
