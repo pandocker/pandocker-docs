@@ -17,7 +17,10 @@ jobs:
 
       - run:
           name: Deploy preparation
-          command: mkdir deploy; mv Out/*.html deploy/; mv Out/*.pdf deploy/
+          command: |
+            mkdir deploy
+            mv Out/*.html deploy/`basename Out/*.html .html`-`git rev-parse --short HEAD`.html
+            mv Out/*.pdf deploy/`basename Out/*.html .pdf`-`git rev-parse --short HEAD`.pdf
       - run:
           name: Deploy
           command: ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME build-`git rev-parse --short HEAD` deploy/
