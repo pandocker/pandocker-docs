@@ -245,34 +245,9 @@ pandocker-filters
 
       [`setup.py` バージョン引数部](pandocker-filters/setup.py){.listingtable type=yaml from=37 to=41}
 
-      <!-- ```listingtable
-      source: pandocker-filters/setup.py
-      caption: "`setup.py` バージョン宣言部"
-      type: python
-      from: 3
-      to: 5
-      ---
-      ``` -->
-      <!-- ```listingtable
-      source: pandocker-filters/setup.py
-      # caption: "`setup.py` バージョン引数部"
-      type: python
-      from: 37
-      to: 41
-      ---
-      ``` -->
     - Pythonスクリプトを実行ファイルとして使いたいのでentry_points セクションに列挙します。
 
       [entry_points セクション](pandocker-filters/setup.py){.listingtable type=yaml from=56 to=66}
-
-      <!-- ```listingtable
-      source: pandocker-filters/setup.py
-      # caption: "`setup.py`（抜粋）"
-      type: python
-      from: 56
-      to: 66
-      ---
-      ``` -->
 
 ### アーカイブにする
 
