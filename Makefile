@@ -17,6 +17,6 @@ PROJECT= `pwd`
 
 # CONFIG:= config.yaml
 # INPUT:= TITLE.md
-# TARGET:= TARGET
+TARGET:= Pandocker-Docs
 ##
 include $(MISC)/Makefile
