@@ -35,7 +35,7 @@ PandocおよびPandocフィルタをインストールし、その他便利コ�
 
 #### 反省事項？と改善事項と制限事項 {-}
 前作を書き上げてからもWindows環境を無視するのはいかがなものかという心の葛藤[^windows-lol]が
-ありました。これはやっぱりOS依存性が低いやり方[^os-independent]としてDockerイメージ
+ありました。これはやっぱりOS依存性が低いやり方としてDockerイメージ
 を公開して使ってもらえばいいんじゃないかと。さらにCIシステムの構築例を挙げておけば、
 Windowsでも使えるだろう、ということで、CircleCIを使ってみました[^why-not-travis]。
 
@@ -44,17 +44,14 @@ Windowsでも使えるだろう、ということで、CircleCIを使ってみ�
 
 ところで、WindowsでDocker導入って使えるんだろうかと思って実際に会社の**Windows7PC**での導入実験を行ったところ、
 やっぱり環境依存があるっぽいです[^windows-hell]。残念ですがWindowsユーザさんは
-**Fall Creators Update(2017)を適用したWindow10PC**を使って下さい。WSLは不要というかちゃんと動かないらしいので
-対象外です。
+**Window10搭載PC**を使って下さい（可能ならFall Creators Update(2017)を適用してください）。
+WSLは不要というかちゃんと動かないらしいので対象外です。
 
-**と思ったのですが筆者のDocker for Windows環境ではどーーーーーしてもホストのドライブがマウントできず実験が
-続行できませんでした。ということDockerの使用についてWindowsは対象外にします。**
 LinuxはもとよりMacもローカルでDockerを動かすのは簡単でした[^unix-env]。
 
 [^windows-lol]: Windowsとかずっとオープンβ()だし無視しようよ（悪魔~~天使~~）
 vs.
 一応会社でも使えるしやっといたほうがいいですよ（天使~~悪魔~~）
-[^os-independent]: JAVA（笑）か？
 [^windows-hell]: 自分のマシンはNGでラボのマシンはOKだったのでリモートで動かしてる。Windowsきらい。
 [^unix-env]: 筆者が確認したOSはUbuntu16.04LTS/MacOS Sierraです。
 
@@ -241,7 +238,7 @@ pandocker-filters
       リポジトリのタグを一致させるようにします。pypiはすでにアップロードされたバージョン
       と同バージョンのアーカイブを受けつけない上に勝手にバージョンを上げてしまいます。
 
-      [`setup.py` バージョン宣言部](pandocker-filters/setup.py){.listingtable type=yaml from=3 to=5}
+      [`setup.py` バージョン宣言部](pandocker-filters/setup.py){.listingtable type=yaml from=4 to=4}
 
       [`setup.py` バージョン引数部](pandocker-filters/setup.py){.listingtable type=yaml from=37 to=41}
 
@@ -543,10 +540,9 @@ cloneされてきます。このときsubmoduleには手を付けないのでそ
 ## Revision1.0（C93） {-}
 
 - 前作の技術書典３での売れ行きは衝撃だった。75％は記録的（注：総部数20）
-- Windowsｪ...
 - Alpine Linuxが12月半ばにバージョンアップしやがったので説明がややこしくなったｗ
 - 次はpandoc_miscをpipからインストールできるようにpythonize(?)する、かも
 - aafigureというditaaっぽいやつを見つけた。Pandocフィルタはドイツの大学？が作ってるらしい。
 参考にしてpandocker-filtersに足します。
-- 最終章まだ見てないからTVシリーズと劇場版から引用したよ
+- 最終章~~まだ観てないから~~1話観たけどTVシリーズと劇場版から引用したよ
 - TeXのverbatimまわりでバグってるっぽいのを見つけましたがC94または技術書典４までに直します。
