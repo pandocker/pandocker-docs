@@ -1,0 +1,19 @@
+@startuml
+(pandoc_misc)
+(pandocker)
+(pandocker-base)
+(pandocker-alpine)
+(pandocker-filters)
+(pandocker-docs)
+
+(pandoc_misc) --> (pandocker) : hook by git commit(core program)
+(pandoc_misc) --> (pandocker-alpine) : hook by git commit(core program)
+(pandocker-filters) -> (pandocker-base) : hook by git commit(python module)
+(pandocker-filters) -> (pandocker-alpine) : hook by git commit(python module)
+(pandocker-base) -> (pandocker) : Docker image dependency
+
+(pandocker-base) .. (pandocker-docs) : git submodule
+(pandocker) .. (pandocker-docs) : git submodule
+(pandocker-alpine) .. (pandocker-docs) : git submodule
+(pandocker-filters) .. (pandocker-docs) : git submodule
+@enduml
