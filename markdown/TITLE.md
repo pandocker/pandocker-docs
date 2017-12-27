@@ -504,37 +504,20 @@ cloneされてきます。このときsubmoduleには手を付けないのでそ
 
 [`pandocker-alpine`のDockerfile](pandocker-alpine/Dockerfile){.listingtable type=dockerfile}
 
-\\Stoplandscape
+### CircleCI {-}
 
+[.circleci/config.yml](.circleci/config.yml){.listingtable type=yaml}
+
+\\Stoplandscape
+<!--
 ### Web Hook Tree {-}
 今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
 主に自分のためです。
 
 ```{.plantuml im_out="img"}
-@startuml
-(pandoc_misc)
-(pandocker)
-(pandocker-base)
-(pandocker-alpine)
-(pandocker-filters)
-(pandocker-docs)
-
-(pandoc_misc) --> (pandocker) : hook by git commit(core program)
-(pandoc_misc) --> (pandocker-alpine) : hook by git commit(core program)
-(pandocker-filters) -> (pandocker-base) : hook by git commit(python module)
-(pandocker-filters) -> (pandocker-alpine) : hook by git commit(python module)
-(pandocker-base) -> (pandocker) : Docker image dependency
-
-(pandocker-base) .. (pandocker-docs) : git submodule
-(pandocker) .. (pandocker-docs) : git submodule
-(pandocker-alpine) .. (pandocker-docs) : git submodule
-(pandocker-filters) .. (pandocker-docs) : git submodule
-@enduml
+<#include "webhooktree.puml">
 ```
-
-### CircleCI {-}
-
-[.circleci/config.yml](.circleci/config.yml){.listingtable type=yaml}
+-->
 
 # 更新履歴 {-}
 ## Revision1.0（C93） {-}
