@@ -238,13 +238,13 @@ pandocker-filters
       リポジトリのタグを一致させるようにします。pypiはすでにアップロードされたバージョン
       と同バージョンのアーカイブを受けつけない上に勝手にバージョンを上げてしまいます。
 
-      [`setup.py` バージョン宣言部](pandocker-filters/setup.py){.listingtable type=yaml from=4 to=4}
+      [`setup.py` バージョン宣言部](pandocker-filters/setup.py){.listingtable type=yaml from=38 to=38}
 
       [`setup.py` バージョン引数部](pandocker-filters/setup.py){.listingtable type=yaml from=37 to=41}
 
     - Pythonスクリプトを実行ファイルとして使いたいのでentry_points セクションに列挙します。
 
-      [entry_points セクション](pandocker-filters/setup.py){.listingtable type=yaml from=56 to=66}
+      [entry_points セクション](pandocker-filters/setup.py){.listingtable type=yaml from=58 to=70}
 
 ### アーカイブにする
 
