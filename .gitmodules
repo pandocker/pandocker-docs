@@ -10,3 +10,6 @@
 [submodule "pandocker-filters"]
 	path = pandocker-filters
 	url = https://github.com/K4zuki/pandocker-filters.git
+[submodule "removalnotes"]
+	path = removalnotes
+	url = https://github.com/pandocker/removalnotes.git
