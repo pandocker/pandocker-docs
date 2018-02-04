@@ -27,11 +27,16 @@ Gitのインストールを済ませておくことだけです。GitHubアカ�
 Dockerの入手・導入は容易です。
 
 - `dmg`(for Mac): https://www.docker.com/docker-mac
-- `deb`(for Ubuntu/Debian): https://www.docker.com/docker-ubuntu
+- `deb`(for Ubuntu): https://www.docker.com/docker-ubuntu
 - installer (for Windows 10): https://www.docker.com/docker-windows
 
+## Whalebrewのインストール
+https://github.com/bfirsh/whalebrew#install に従ってWhalebrewを導入します。
+Windows版は https://github.com/3846masa/whalebrew#install に従います。
+
 ## Dockerイメージのダウンロード {-}
-シェル上で`docker pull k4zuki/pandocker`を打ち込む。これだけです。
+シェル上で`whalebrew install k4zuki/pandocker-whalebrew`を打ち込む。これだけです。
+いい感じにインストールが行われたのち`/usr/local/bin/pandocker`として実行できるようになります。
 
 ## で、何ができるん？何をするん？
 
@@ -42,10 +47,10 @@ Dockerの入手・導入は容易です。
 
 出力にあたって必要なコマンドは主に
 
-- `pandocker make init`
-- `pandocker make html`あるいは`pandocker make`
-- `pandocker make pdf`
-- `pandocker make clean`
+- `pandocker init`
+- `pandocker html`あるいは`pandocker make`
+- `pandocker pdf`
+- `pandocker clean`
 
 の４種類です。
 
@@ -61,7 +66,7 @@ $ git init
 ここで原稿リポジトリにコンパイル環境をコピーします。
 `pandocker make init`の出番です。
 ```sh
-$ pandocker make init PREFIX=~/workspace/MyBook
+$ pandocker -f /var/pandoc_misc/Makefile init
 ```
 初期状態では以下のようなディレクトリ構成のはずです。
 ```
@@ -89,7 +94,7 @@ $ git commit -m"initial commit"
 この状態で`pandocker make html`とすると`Out/TARGET.html`というファイルができあがるはずです。
 以下にコマンドの一覧を載せます。
 
-`````table
+```table
 ---
 caption: コンパイル方法
 markdown: True
@@ -102,7 +107,7 @@ markdown: True
 `rm -rf $(IMAGEDIR)/$(WAVEDIR)/`  \
 `rm -rf $(IMAGEDIR)/$(BITDIR)/`  \
 `rm -rf $(IMAGEDIR)/$(BIT16DIR)/`"
-`````
+```
 
 `make pdf` を使うとXeLaTeXを使ってPDFに出力します。表紙、目次、本文、奥付けが体裁されたPDFができあがるはずです。
 
@@ -139,7 +144,6 @@ markdown: True
 `BIT16DIR`,ディレクトリ,16ビット幅Bitfieldファイルの置き場所,`bitfield16/`
 ```
 
-\\newpage
 #### Pandocオプションの設定(config.yaml) {.unnumbered}
 Pandocはmarkdownファイル内のYAML FrontMatterもしくは独立したYAMLファイルから
 コンパイルオプションを取得します。これらの値は表紙絵と奥付に使用されます
@@ -163,9 +167,10 @@ width:
 `publisher`,印刷所,出版社で印刷製本
 `docrevision`,リビジョン番号,1.0
 `front`,表紙画像ファイル名,`images/front-image.png`
+`verbcolored`,\\`verbatim\\`に枠線をつける,false
+`rmnote`,コンパイル時に`<div class="rmnote">`〜`</div>`を消す,false
 ```
 
-\\newpage
 ## 原稿リポジトリをコンパイル
 ここでいったんコンパイルできるかどうか試してみましょう。`TITLE.md`の中身が空でも
 コンパイルすることはできます。コンパイルする前に`Makefile`/`config.yaml`と
@@ -186,7 +191,6 @@ $ git commit -m"initial commit"
 例外が適用できるのは深さ４までの章番号に限られ、深さ５より深いものは _強制的に_ ナンバリングされます。
 _**バグっぽいんだけどどうなんですかね**_。そこまで深く章分けする人あまりいないんですかね。
 
-\\newpage
 ```markdown
 # 深さ1：章番号なし {.unnumbered}
 ## 深さ2：章番号なし {.unnumbered}
@@ -197,4 +201,4 @@ _**バグっぽいんだけどどうなんですかね**_。そこまで深く�
 
 # 構築してみる編
 ## なにもないところからaptかbrewで構築する修行の章
-## Docker楽チンヤッターの章
+## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
