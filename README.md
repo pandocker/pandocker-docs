@@ -15,21 +15,18 @@ git init
 
 #### installation
 ```sh
-docker run --rm -it -v $PWD:/workspace k4zuki/pandocker cp /var/pandoc_misc/Makefile.txt ./Makefile
-docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make init
+docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make -f /var/pandoc_misc/Makefile init
 > mkdir -p ./
+> mkdir -p ./.circleci
 > mkdir -p ./Out
 > mkdir -p ./data
 > mkdir -p ./markdown
 > mkdir -p ./images
-> mkdir -p ./data/waves
-> mkdir -p ./data/bitfields
-> mkdir -p ./data/bitfield16
 > cp -i /var/pandoc_misc/Makefile.txt ./Makefile
-> cp: overwrite './Makefile'? y
 > cp -i /var/pandoc_misc/config.txt ./markdown/config.yaml
-> touch ./markdown/TITLE.md
-> echo "Out/" > .gitignore
+> cp -i /var/pandoc_misc/.gitignore ./.gitignore
+> cp -i /var/pandoc_misc/circleci.yml ./.circleci/config.yml
+> touch ./markdown/TITLE.md> mkdir -p ./
 
 git add .
 git commit -m"initial commit"
