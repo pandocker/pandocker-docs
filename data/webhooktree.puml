@@ -6,12 +6,18 @@
 (pandocker-filters)
 (pandocker-docs)
 
-(pandoc_misc) --> (pandocker) : hook by git commit(core program)
-(pandoc_misc) --> (pandocker-alpine) : hook by git commit(core program)
-(pandocker-filters) -> (pandocker-base) : hook by git commit(python module)
-(pandocker-filters) -> (pandocker-alpine) : hook by git commit(python module)
+(pandoc_misc) --> (pandocker) : hook by git commit\\n(core program)
+(pandoc_misc) --> (pandocker-alpine) : hook by git commit\\n(core program)
+
+(pandocker-filters) -> (pandocker-base) : hook by git commit\\n(python module)
+(pandocker-filters) --> (pandocker) : hook by git commit\\n(python module)
+
+(rmnotes) -> (pandocker) : hook by git commit\\n(python module)
 (pandocker-base) -> (pandocker) : Docker image dependency
 
+(pandocker) -> (whalebrew-pandocker) : Docker image dependency\\n(Whalebrew module)
+
+(rmnotes) .. (pandocker-docs) : git submodule
 (pandocker-base) .. (pandocker-docs) : git submodule
 (pandocker) .. (pandocker-docs) : git submodule
 (pandocker-alpine) .. (pandocker-docs) : git submodule
