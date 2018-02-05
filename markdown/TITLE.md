@@ -23,18 +23,18 @@ Gitのインストールを済ませておくことだけです。GitHubアカ�
 必要というわけでもないです。
 
 # 使ってみる編
-## Dockerのインストール {-}
+#### Dockerのインストール {-}
 Dockerの入手・導入は容易です。
 
 - `dmg`(for Mac): https://www.docker.com/docker-mac
 - `deb`(for Ubuntu): https://www.docker.com/docker-ubuntu
 - installer (for Windows 10): https://www.docker.com/docker-windows
 
-## Whalebrewのインストール
+#### Whalebrewのインストール {-}
 https://github.com/bfirsh/whalebrew#install に従ってWhalebrewを導入します。
-Windows版は https://github.com/3846masa/whalebrew#install に従います。
+<!-- Windows版は https://github.com/3846masa/whalebrew#install に従います。 -->
 
-## Dockerイメージのダウンロード {-}
+#### Dockerイメージのダウンロード {-}
 シェル上で`whalebrew install k4zuki/pandocker-whalebrew`を打ち込む。これだけです。
 いい感じにインストールが行われたのち`/usr/local/bin/pandocker`として実行できるようになります。
 
@@ -71,6 +71,9 @@ $ pandocker -f /var/pandoc_misc/Makefile init
 初期状態では以下のようなディレクトリ構成のはずです。
 ```
 ~/workspace/MyBook
+|-- .circleci/
+|   `-- config.yml
+|-- .gitignore
 |-- Makefile
 |-- Out/
 |-- images/
@@ -78,10 +81,9 @@ $ pandocker -f /var/pandoc_misc/Makefile init
 |   |-- TITLE.md
 |   `-- config.yaml
 `-- data/
-    |-- bitfields/
-    |-- bitfield16/
-    `-- waves/
 ```
+
+\\newpage
 
 ## 原稿リポジトリをコンパイル
 ここでいったんコンパイルできるかどうか試してみましょう。`TITLE.md`の中身が空でも
@@ -96,17 +98,18 @@ $ git commit -m"initial commit"
 
 ```table
 ---
-caption: コンパイル方法
+caption: コンパイルコマンド一覧 {#tbl:compile-commands}
 markdown: True
+width:
+    - 0.3
+    - 0.3
+    - 0.4
 ---
 コマンド,効果,成果物
 `pandocker make init`,ディレクトリ初期化,
 `pandocker make html`,HTMLファイル生成,`$(TARGETDIR)/$(TARGET).html`
 `pandocker make pdf`,PDFファイル生成,`$(TARGETDIR)/$(TARGET).pdf`
-`pandocker make clean`,成果物を全部消去,"`rm -rf $(TARGETDIR)/*`  \
-`rm -rf $(IMAGEDIR)/$(WAVEDIR)/`  \
-`rm -rf $(IMAGEDIR)/$(BITDIR)/`  \
-`rm -rf $(IMAGEDIR)/$(BIT16DIR)/`"
+`pandocker make clean`,成果物を全部消去,`rm -rf $(TARGETDIR)/*`
 ```
 
 `make pdf` を使うとXeLaTeXを使ってPDFに出力します。表紙、目次、本文、奥付けが体裁されたPDFができあがるはずです。
@@ -115,18 +118,20 @@ markdown: True
 原稿のファイル名・置き場所・ディレクトリ構成は自由に配置してください。日本語ファイル名は
 問題ないと思います^[推奨しません]が、スペースを入れるのは避けるべきです。
 
-#### ファイル名・ディレクトリ名の設定(Makefile) {.unnumbered}
+### ファイル名・ディレクトリ名の設定(Makefile) {.unnumbered}
 タイトルファイル名、ディレクトリ名を変更した場合は、そのことをビルドスクリプトに知らせる必要があります。
 ビルドスクリプトはタイトルページのファイル名と各種ディレクトリ名をMakefileから取得します。
 ディレクトリ名はすべてMakefileが置かれたディレクトリからの相対パスです。
 
+\\newpage
+[Makefile](Makefile){.listingtable type=makefile}
 ```table
 ---
 caption: Makeコンパイルオプション
 width:
   - 0.15
   - 0.2
-  - 0.50
+  - 0.5
   - 0.15
 header: True
 markdown: True
@@ -135,16 +140,14 @@ markdown: True
 `CONFIG`,ファイル,pandocのコンフィグファイル,`config.yaml`
 `INPUT`,ファイル,タイトルファイル,`TITLE.md`
 `TARGET`,ファイル,出力ファイル,`TARGET`
-`MDDIR`,ディレクトリ,タイトルファイルの置き場所,`markdown/`
+`MDDIR`,ディレクトリ,原稿markdownファイルの置き場所,`markdown/`
 `DATADIR`,ディレクトリ,データディレクトリ,`data/`
 `TARGETDIR`,ディレクトリ,出力先ディレクトリ,`Out/`
 `IMAGEDIR`,ディレクトリ,画像ファイルの置き場所,`images/`
-`WAVEDIR`,ディレクトリ,WaveDromファイルの置き場所,`waves/`
-`BITDIR`,ディレクトリ,8ビット幅Bitfieldファイルの置き場所,`bitfields/`
-`BIT16DIR`,ディレクトリ,16ビット幅Bitfieldファイルの置き場所,`bitfield16/`
 ```
 
-#### Pandocオプションの設定(config.yaml) {.unnumbered}
+\\newpage
+### Pandocオプションの設定(config.yaml) {.unnumbered}
 Pandocはmarkdownファイル内のYAML FrontMatterもしくは独立したYAMLファイルから
 コンパイルオプションを取得します。これらの値は表紙絵と奥付に使用されます
 ```table
@@ -168,24 +171,49 @@ width:
 `docrevision`,リビジョン番号,1.0
 `front`,表紙画像ファイル名,`images/front-image.png`
 `verbcolored`,\\`verbatim\\`に枠線をつける,false
-`rmnote`,コンパイル時に`<div class="rmnote">`〜`</div>`を消す,false
+`rmnote`,pandocker-rmnoteフィルタでコンパイル時に`<div class="rmnote">`〜`</div>`を消す,false
 ```
-
-## 原稿リポジトリをコンパイル
-ここでいったんコンパイルできるかどうか試してみましょう。`TITLE.md`の中身が空でも
-コンパイルすることはできます。コンパイルする前に`Makefile`/`config.yaml`と
-原稿一式をリポジトリに登録して最初のコミットをします。
-```sh
-$ git add .
-$ git commit -m"initial commit"
-```
-この状態で`make html`とすると`Out/TARGET.html`というファイルができあがるはずです。
-以下に代表的なコマンドの一覧を載せます。
 
 ## 原稿を書く {#sec:pandoc}
 これでとりあえずコンパイルが通るようになったので、実際の原稿を書けるようになりました。
-**~~デファクトスタンダードこと~~**Pandoc式Markdown記法に則って書いていきます。
+**~~デファクトスタンダードこと~~**Pandoc Flavored Markdown記法に則って書いていきます。
 
+### Pandocフィルタ（プラグイン）一覧
+**pandoc_misc**環境にインストールされているフィルタの一覧を下に示します。
+<div class="rmnote">
+```makefile
+PANFLAGS += --filter=pandocker-rmnote
+PANFLAGS += --filter=$(PANTABLE)
+PANFLAGS += --filter=pandocker-listingtable
+PANFLAGS += --filter=pandocker-listingtable-inline
+PANFLAGS += --filter=pandocker-bitfield
+PANFLAGS += --filter=pandocker-bitfield-inline
+PANFLAGS += --filter=pandocker-wavedrom-inline
+PANFLAGS += --filter=pandocker-aafigure
+PANFLAGS += --filter=pandocker-aafigure-inline
+PANFLAGS += --filter=pandocker-rotateimage
+PANFLAGS += --filter=pandocker-rotateimage-inline
+PANFLAGS += --filter=$(IMAGINE)
+PANFLAGS += --filter=$(PCROSSREF)
+```
+</div>
+```table
+---
+caption: 導入済みフィルタ
+header: True
+markdown: True
+---
+名前,機能,HTML出力,PDF出力
+`pantable`,CSVファイルまたは直打ちで表を挿入する,Y,Y
+`pandocker-rmnote`,`<div class="rmnote">`から`</div>`までの区間を削除する,Y,Y
+`pandocker-listingtable(-inline)`,外部ファイルを引用する,Y,Y
+`pandocker-bitfield(-inline)`,外部ファイルまたは直打ちでbitfield図を挿入する,Y,Y
+`pandocker-wavedrom-inline`,外部ファイルまたは直打ちでwavedrom波形を挿入する,Y,Y
+`pandocker-aafigure(-inline)`,外部ファイルまたは直打ちでaafigure図を挿入する,Y,Y
+`pandocker-rotateimage(-inline)`,画像を任意角度に回転する,Y,Y
+`pandoc-imagine`,各種外部プログラムを使った図を挿入する,Y,Y
+`pandoc-crossref`,相互参照フィルタ,Y,Y
+```
 ### ヘッダの書き方
 デフォルトの`config.yaml`では章番号がつく設定で、例外的に消すこともできます。
 例外が適用できるのは深さ４までの章番号に限られ、深さ５より深いものは _強制的に_ ナンバリングされます。
@@ -198,7 +226,14 @@ _**バグっぽいんだけどどうなんですかね**_。そこまで深く�
 #### 深さ4：章番号なし {.unnumbered}
 ##### 深さ5+：章番号復活 {.unnumbered}
 ```
-
 # 構築してみる編
 ## なにもないところからaptかbrewで構築する修行の章
 ## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
+# Appendix {-}
+### Web Hook Tree {-}
+今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
+主に自分のためです。
+
+```{.plantuml im_out="img"}
+<#include "webhooktree.puml">
+```
