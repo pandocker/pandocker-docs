@@ -13,10 +13,10 @@ Dockerイメージ、CI構築例を順に解説していきます。
 [^scratch-is-not-required]: いまさらスクラッチからの構築は不要なのですが、残します
 
 このシリーズでは「MacまたはLinux機」を動作前提環境としていましたが、「２」以降は
-_Dockerがちゃんと動けば_ Windowsでも簡単確実に動くようになったので、本当に
-Dockerには感謝しています。もうGtk+まわりで悩まなくていいんだよ…[^company-machine]
+_Dockerがちゃんと動くWindows10機_ であれば簡単確実に動くようになったので、本当に
+Dockerには感謝しています。もうGtk+まわりで悩まなくていいんだょ…[^company-machine]
 
-[^company-machine]: 会社で支給されてるマシンはOSごと入れ直さないと動かないっぽいけど
+[^company-machine]: 筆者の会社支給のマシンはOSごと入れ直さないと動かないっぽいのでWindowsキライ
 
 この本の内容で楽しんでもらうために読者さんに最低限済ませてほしいことはたぶん
 Gitのインストールを済ませておくことだけです。GitHubアカウントがあると楽ですが
@@ -64,7 +64,7 @@ $ cd ~/workspace/MyBook
 $ git init
 ```
 ここで原稿リポジトリにコンパイル環境をコピーします。
-`pandocker make init`の出番です。
+`pandocker init`の出番です。
 ```sh
 $ pandocker -f /var/pandoc_misc/Makefile init
 ```
@@ -93,7 +93,7 @@ $ pandocker -f /var/pandoc_misc/Makefile init
 $ git add .
 $ git commit -m"initial commit"
 ```
-この状態で`pandocker make html`とすると`Out/TARGET.html`というファイルができあがるはずです。
+この状態で`pandocker html`とすると`Out/TARGET.html`というファイルができあがるはずです。
 以下にコマンドの一覧を載せます。
 
 ```table
@@ -116,7 +116,9 @@ width:
 
 ## 原稿リポジトリの調整
 原稿のファイル名・置き場所・ディレクトリ構成は自由に配置してください。日本語ファイル名は
-問題ないと思います^[推奨しません]が、スペースを入れるのは避けるべきです。
+問題ないと思います^[推奨しません]が、全角半角関係なく[^zenkaku]スペースを入れるのは避けるべきです。
+
+[^zenkaku]: 読者諸氏は全角スペースをファイル名に使うような素人さんではないと信じたい
 
 ### ファイル名・ディレクトリ名の設定(Makefile) {.unnumbered}
 タイトルファイル名、ディレクトリ名を変更した場合は、そのことをビルドスクリプトに知らせる必要があります。
@@ -170,8 +172,8 @@ width:
 `publisher`,印刷所,出版社で印刷製本
 `docrevision`,リビジョン番号,1.0
 `front`,表紙画像ファイル名,`images/front-image.png`
-`verbcolored`,\\`verbatim\\`に枠線をつける,false
-`rmnote`,pandocker-rmnoteフィルタでコンパイル時に`<div class="rmnote">`〜`</div>`を消す,false
+`verbcolored`,\\`verbatim\\`に枠線をつけるフラグ,false(枠なし)
+`rmnote`,pandocker-rmnoteフィルタでコンパイル時に`<div class="rmnote">`〜`</div>`を消すフラグ,false(残す)
 ```
 
 ## 原稿を書く {#sec:pandoc}
@@ -179,7 +181,9 @@ width:
 **~~デファクトスタンダードこと~~**Pandoc Flavored Markdown記法に則って書いていきます。
 
 ### Pandocフィルタ（プラグイン）一覧
-**pandoc_misc**環境にインストールされているフィルタの一覧を下に示します。
+**pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。
+次のページから１つずつ解説していきます。
+
 <div class="rmnote">
 ```makefile
 PANFLAGS += --filter=pandocker-rmnote
@@ -195,6 +199,8 @@ PANFLAGS += --filter=pandocker-rotateimage
 PANFLAGS += --filter=pandocker-rotateimage-inline
 PANFLAGS += --filter=$(IMAGINE)
 PANFLAGS += --filter=$(PCROSSREF)
+
+TEXFLAGS += --filter=pandoc-latex-barcode
 ```
 </div>
 ```table
@@ -212,12 +218,145 @@ markdown: True
 `pandocker-aafigure(-inline)`,外部ファイルまたは直打ちでaafigure図を挿入する,Y,Y
 `pandocker-rotateimage(-inline)`,画像を任意角度に回転する,Y,Y
 `pandoc-imagine`,各種外部プログラムを使った図を挿入する,Y,Y
-`pandoc-crossref`,相互参照フィルタ,Y,Y
+`pandoc-latex-barcode`,QRコードを挿入する,N,Y
+`pandoc-crossref`,超有名な相互参照リンカ,Y,Y
 ```
-### ヘッダの書き方
-デフォルトの`config.yaml`では章番号がつく設定で、例外的に消すこともできます。
-例外が適用できるのは深さ４までの章番号に限られ、深さ５より深いものは _強制的に_ ナンバリングされます。
-_**バグっぽいんだけどどうなんですかね**_。そこまで深く章分けする人あまりいないんですかね。
+\\newpage
+#### `pantable`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandocker-rmnote`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandocker-listingtable(-inline)`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandocker-bitfield(-inline)`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandocker-wavedrom-inline`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandocker-aafigure(-inline)`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandocker-rotateimage(-inline)`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandoc-imagine`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandoc-latex-barcode`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+\\newpage
+#### `pandoc-crossref`
+```markdown
+```
+```table
+---
+caption: オプション一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`param`,function,Y,true
+```
+
+### ヘッダのナンバリングに関する注意
+デフォルトの`config.yaml`では章番号がつく設定(`--number-sections`適用済)で、例外的に`{-}`または`{.unnumbered}`で
+つけない設定にできます。が、つけずに済ませられるのは深さ４までの章番号に限られ、深さ５より深いものは
+_強制的に_ ナンバリングされます。_**バグっぽいんだけどどうなんですかね**_。
+そこまで深く章分けする人あまりいないんですかね。
 
 ```markdown
 # 深さ1：章番号なし {.unnumbered}
