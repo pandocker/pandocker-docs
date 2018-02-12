@@ -149,7 +149,7 @@ markdown: True
 ```
 
 \\newpage
-### Pandocオプションの設定(config.yaml) {.unnumbered #sec:yaml-metadata}
+### Pandocオプションの設定(config.yaml) {#sec:yaml-metadata}
 Pandocはmarkdownファイル内のYAML FrontMatterもしくは独立したYAMLファイルから
 コンパイルオプションを取得します。これらの値は表紙絵と奥付に使用されます
 ```table
@@ -209,20 +209,20 @@ caption: 導入済みフィルタ
 header: True
 markdown: True
 ---
-名前,機能,HTML出力,PDF出力
-`pandocker-rmnote`,`<div class="rmnote">`から`</div>`までの区間を削除する,Y,Y
-`pantable`,CSVファイルまたは直打ちで表を挿入する,Y,Y
-`pandocker-listingtable(-inline)`,外部ファイルを引用する,Y,Y
-`pandocker-bitfield(-inline)`,外部ファイルまたは直打ちでbitfield図を挿入する,Y,Y
-`pandocker-wavedrom-inline`,外部ファイルまたは直打ちでwavedrom波形を挿入する,Y,Y
-`pandocker-aafigure(-inline)`,外部ファイルまたは直打ちでaafigure図を挿入する,Y,Y
-`pandocker-rotateimage(-inline)`,画像を任意角度に回転する,Y,Y
-`pandoc-imagine`,各種外部プログラムを使った図を挿入する,Y,Y
-`pandoc-crossref`,超有名な相互参照リンカ,Y,Y
-`pandoc-latex-barcode`,QRコードを挿入する,N,Y
+名前,機能,HTML出力,PDF出力,参照先
+`pandocker-rmnote`,`<div class="rmnote">`から`</div>`までの区間を削除する,Y,Y,[@sec:pandocker-rmnote]
+`pantable`,CSVファイルまたは直打ちで表を挿入する,Y,Y,[@sec:pantable]
+`pandocker-listingtable(-inline)`,外部ファイルを引用する,Y,Y,[@sec:pandocker-listingtable]
+`pandocker-bitfield(-inline)`,外部ファイルまたは直打ちでbitfield図を挿入する,Y,Y,
+`pandocker-wavedrom-inline`,外部ファイルまたは直打ちでwavedrom波形を挿入する,Y,Y,
+`pandocker-aafigure(-inline)`,外部ファイルまたは直打ちでaafigure図を挿入する,Y,Y,
+`pandocker-rotateimage(-inline)`,画像を任意角度に回転する,Y,Y,
+`pandoc-imagine`,各種外部プログラムを使った図を挿入する,Y,Y,
+`pandoc-crossref`,超有名な相互参照リンカ,Y,Y,
+`pandoc-latex-barcode`,QRコードを挿入する,N,Y,
 ```
 \\newpage
-### `pandocker-rmnote`フィルタ {-}
+### `pandocker-rmnote`フィルタ {#sec:pandocker-rmnote}
 条件付きコメントアウトを実現するフィルタです。`pandoc -M rmnote:true`や[@sec:yaml-metadata]などで
 `rmnote`メタデータに`true`を与えると`<div class="rmnote">`と`</div>`の間を削除します。
 `rmnote`メタデータのデフォルト値は`false`です。
@@ -243,7 +243,7 @@ markdown: True
 ```
 \\newpage
 
-### `pantable`フィルタ {-}
+### `pantable`フィルタ {#sec:pantable}
 CSVファイルまたは直打ちで表を挿入するフィルタです。オプション設定でセル内のmarkdownを解釈するかどうかを設定できます。
 CSVファイルが指定されているときは直打ち部分を無視します。
 
@@ -325,9 +325,41 @@ PDF出力のみ効果あり)",Y,1.0
 `include`,外部ファイル使用時のファイル名,Y,
 ```
 \\newpage
-### `pandocker-listingtable(-inline)`フィルタ {-}
+### `pandocker-listingtable(-inline)`フィルタ {#sec:pandocker-listingtable}
+テキストファイルを引用して、タイトル付きのコードブロックに変換します。pantable(@sec:pantable)
+と同様のYAMLコードブロック記述とハイパーリンク記述が使用できます。ハイパーリンク記述の前後には
+改行を入れる必要があります。
 `````markdown
+``` {.listingtable #lst:block-listingtable-sample}
+caption: caption
+source: README.md
+type: markdown
+from: 5
+to: 12
+---
+```
+<!-- 改行 -->
+[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
+<!-- 改行 -->
+- コードブロック記述へのリファレンス：[@lst:block-listingtable-sample]
+- ハイパーリンク記述へのリファレンス：[@lst:inline-listingtable-sample]
 `````
+
+``` {.listingtable #lst:block-listingtable-sample}
+caption: caption
+source: README.md
+type: markdown
+from: 5
+to: 12
+---
+```
+
+[Sample inline listingtable](README.md){.listingtable type=markdown from=5 to=12 #lst:inline-listingtable-sample}
+
+- コードブロック記述へのリファレンス：[@lst:block-listingtable-sample]
+- ハイパーリンク記述へのリファレンス：[@lst:inline-listingtable-sample]
+
+#### オプションパラメータ一覧 {-}
 ```table
 ---
 caption: オプション一覧
@@ -335,7 +367,11 @@ header: True
 markdown: True
 ---
 パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
+`caption`^[ブロック表記のとき。ハイパーリンク表記ではタイトル部(`[...]`)で指定する],,Y,ソースファイル名
+`source`^[ブロック表記のとき。ハイパーリンク表記ではURL部で指定する],ソースファイル名(フルパス),N,
+`type`,"ソースファイル種類(python,cpp,markdown etc.)",Y,plain
+`from`,引用元ソースの切り出し開始行,Y,1
+`to`,引用元ソースの切り出し終了行,Y,max
 ```
 \\newpage
 #### `pandocker-bitfield(-inline)`
