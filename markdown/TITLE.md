@@ -149,7 +149,7 @@ markdown: True
 ```
 
 \\newpage
-### Pandocオプションの設定(config.yaml) {.unnumbered}
+### Pandocオプションの設定(config.yaml) {.unnumbered #sec:yaml-metadata}
 Pandocはmarkdownファイル内のYAML FrontMatterもしくは独立したYAMLファイルから
 コンパイルオプションを取得します。これらの値は表紙絵と奥付に使用されます
 ```table
@@ -222,6 +222,26 @@ markdown: True
 `pandoc-latex-barcode`,QRコードを挿入する,N,Y
 ```
 \\newpage
+### `pandocker-rmnote`フィルタ {-}
+条件付きコメントアウトを実現するフィルタです。`pandoc -M rmnote:true`や[@sec:yaml-metadata]などで
+`rmnote`メタデータに`true`を与えると`<div class="rmnote">`と`</div>`の間を削除します。
+`rmnote`メタデータのデフォルト値は`false`です。
+`````markdown
+<div class="rmnote">
+ここはコメント
+</div>
+`````
+#### オプションパラメータ一覧 {-}
+```table
+---
+caption: オプションパラメータ一覧
+header: True
+markdown: True
+---
+パラメータ,機能,省略可能,初期値
+`rmnote`,削除フラグ,Y,false
+```
+\\newpage
 
 ### `pantable`フィルタ {-}
 CSVファイルまたは直打ちで表を挿入するフィルタです。オプション設定でセル内のmarkdownを解釈するかどうかを設定できます。
@@ -235,26 +255,26 @@ CSVファイルが指定されているときは直打ち部分を無視しま�
 
 \\Begin{mdframed}
 
-> Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
->
-> -   `caption`: the caption of the table. If omitted, no caption will be inserted. Default: disabled.
-> -   `alignment`: a string of characters among `L,R,C,D`, case-insensitive, corresponds to Left-aligned, Right-aligned, Center-aligned, > Default-aligned respectively. e.g. `LCRD` for a table with 4 columns. Default: `DDD...`
-> -   `width`: a list of relative width corresponding to the width of each columns. e.g.
->     ``` yaml
->     - width
->         - 0.1
->         - 0.2
->         - 0.3
->         - 0.4
->     ```
->     Default: auto calculated from the length of each line in table cells.
->
-> -   `table-width`: the relative width of the table (e.g. relative to `\linewidth`). default: 1.0
-> -   `header`: If it has a header row or not. True/False/yes/NO are accepted, case-insensitive. default: True
-> -   `markdown`: If CSV table cell contains markdown syntax or not. Same as above. Default: False
-> -   `include`: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
->
-> When the metadata keys is invalid, the default will be used instead. Note that width and table-width accept fractions as well.
+Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
+
+-   `caption`: the caption of the table. If omitted, no caption will be inserted. Default: disabled.
+-   `alignment`: a string of characters among `L,R,C,D`, case-insensitive, corresponds to Left-aligned, Right-aligned, Center-aligned, > Default-aligned respectively. e.g. `LCRD` for a table with 4 columns. Default: `DDD...`
+-   `width`: a list of relative width corresponding to the width of each columns. e.g.
+    ``` yaml
+    - width
+        - 0.1
+        - 0.2
+        - 0.3
+        - 0.4
+    ```
+    Default: auto calculated from the length of each line in table cells.
+
+-   `table-width`: the relative width of the table (e.g. relative to `\linewidth`). default: 1.0
+-   `header`: If it has a header row or not. True/False/yes/NO are accepted, case-insensitive. default: True
+-   `markdown`: If CSV table cell contains markdown syntax or not. Same as above. Default: False
+-   `include`: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
+
+When the metadata keys is invalid, the default will be used instead. Note that width and table-width accept fractions as well.
 
 \\End{mdframed}
 
@@ -264,7 +284,8 @@ CSVファイルが指定されているときは直打ち部分を無視しま�
 `````markdown
 ```table
 ---
-caption: 表のタイトル {#tbl:table-title} # pandoc-crossrefのアンカー指定もできる
+caption: 表のタイトル {#tbl:table-title}
+# pandoc-crossrefのアンカー指定もできる
 header: True # １行目をヘッダにする
 markdown: True # セル内のmarkdownを解釈する
 alignment: CCCC # 列ごとの文字寄せ指定
@@ -276,7 +297,11 @@ width: # 列ごとの幅割合指定
 table-width: 0.8 # 表の幅
 ---
 パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
+`foo`,hoge,Y,true
+"`bar`","piyo","Y","
+- `true` if A
+- `false` if not A
+"
 ```
 `````
 
@@ -293,22 +318,11 @@ alignment: DDCC
 `header`,ヘッダ行の有無,Y,True
 `markdown`,セルをmarkdownとして解釈,Y,False
 `alignment`,列ごとの文字寄せ,Y,DDD...
-`width`,列ごとの幅割合,Y,いい感じに自動補正
-`table-width`,表の幅,Y,1.0
+`width`,列ごとの幅割合,Y,"いい感じに  \
+自動補正"
+`table-width`,"表の幅(ページ幅に対する割合;  \
+PDF出力のみ効果あり)",Y,1.0
 `include`,外部ファイル使用時のファイル名,Y,
-```
-\\newpage
-### `pandocker-rmnote`フィルタ {-}
-`````markdown
-`````
-```table
----
-caption: オプション一覧
-header: True
-markdown: True
----
-パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
 ```
 \\newpage
 ### `pandocker-listingtable(-inline)`フィルタ {-}
