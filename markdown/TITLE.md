@@ -222,22 +222,79 @@ markdown: True
 `pandoc-crossref`,超有名な相互参照リンカ,Y,Y
 ```
 \\newpage
-#### `pantable`
-```markdown
-```
+
+### `pantable`フィルタ {-}
+CSVファイルまたは直打ちで表を挿入するフィルタです。オプション設定でセル内のmarkdownを解釈するかどうかを設定できます。
+CSVファイルが指定されているときは直打ち部分を無視します。
+
+リポジトリURLはこちら: <https://github.com/ickc/pantable>
+
+複数行セルはダブルクオート`"`ではさみます。セルにダブルクオートが含まれるときはエスケープします`\\"`。
+
+以下にリポジトリのREADMEを抜粋します。
+
+> Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
+>
+> -   `caption`: the caption of the table. If omitted, no caption will be inserted. Default: disabled.
+> -   `alignment`: a string of characters among `L,R,C,D`, case-insensitive, corresponds to Left-aligned, Right-aligned, Center-aligned, > Default-aligned respectively. e.g. `LCRD` for a table with 4 columns. Default: `DDD...`
+> -   `width`: a list of relative width corresponding to the width of each columns. e.g.
+>     ``` yaml
+>     - width
+>         - 0.1
+>         - 0.2
+>         - 0.3
+>         - 0.4
+>     ```
+>     Default: auto calculated from the length of each line in table cells.
+>
+> -   `table-width`: the relative width of the table (e.g. relative to `\linewidth`). default: 1.0
+> -   `header`: If it has a header row or not. True/False/yes/NO are accepted, case-insensitive. default: True
+> -   `markdown`: If CSV table cell contains markdown syntax or not. Same as above. Default: False
+> -   `include`: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
+>
+> When the metadata keys is invalid, the default will be used instead. Note that width and table-width accept fractions as well.
+
+#### 使用例 {-}
+`````markdown
 ```table
 ---
-caption: オプション一覧
-header: True
-markdown: True
+caption: 表のタイトル {#tbl:table-title} # pandoc-crossrefのアンカー指定もできる
+header: True # １行目をヘッダにする
+markdown: True # セル内のmarkdownを解釈する
+alignment: CCCC # 列ごとの文字寄せ指定
+width: # 列ごとの幅割合指定
+    - 0.3
+    - 0.3
+    - 0.2
+    - 0.2
+table-width: 0.8 # 表の幅
 ---
 パラメータ,機能,省略可能,初期値
 `param`,function,Y,true
 ```
+`````
+
+#### オプションパラメータ一覧 {-}
+```table
+---
+caption: オプションパラメータ一覧
+header: True
+markdown: True
+alignment: DDCC
+---
+パラメータ,機能,省略可能,初期値
+`caption`,表のタイトル,Y,
+`header`,ヘッダ行の有無,Y,True
+`markdown`,セルをmarkdownとして解釈,Y,False
+`alignment`,列ごとの文字寄せ,Y,DDD...
+`width`,列ごとの幅割合,Y,いい感じに自動補正
+`table-width`,表の幅,Y,1.0
+`include`,外部ファイル使用時のファイル名,Y,
+```
 \\newpage
 #### `pandocker-rmnote`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -249,8 +306,8 @@ markdown: True
 ```
 \\newpage
 #### `pandocker-listingtable(-inline)`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -262,8 +319,8 @@ markdown: True
 ```
 \\newpage
 #### `pandocker-bitfield(-inline)`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -275,8 +332,8 @@ markdown: True
 ```
 \\newpage
 #### `pandocker-wavedrom-inline`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -288,8 +345,8 @@ markdown: True
 ```
 \\newpage
 #### `pandocker-aafigure(-inline)`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -301,8 +358,8 @@ markdown: True
 ```
 \\newpage
 #### `pandocker-rotateimage(-inline)`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -314,8 +371,8 @@ markdown: True
 ```
 \\newpage
 #### `pandoc-imagine`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -327,8 +384,8 @@ markdown: True
 ```
 \\newpage
 #### `pandoc-latex-barcode`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
@@ -340,8 +397,8 @@ markdown: True
 ```
 \\newpage
 #### `pandoc-crossref`
-```markdown
-```
+`````markdown
+`````
 ```table
 ---
 caption: オプション一覧
