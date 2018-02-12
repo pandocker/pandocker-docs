@@ -182,7 +182,7 @@ width:
 
 ### Pandocフィルタ（プラグイン）一覧
 **pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。
-次のページから１つずつ解説していきます。
+次の項から１つずつ解説していきます。
 
 <div class="rmnote">
 ```makefile
@@ -210,16 +210,16 @@ header: True
 markdown: True
 ---
 名前,機能,HTML出力,PDF出力
-`pantable`,CSVファイルまたは直打ちで表を挿入する,Y,Y
 `pandocker-rmnote`,`<div class="rmnote">`から`</div>`までの区間を削除する,Y,Y
+`pantable`,CSVファイルまたは直打ちで表を挿入する,Y,Y
 `pandocker-listingtable(-inline)`,外部ファイルを引用する,Y,Y
 `pandocker-bitfield(-inline)`,外部ファイルまたは直打ちでbitfield図を挿入する,Y,Y
 `pandocker-wavedrom-inline`,外部ファイルまたは直打ちでwavedrom波形を挿入する,Y,Y
 `pandocker-aafigure(-inline)`,外部ファイルまたは直打ちでaafigure図を挿入する,Y,Y
 `pandocker-rotateimage(-inline)`,画像を任意角度に回転する,Y,Y
 `pandoc-imagine`,各種外部プログラムを使った図を挿入する,Y,Y
-`pandoc-latex-barcode`,QRコードを挿入する,N,Y
 `pandoc-crossref`,超有名な相互参照リンカ,Y,Y
+`pandoc-latex-barcode`,QRコードを挿入する,N,Y
 ```
 \\newpage
 
@@ -232,6 +232,8 @@ CSVファイルが指定されているときは直打ち部分を無視しま�
 複数行セルはダブルクオート`"`ではさみます。セルにダブルクオートが含まれるときはエスケープします`\\"`。
 
 以下にリポジトリのREADMEを抜粋します。
+
+\\Begin{mdframed}
 
 > Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
 >
@@ -253,6 +255,10 @@ CSVファイルが指定されているときは直打ち部分を無視しま�
 > -   `include`: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
 >
 > When the metadata keys is invalid, the default will be used instead. Note that width and table-width accept fractions as well.
+
+\\End{mdframed}
+
+\\newpage
 
 #### 使用例 {-}
 `````markdown
@@ -292,7 +298,7 @@ alignment: DDCC
 `include`,外部ファイル使用時のファイル名,Y,
 ```
 \\newpage
-#### `pandocker-rmnote`
+### `pandocker-rmnote`フィルタ {-}
 `````markdown
 `````
 ```table
@@ -305,7 +311,7 @@ markdown: True
 `param`,function,Y,true
 ```
 \\newpage
-#### `pandocker-listingtable(-inline)`
+### `pandocker-listingtable(-inline)`フィルタ {-}
 `````markdown
 `````
 ```table
