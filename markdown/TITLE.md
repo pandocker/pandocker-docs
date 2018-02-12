@@ -146,6 +146,7 @@ markdown: True
 `DATADIR`,ディレクトリ,データディレクトリ,`data/`
 `TARGETDIR`,ディレクトリ,出力先ディレクトリ,`Out/`
 `IMAGEDIR`,ディレクトリ,画像ファイルの置き場所,`images/`
+,,,
 ```
 
 \\newpage
@@ -174,6 +175,7 @@ width:
 `front`,表紙画像ファイル名,`images/front-image.png`
 `verbcolored`,\\`verbatim\\`に枠線をつけるフラグ,false(枠なし)
 `rmnote`,pandocker-rmnoteフィルタでコンパイル時に`<div class="rmnote">`〜`</div>`を消すフラグ,false(残す)
+,,
 ```
 
 ## 原稿を書く {#sec:pandoc}
@@ -183,7 +185,7 @@ width:
 ### Pandocフィルタ（プラグイン）一覧
 **pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。
 次の項から１つずつ解説していきます。
-
+\\newpage
 <div class="rmnote">
 ```makefile
 PANFLAGS += --filter=pandocker-rmnote
@@ -205,21 +207,27 @@ TEXFLAGS += --filter=pandoc-latex-barcode
 </div>
 ```table
 ---
-caption: 導入済みフィルタ
+caption: 導入済みフィルタ {#tbl:installed-filters}
 header: True
 markdown: True
+alignment: DDCC
+width:
+  - 0.5
+  - 0.2
+  - 0.15
+  - 0.15
 ---
-名前,機能,HTML出力,PDF出力,参照先
-`pandocker-rmnote`,`<div class="rmnote">`から`</div>`までの区間を削除する,Y,Y,[@sec:pandocker-rmnote]
-`pantable`,CSVファイルまたは直打ちで表を挿入する,Y,Y,[@sec:pantable]
-`pandocker-listingtable(-inline)`,外部ファイルを引用する,Y,Y,[@sec:pandocker-listingtable]
-`pandocker-bitfield(-inline)`,外部ファイルまたは直打ちでbitfield図を挿入する,Y,Y,
-`pandocker-wavedrom-inline`,外部ファイルまたは直打ちでwavedrom波形を挿入する,Y,Y,
-`pandocker-aafigure(-inline)`,外部ファイルまたは直打ちでaafigure図を挿入する,Y,Y,
-`pandocker-rotateimage(-inline)`,画像を任意角度に回転する,Y,Y,
-`pandoc-imagine`,各種外部プログラムを使った図を挿入する,Y,Y,
-`pandoc-crossref`,超有名な相互参照リンカ,Y,Y,
-`pandoc-latex-barcode`,QRコードを挿入する,N,Y,
+"名前","参照先","HTML出力","PDF出力"
+"`pandocker-rmnote`","[@sec:pandocker-rmnote]","Y","Y"
+"`pantable`","[@sec:pantable]","Y","Y"
+"`pandocker-listingtable(-inline)`",[@sec:pandocker-listingtable],"Y","Y"
+"`pandocker-bitfield(-inline)`",,"Y","Y"
+"`pandocker-wavedrom-inline`",,"Y","Y"
+"`pandocker-aafigure(-inline)`",,"Y","Y"
+"`pandocker-rotateimage(-inline)`",,"Y","Y"
+"`pandoc-imagine`",,"Y","Y"
+"`pandoc-crossref`",,"Y","Y"
+"`pandoc-latex-barcode`",,"N","Y"
 ```
 \\newpage
 ### `pandocker-rmnote`フィルタ {#sec:pandocker-rmnote}
@@ -240,6 +248,7 @@ markdown: True
 ---
 パラメータ,機能,省略可能,初期値
 `rmnote`,削除フラグ,Y,false
+,,,
 ```
 \\newpage
 
