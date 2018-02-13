@@ -383,7 +383,50 @@ markdown: True
 `to`,引用元ソースの切り出し終了行,Y,max
 ```
 \\newpage
-#### `pandocker-bitfield(-inline)`
+### `pandocker-bitfield(-inline)` {#sec:pandocker-bitfield}
+マイコンのデータシートに載っていそうな「ビットフィールド図」を挿入します。
+[@sec:pandocker-listingtable]と同様の文法が使えます。
+
+#### 記述例 - コードブロック形式 {-}
+`````markdown
+```bitfield
+# input: # ソースファイル名
+# png: # PNG出力フラグ
+eps: True # EPS出力フラグ
+pdf: True # PDF出力フラグ
+lane-height: 80 # レーンあたりの高さ
+lane-width: 640 # レーンの幅
+lanes: 2 # レーンの数
+bits: 32 # 総ビット数
+fontfamily: "source code pro" # フォントファミリ名
+fontsize: "16" # フォントサイズ
+fontweight: "normal" # フォントのウェイト
+caption: _**block bitfield sample**_ # タイトル
+directory: "svg" # 出力ディレクトリ
+attr: # 画像幅などの指定
+  - width: 80%
+---
+# list from LSB
+# bits: bit width
+# attr: information RO/WO/RW etc.
+# name: name of bitfield
+- bits: 5
+- bits: 1
+  attr: RW
+  name: IPO
+- bits: 1
+  attr: RW
+  name: BRK
+- bits: 1
+  name: CPK
+```
+`````
+
+#### インライン形式 {.unnumbered}
+```markdown
+[**inline bitfield sample**](data/bitfields/bit.yaml){.bitfield pdf=True}
+```
+
 `````markdown
 `````
 ```table
@@ -391,11 +434,33 @@ markdown: True
 caption: オプション一覧
 header: True
 markdown: True
+width:
+  - 0.20
+  - 0.40
+  - 0.20
+  - 0.20
+alignment: DDCC
 ---
 パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
+`input`,ソースファイル名,N,
+`png`,PNG出力フラグ,Y,**True**
+`eps`,EPS出力フラグ,Y,False
+`pdf`,PDF出力フラグ,Y,False
+`lane-height`,レーンあたりの高さ,Y,80
+`lane-width`,レーンの幅,Y,640
+`lanes`,レーンの数,Y,1
+`bits`,総ビット数,Y,8
+`fontfamily`,フォントファミリ名,Y,"source code pro"
+`fontsize`,フォントサイズ,Y,16
+`fontweight`,フォントのウェイト,Y,normal
+`caption`,タイトル,Y,Untitled(*)
+`directory`,出力ディレクトリ,Y,"`./svg`"
+`attr`,画像幅などの指定,Y,
 ```
+(*) インライン形式のときはタイトルなしにできる
+
 \\newpage
+
 #### `pandocker-wavedrom-inline`
 `````markdown
 `````
