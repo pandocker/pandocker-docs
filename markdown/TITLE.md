@@ -290,6 +290,7 @@ When the metadata keys is invalid, the default will be used instead. Note that w
 \\newpage
 
 #### 使用例 {-}
+`#tbl:`で始まるアンカーを書いておくと"Table X.Y: zzz"の形式で変換されます（下記参照）。
 `````markdown
 ```table
 ---
@@ -317,7 +318,7 @@ table-width: 0.8 # 表の幅
 #### オプションパラメータ一覧 {-}
 ```table
 ---
-caption: オプションパラメータ一覧
+caption: オプションパラメータ一覧 {#tbl:pantable-options}
 header: True
 markdown: True
 alignment: DDCC
@@ -371,7 +372,7 @@ to: 12
 #### オプションパラメータ一覧 {-}
 ```table
 ---
-caption: オプション一覧
+caption: オプションパラメータ一覧 {#tbl:listingtable-options}
 header: True
 markdown: True
 ---
@@ -383,13 +384,28 @@ markdown: True
 `to`,引用元ソースの切り出し終了行,Y,max
 ```
 \\newpage
-### `pandocker-bitfield(-inline)` {#sec:pandocker-bitfield}
-マイコンのデータシートに載っていそうな「ビットフィールド図」を挿入します。
-[@sec:pandocker-listingtable]と同様の文法が使えます。
 
-#### 記述例 - コードブロック形式 {-}
+### `pandocker-bitfield(-inline)` {#sec:pandocker-bitfield}
+
+マイコンのデータシートに載っていそうな「ビットフィールド図」を挿入できるようにするフィルタです。
+[@sec:pandocker-listingtable]と同様の文法が使えます。
+"bitfield"そのものの文法は本家(<https://github.com/drom/bitfield>)を参照ください。
+
+[@tbl:bitfield-options]にある出力オプションにかかわらず、HTML出力(`pandocker html`など)
+するときはSVG、TeX/PDF出力(`pandocker pdf`など)のときはPDFにリンクします。EPSへの変換は指定がなければ行われず、
+指定してもリンクされません。HTMLでもPDFでもないときはPNGをリンクします。
+
+もともとの`bitfield`プログラムはJSONファイルから画像に変換するものですが、入力ファイルとして
+YAMLも扱えるようになっています。内部で使うプログラムはオリジナルのJS製ではなく、
+[pythonに移植したもの](https://github.com/K4zuki/bitfieldpy)を使っています。
+JS(というか外部シェル)を使うのは殆どの場合問題がないんですが、Windows７機での意味不明な
+エラー[^windows-io-error]が解決できず移植に踏み切りました。
+
+[^windows-io-error]: たぶんpythonの"subprocess"周辺のエラーですが時間の無駄だし根が深そうなので追いかけてません。
+
+#### 記述例 {-}
 `````markdown
-```bitfield
+```{.bitfield #fig:block-bitfield-sample}
 # input: # ソースファイル名
 # png: # PNG出力フラグ
 eps: True # EPS出力フラグ
@@ -420,18 +436,35 @@ attr: # 画像幅などの指定
 - bits: 1
   name: CPK
 ```
+
+[**inline bitfield sample**](data/bitfields/bit.yaml){.bitfield pdf=True #fig:inline-bitfield-sample}
+
 `````
 
-#### インライン形式 {.unnumbered}
-```markdown
-[**inline bitfield sample**](data/bitfields/bit.yaml){.bitfield pdf=True}
+```{.bitfield #fig:block-bitfield-sample}
+caption: _**block bitfield sample**_
+---
+# list from LSB
+# bits: bit width
+# attr: information RO/WO/RW etc.
+# name: name of bitfield
+- bits: 5
+- bits: 1
+  attr: RW
+  name: IPO
+- bits: 1
+  attr: RW
+  name: BRK
+- bits: 1
+  name: CPK
 ```
 
-`````markdown
-`````
+[**inline bitfield sample**](data/bitfields/bit.yaml){.bitfield pdf=True #fig:inline-bitfield-sample}
+
+#### オプションパラメータ一覧 {-}
 ```table
 ---
-caption: オプション一覧
+caption: オプションパラメータ一覧 {#tbl:bitfield-options}
 header: True
 markdown: True
 width:
