@@ -12,6 +12,11 @@ jobs:
           name: Make HTML
           command: make initdir html
       - run:
+        name: Prepare QR code for this build
+        command: |
+          tag = `git rev-parse --short HEAD`
+          qr https://github.com/pandocker/pandocker-docs/releases/download/build-$(tag)/Pandocker-Docs-$(tag).pdf > images/QRcode.png
+      - run:
           name: Make PDF
           command: make initdir pdf
 
