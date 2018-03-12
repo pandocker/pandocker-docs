@@ -48,7 +48,7 @@ https://github.com/bfirsh/whalebrew#install に従ってWhalebrewを導入しま
 出力にあたって必要なコマンドは主に
 
 - `pandocker init`
-- `pandocker html`あるいは`pandocker make`
+- `pandocker html`あるいは`pandocker all`
 - `pandocker pdf`
 - `pandocker clean`
 
@@ -221,8 +221,8 @@ width:
 "`pandocker-rmnote`","[@sec:pandocker-rmnote]","Y","Y"
 "`pantable`","[@sec:pantable]","Y","Y"
 "`pandocker-listingtable(-inline)`",[@sec:pandocker-listingtable],"Y","Y"
-"`pandocker-bitfield(-inline)`",,"Y","Y"
-"`pandocker-wavedrom-inline`",,"Y","Y"
+"`pandocker-bitfield(-inline)`",[@sec:pandocker-bitfield],"Y","Y"
+"`pandocker-wavedrom-inline`",[@sec:pandocker-wavedrom-inline],"Y","Y"
 "`pandocker-aafigure(-inline)`",,"Y","Y"
 "`pandocker-rotateimage(-inline)`",,"Y","Y"
 "`pandoc-imagine`",,"Y","Y"
@@ -393,7 +393,8 @@ markdown: True
 
 [@tbl:bitfield-options]にある出力オプションにかかわらず、HTML出力(`pandocker html`など)
 するときはSVG、TeX/PDF出力(`pandocker pdf`など)のときはPDFにリンクします。EPSへの変換は指定がなければ行われず、
-指定してもリンクされません。HTMLでもPDFでもないときはPNGをリンクします。
+指定してもリンクされません。変換後のファイル名はランダムな16進数8桁です。
+HTMLでもTeX/PDFでもないときはPNGをリンクします。
 
 もともとの`bitfield`プログラムはJSONファイルから画像に変換するものですが、入力ファイルとして
 YAMLも扱えるようになっています。内部で使うプログラムはオリジナルのJS製ではなく、
@@ -459,7 +460,7 @@ caption: _**block bitfield sample**_
   name: CPK
 ```
 
-[**inline bitfield sample**](data/bitfields/bit.yaml){.bitfield pdf=True #fig:inline-bitfield-sample}
+[**inline bitfield sample**](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 pdf=True #fig:inline-bitfield-sample}
 
 #### オプションパラメータ一覧 {-}
 ```table
@@ -494,10 +495,23 @@ alignment: DDCC
 
 \\newpage
 
-#### `pandocker-wavedrom-inline`
+### `pandocker-wavedrom-inline` {#sec:pandocker-wavedrom-inline}
+
+ロジック回路（など）のタイミング図を挿入できるようにするフィルタです。JSONまたはYAMLファイルへの
+ハイパーリンク表記のみ使えます。文法は本家チュートリアル(<http://wavedrom.com/tutorial.html>)を参照ください。
+本家よりもJSONの文法を厳密に解釈します(<https://github.com/BreizhGeek/wavedrompy#important-notice>)。
+また、本家チュートリアル2(<http://wavedrom.com/tutorial2.html>)の回路図レンダリングは未実装です。
+
+本家はJS製（サーバサイド用途を前提にしているように見受けられる）ですが、先述のSubprocess問題を回避するため、
+Python移植版(<https://github.com/BreizhGeek/wavedrompy>)をさらにフォークしてライブラリとして使用しています。
+
 `````markdown
+[wavedrom sample](data/waves/anotherwave.yaml){.wavedrom #fig:inline-wavedrom-example}
 `````
-```table
+
+[wavedrom sample](data/waves/anotherwave.yaml){.wavedrom #fig:inline-wavedrom-example}
+
+<!-- ```table
 ---
 caption: オプション一覧
 header: True
@@ -505,7 +519,7 @@ markdown: True
 ---
 パラメータ,機能,省略可能,初期値
 `param`,function,Y,true
-```
+``` -->
 \\newpage
 #### `pandocker-aafigure(-inline)`
 `````markdown
