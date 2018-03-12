@@ -14,8 +14,8 @@ jobs:
       - run:
           name: Prepare QR code for this build
           command: |
-            tag = `git rev-parse --short HEAD`
-            qr https://github.com/pandocker/pandocker-docs/releases/download/build-$(tag)/Pandocker-Docs-$(tag).pdf > images/QRcode.png
+            pip install qrcode
+            qr https://github.com/pandocker/pandocker-docs/releases/download/build-`git rev-parse --short HEAD`/Pandocker-Docs-`git rev-parse --short HEAD`.pdf > images/QRcode.png
       - run:
           name: Make PDF
           command: make initdir pdf
