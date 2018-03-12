@@ -10,5 +10,5 @@ docrevision: "1.0"
 front: images/markdown-logo-1664x1024.png
 # download from: https://github.com/dcurtis/markdown-mark
 verbcolored: true
-rmnote: false
+rmnote: true
 ...
