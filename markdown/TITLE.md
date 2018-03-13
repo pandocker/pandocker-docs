@@ -613,4 +613,4 @@ _強制的に_ ナンバリングされます。_**バグっぽいんだけど�
 
 # 更新履歴
 ## Revision1.0（技術書典４） {-}
-![](imaages/QRcode.png){width=80%}
+![](images/QRcode.png){width=80%}
