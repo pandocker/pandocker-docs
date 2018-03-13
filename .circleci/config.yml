@@ -9,13 +9,13 @@ jobs:
           name: get submodules
           command: git submodule update --init
       - run:
+        name: Prepare QR code for this build
+        command: |
+          pip3 install qrcode
+          qr https://github.com/pandocker/pandocker-docs/releases/download/build-`git rev-parse --short HEAD`/Pandocker-Docs-`git rev-parse --short HEAD`.pdf > images/QRcode.png
+      - run:
           name: Make HTML
           command: make initdir html
-      - run:
-          name: Prepare QR code for this build
-          command: |
-            pip3 install qrcode
-            qr https://github.com/pandocker/pandocker-docs/releases/download/build-`git rev-parse --short HEAD`/Pandocker-Docs-`git rev-parse --short HEAD`.pdf > images/QRcode.png
       - run:
           name: Make PDF
           command: make initdir pdf
