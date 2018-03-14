@@ -2,6 +2,7 @@
 # bits: bit width
 # attr: information RO/WO/RW etc.
 # name: name of bitfield
+# http://www.nxp.com/assets/documents/data/en/reference-manuals/K66P144M180SF5RMV2.pdf for details
 # Pin Control Register n (PORTx_PCRn)
 - bits: 1
   attr: RW
