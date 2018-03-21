@@ -521,9 +521,85 @@ markdown: True
 `param`,function,Y,true
 ``` -->
 \\newpage
-#### `pandocker-aafigure(-inline)`
+### `pandocker-aafigure(-inline)`
+
+アスキーアートを画像に変換してくれるフィルタです。内部ではaafigure(<https://github.com/aafigure/aafigure>)
+を使っています。[@sec:pandocker-listingtable]と同様の文法が使えますが、直接記述は右下がりの斜め線描画に難があります。
+
 `````markdown
+```{.aafigure #fig:block-aafigure}
+# input: data/bitfields/bit.yaml
+caption: _**block aafigure sample**_
+png: True
+pdf: True
+---
+A   B
+ AA   BB
+ AA   BB
+
+  ---- |         ___  ~~~|
+       | --  ___|        |    ===
+                         ~~~
+/-------\\\\
+| "foo" |
++-------+
+| "bar" |
+\\\\-------/
+                                     +
+      |  -  +   |  -  +   |  -  +   /               -
+     /  /  /   /  /  /   /  /  /   /     --     |/| /    +
+    |  |  |   +  +  +   -  -  -   /     /  \\\\        -   \\\\|/  |\\\\
+                                 +     +    +          +-+-+ | +
+    |  |  |   +  +  +   -  -  -   \\\\     \\\\  /        -   /|\\\\  |/
+     \\\\  \\\\  \\\\   \\\\  \\\\  \\\\   \\\\  \\\\  \\\\   \\\\     --     |\\\\| \\\\    +
+      |  -  +   |  -  +   |  -  +   \\\\               -
+                                     +
+
+    --->   | | | | | |
+    ---<   | | | | | |
+    ---o   ^ V v o O #
+    ---O
+    ---#
+```
+
+[inline aafigure sample](data/aafigure.txt){.aafigure #fig:inline-aafigure png=True pdf=True eps=True}
 `````
+```{.aafigure #fig:block-aafigure}
+# input: data/bitfields/bit.yaml
+caption: _**block aafigure sample**_
+png: True
+pdf: True
+---
+A   B
+ AA   BB
+ AA   BB
+
+  ---- |         ___  ~~~|
+       | --  ___|        |    ===
+                         ~~~
+/-------\\
+| "foo" |
++-------+
+| "bar" |
+\\-------/
+                                     +
+      |  -  +   |  -  +   |  -  +   /               -
+     /  /  /   /  /  /   /  /  /   /     --     |/| /    +
+    |  |  |   +  +  +   -  -  -   /     /  \\        -   \\|/  |\\
+                                 +     +    +          +-+-+ | +
+    |  |  |   +  +  +   -  -  -   \\     \\  /        -   /|\\  |/
+     \\  \\  \\   \\  \\  \\   \\  \\  \\   \\     --     |\\| \\    +
+      |  -  +   |  -  +   |  -  +   \\               -
+                                     +
+
+    --->   | | | | | |
+    ---<   | | | | | |
+    ---o   ^ V v o O #
+    ---O
+    ---#
+```
+
+[inline aafigure sample](data/aafigure.txt){.aafigure #fig:inline-aafigure png=True pdf=True eps=True}
 ```table
 ---
 caption: オプション一覧
@@ -574,6 +650,8 @@ markdown: True
 ```
 \\newpage
 #### `pandoc-crossref`
+
+言わずと知れた超有名Haskell製フィルタです。
 `````markdown
 `````
 ```table
@@ -613,4 +691,4 @@ _強制的に_ ナンバリングされます。_**バグっぽいんだけど�
 
 # 更新履歴
 ## Revision1.0（技術書典４） {-}
-![](images/QRcode.png){width=80%}
+![](images/QRcode.png){width=30%}
