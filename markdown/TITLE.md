@@ -223,8 +223,8 @@ width:
 "`pandocker-listingtable(-inline)`",[@sec:pandocker-listingtable],"Y","Y"
 "`pandocker-bitfield(-inline)`",[@sec:pandocker-bitfield],"Y","Y"
 "`pandocker-wavedrom-inline`",[@sec:pandocker-wavedrom-inline],"Y","Y"
-"`pandocker-aafigure(-inline)`",,"Y","Y"
-"`pandocker-rotateimage(-inline)`",,"Y","Y"
+"`pandocker-aafigure(-inline)`",[@sec:pandocker-aafigure],"Y","Y"
+"`pandocker-rotateimage(-inline)`",[@sec:pandocker-rotateimage],"Y","Y"
 "`pandoc-imagine`",,"Y","Y"
 "`pandoc-crossref`",,"Y","Y"
 "`pandoc-latex-barcode`",,"N","Y"
@@ -385,7 +385,7 @@ markdown: True
 ```
 \\newpage
 
-### `pandocker-bitfield(-inline)` {#sec:pandocker-bitfield}
+### `pandocker-bitfield(-inline)`フィルタ {#sec:pandocker-bitfield}
 
 マイコンのデータシートに載っていそうな「ビットフィールド図」を挿入できるようにするフィルタです。
 [@sec:pandocker-listingtable]と同様の文法が使えます。
@@ -495,7 +495,7 @@ alignment: DDCC
 
 \\newpage
 
-### `pandocker-wavedrom-inline` {#sec:pandocker-wavedrom-inline}
+### `pandocker-wavedrom-inline`フィルタ {#sec:pandocker-wavedrom-inline}
 
 ロジック回路（など）のタイミング図を挿入できるようにするフィルタです。JSONまたはYAMLファイルへの
 ハイパーリンク表記のみ使えます。文法は本家チュートリアル(<http://wavedrom.com/tutorial.html>)を参照ください。
@@ -521,10 +521,11 @@ markdown: True
 `param`,function,Y,true
 ``` -->
 \\newpage
-### `pandocker-aafigure(-inline)`
+### `pandocker-aafigure(-inline)`フィルタ {#sec:pandocker-aafigure}
 
 アスキーアートを画像に変換してくれるフィルタです。内部ではaafigure(<https://github.com/aafigure/aafigure>)
 を使っています。[@sec:pandocker-listingtable]と同様の文法が使えますが、直接記述は右下がりの斜め線描画に難があります。
+aafigureの文法はヘルプページ<http://aafigure.readthedocs.io/en/latest/>を参照ください
 
 `````markdown
 ```{.aafigure #fig:block-aafigure}
@@ -607,12 +608,49 @@ header: True
 markdown: True
 ---
 パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
+`input`,ソースファイル名,N,
+`png`,PNG出力フラグ,Y,**True**
+`eps`,EPS出力フラグ,Y,False
+`pdf`,PDF出力フラグ,Y,False
 ```
 \\newpage
-#### `pandocker-rotateimage(-inline)`
+### `pandocker-rotateimage(-inline)`フィルタ {#sec:pandocker-rotateimage}
+シンプルな画像回転フィルタです。wavedrom/bitfield/aafigureとの組み合わせ、拡大縮小も可能です。
+wavedrom/bitfield/aafigureと組み合わせた場合はSVG/PDF画像の回転を試みます。
+_angle_ 指定が正の数で時計回り、負の数は反時計回りです。実際の _angle_ は360で割った余りを用います。
+_angle=365_ なら右に5度回転します。
 `````markdown
+[inline aafigure sample](data/aafigure.txt){.aafigure #fig:inline-aafigure-30 png=True pdf=True eps=True .rotate angle=30 height=40%}
+
+[wavedrom sample](data/waves/anotherwave.yaml){.wavedrom #fig:inline-wavedrom-example-m30 .rotate angle=-30 height=40%}
 `````
+\\newpage
+
+[inline aafigure sample](data/aafigure.txt){.aafigure #fig:inline-aafigure-30 png=True pdf=True eps=True .rotate angle=30 height=40%}
+
+[wavedrom sample](data/waves/anotherwave.yaml){.wavedrom #fig:inline-wavedrom-example-m30 .rotate angle=-30 height=40%}
+
+:::::{#fig:RotateImage}
+[0](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 height=25% width=25%}
+
+[30](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=30 height=25% width=25% #fig:RotateImageA}
+[60](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=60 height=25% width=25% #fig:RotateImageB}
+[90](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=90 height=25% width=25% #fig:RotateImageC}
+[120](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=120 height=25% width=25% #fig:RotateImageD}
+
+[150](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=150 height=25% width=25% #fig:RotateImageE}
+[180](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=180 height=25% width=25% #fig:RotateImageF}
+[210](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=210 height=25% width=25% #fig:RotateImageG}
+[240](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=240 height=25% width=25% #fig:RotateImageH}
+
+[270](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=270 height=25% width=25% #fig:RotateImageI}
+[300](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=300 height=25% width=25% #fig:RotateImageJ}
+[330](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=330 height=25% width=25% #fig:RotateImageK}
+[360](data/bitfields/bit.yaml){.bitfield bits=32 lanes=2 .rotate angle=360 height=25% width=25% #fig:RotateImageL}
+
+回転サンプル
+:::::
+
 ```table
 ---
 caption: オプション一覧
@@ -649,9 +687,9 @@ markdown: True
 `param`,function,Y,true
 ```
 \\newpage
-#### `pandoc-crossref`
+#### `pandoc-crossref`フィルタ
 
-言わずと知れた超有名Haskell製フィルタです。
+言わずと知れた超有名Haskell製フィルタです。
 `````markdown
 `````
 ```table
