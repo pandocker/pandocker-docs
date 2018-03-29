@@ -16,11 +16,13 @@ Dockerイメージ、CI構築例を順に解説していきます。
 _Dockerがちゃんと動くWindows10機_ であれば簡単確実に動くようになったので、本当に
 Dockerには感謝しています。もうGtk+まわりで悩まなくていいんだょ…[^company-machine]
 
+Dockerがちゃんと動かないWindows機をお使いの方は外部のCIサービスを使ってください。
+
 [^company-machine]: 筆者の会社支給のマシンはOSごと入れ直さないと動かないっぽいのでWindowsキライ
 
-この本の内容で楽しんでもらうために読者さんに最低限済ませてほしいことはたぶん
-Gitのインストールを済ませておくことだけです。GitHubアカウントがあると楽ですが
-必要というわけでもないです。
+この本の内容で楽しんでもらうために読者さんに最低限済ませてほしいことは~~たぶん~~
+Gitのインストールを済ませておくことだけです。GitHubアカウントがあると楽ですが、必要というわけでもないです。
+アップロードを行わずとも使えるビルド方法を説明しますので
 
 # 使ってみる編
 #### Dockerのインストール {-}
@@ -120,7 +122,7 @@ width:
 
 [^zenkaku]: 読者諸氏は全角スペースをファイル名に使うような素人さんではないと信じたい
 
-### ファイル名・ディレクトリ名の設定(Makefile) {.unnumbered}
+### ファイル名・ディレクトリ名の設定(Makefile)
 タイトルファイル名、ディレクトリ名を変更した場合は、そのことをビルドスクリプトに知らせる必要があります。
 ビルドスクリプトはタイトルページのファイル名と各種ディレクトリ名をMakefileから取得します。
 ディレクトリ名はすべてMakefileが置かれたディレクトリからの相対パスです。
@@ -182,6 +184,34 @@ width:
 これでとりあえずコンパイルが通るようになったので、実際の原稿を書けるようになりました。
 **~~デファクトスタンダードこと~~**Pandoc Flavored Markdown記法に則って書いていきます。
 
+### (必要なら)章ごとにファイルを分けてもいいよ {#sec:file-per-section}
+編集方針や合同誌などの理由で複数人が原稿に関わるなどの事情によっては担当ごとにファイルを分けたほうが無難でしょう。
+方法は２つあります。
+
+#### Makefileで設定する {#sec:config-by-makefile}
+Makefileに複数の原稿ファイルを書き足していけばその順番どおり連結され、
+連結されたものにコンパイル・フィルタ適用されます。下記の例なら`Appendix.md`が`TITLE.md`の直後に書かれていると
+タイトルページの直後にAppendixが現れる構成になってしまいます。
+
+```{.makefile #lst:makefile_example}
+# CONFIG:= config.yaml
+INPUT:= TITLE.md
+INPUT += Section1.md
+INPUT += Section2.md
+INPUT += Appendix.md
+# TARGET:= TARGET
+```
+
+#### GPPでプリプロセスする {#sec:use-gpp-preprocess}
+Generic Preprocessor^[https://github.com/logological/gpp]を使います。
+C言語で`＃include "stdio.h"`などと記述するアレです。
+C言語風そのままだとヘッダと間違われるのでHTML風に&lt;`＃include "ファイル名"`&gt;
+と記述します。該当部分は指定されたファイルに置き換えられます(入れ子になっていても機能します)。
+
+GPPの良くないところは
+**バックスラッシュ`\\`(または半角の`￥`)が1つだけ使われていると強制的に消されてしまうことです。**
+_このドキュメントの原稿も2個重ねてあります。_
+
 ### Pandocフィルタ（プラグイン）一覧
 **pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。
 次の項から１つずつ解説していきます。
@@ -225,9 +255,9 @@ width:
 "`pandocker-wavedrom-inline`",[@sec:pandocker-wavedrom-inline],"Y","Y"
 "`pandocker-aafigure(-inline)`",[@sec:pandocker-aafigure],"Y","Y"
 "`pandocker-rotateimage(-inline)`",[@sec:pandocker-rotateimage],"Y","Y"
-"`pandoc-imagine`",,"Y","Y"
-"`pandoc-crossref`",,"Y","Y"
-"`pandoc-latex-barcode`",,"N","Y"
+"`pandoc-imagine`",[@sec:pandoc-magine],"Y","Y"
+"`pandoc-crossref`","","Y","Y"
+"`pandoc-latex-barcode`","","N","Y"
 ```
 \\newpage
 ### `pandocker-rmnote`フィルタ {#sec:pandocker-rmnote}
@@ -258,16 +288,18 @@ CSVファイルが指定されているときは直打ち部分を無視しま�
 
 リポジトリURLはこちら: <https://github.com/ickc/pantable>
 
-複数行セルはダブルクオート`"`ではさみます。セルにダブルクオートが含まれるときはエスケープします`\\"`。
+複数行セルはダブルクオート`"`ではさみます。セルにダブルクオートを含むときは予めエスケープします`\\"`。
 
 以下にリポジトリのREADMEを抜粋します。
 
 \\Begin{mdframed}
 
-Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
+Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML
+metadata block syntax. 7 metadata keys are recognized:
 
 -   `caption`: the caption of the table. If omitted, no caption will be inserted. Default: disabled.
--   `alignment`: a string of characters among `L,R,C,D`, case-insensitive, corresponds to Left-aligned, Right-aligned, Center-aligned, > Default-aligned respectively. e.g. `LCRD` for a table with 4 columns. Default: `DDD...`
+-   `alignment`: a string of characters among `L,R,C,D`, case-insensitive, corresponds to Left-aligned, Right-aligned,
+Center-aligned, > Default-aligned respectively. e.g. `LCRD` for a table with 4 columns. Default: `DDD...`
 -   `width`: a list of relative width corresponding to the width of each columns. e.g.
     ``` yaml
     - width
@@ -520,7 +552,9 @@ markdown: True
 パラメータ,機能,省略可能,初期値
 `param`,function,Y,true
 ``` -->
+
 \\newpage
+
 ### `pandocker-aafigure(-inline)`フィルタ {#sec:pandocker-aafigure}
 
 アスキーアートを画像に変換してくれるフィルタです。内部ではaafigure(<https://github.com/aafigure/aafigure>)
@@ -601,6 +635,7 @@ A   B
 ```
 
 [inline aafigure sample](data/aafigure.txt){.aafigure #fig:inline-aafigure png=True pdf=True eps=True}
+
 ```table
 ---
 caption: オプション一覧
@@ -614,7 +649,9 @@ markdown: True
 `pdf`,PDF出力フラグ,Y,False
 ```
 \\newpage
+
 ### `pandocker-rotateimage(-inline)`フィルタ {#sec:pandocker-rotateimage}
+
 シンプルな画像回転フィルタです。wavedrom/bitfield/aafigureとの組み合わせ、拡大縮小も可能です。
 wavedrom/bitfield/aafigureと組み合わせた場合はSVG/PDF画像の回転を試みます。
 _angle_ 指定が正の数で時計回り、負の数は反時計回りです。実際の _angle_ は360で割った余りを用います。
@@ -658,12 +695,26 @@ header: True
 markdown: True
 ---
 パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
+`angle`,relative path to source file,N,0
+,,,
 ```
 \\newpage
-#### `pandoc-imagine`
+
+### `pandoc-imagine`フィルタ(PlantUML) {#sec:pandoc-magine}
+
+巷にあふれる各種テキスト−画像コンバータプログラムをラップしたフィルタです。出力はPNGファイルになるので、
+特にPDF出力にするときはできあがりの画像サイズに注意しないとブロックノイズでガタガタになります。
+ファイル指定はできず直接記述のみに対応します。おすすめはGPPによる取り込みです。
+
 `````markdown
+```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
+<#include "ditaa.puml">
+```
 `````
+\\newpage
+```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
+<#include "ditaa.puml">
+```
 ```table
 ---
 caption: オプション一覧
@@ -687,10 +738,35 @@ markdown: True
 `param`,function,Y,true
 ```
 \\newpage
-#### `pandoc-crossref`フィルタ
+### `pandoc-crossref`フィルタ {#sec:pandoc-crossref-filter}
 
-言わずと知れた超有名Haskell製フィルタです。
+言わずと知れた超有名Haskell製フィルタです。図・コードブロック・表・セクションの相互参照テーブル
+を組み立てます。複数の画像を並べて一つの参照番号にすることもできます。その時はそれぞれに小番号がつきます。
+
+より詳しくは<https://github.com/lierdakil/pandoc-crossref>を参照ください。
 `````markdown
+### Section {#sec:section-title}
+
+![Title](path/to/image.png){#fig:figure-title-single}
+
+Table: Table title {#tbl:table-title}
+
+|  type   |       id       |
+|---------|----------------|
+| Section | #sec:<link id> |
+| Figure  | #fig:<link id> |
+| Table   | #tbl:<link id> |
+| Code    | #lst:<link id> |
+
+:::::{#fig:imagearray}
+![1st image](/path/to/first/image.png){#fig:imagearray1}
+![2nd image](/path/to/second/image.png){#fig:imagearray2}
+
+![3rd image](/path/to/third/image.png){#fig:imagearray3}
+![4th image](/path/to/forth/image.png){#fig:imagearray4}
+
+Image Array
+:::::
 `````
 ```table
 ---
@@ -727,6 +803,6 @@ _強制的に_ ナンバリングされます。_**バグっぽいんだけど�
 <#include "webhooktree.puml">
 ```
 
-# 更新履歴
+# 更新履歴 {-}
 ## Revision1.0（技術書典４） {-}
-![](images/QRcode.png){width=30%}
+![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
