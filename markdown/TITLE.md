@@ -743,7 +743,7 @@ markdown: True
 言わずと知れた超有名Haskell製フィルタです。図・コードブロック・表・セクションの相互参照テーブル
 を組み立てます。複数の画像を並べて一つの参照番号にすることもできます。その時はそれぞれに小番号がつきます。
 
-より詳しくは<https://github.com/lierdakil/pandoc-crossref>を参照ください。
+より詳しくは<http://lierdakil.github.io/pandoc-crossref>を参照ください。
 `````markdown
 ### Section {#sec:section-title}
 
@@ -751,12 +751,13 @@ markdown: True
 
 Table: Table title {#tbl:table-title}
 
-|  type   |       id       |
-|---------|----------------|
-| Section | #sec:<link id> |
-| Figure  | #fig:<link id> |
-| Table   | #tbl:<link id> |
-| Code    | #lst:<link id> |
+|   type   |       id       |
+|----------|----------------|
+| Section  | #sec:<link id> |
+| Figure   | #fig:<link id> |
+| Table    | #tbl:<link id> |
+| Code     | #lst:<link id> |
+| Equation | #eq:<link id>  |
 
 :::::{#fig:imagearray}
 ![1st image](/path/to/first/image.png){#fig:imagearray1}
@@ -767,6 +768,8 @@ Table: Table title {#tbl:table-title}
 
 Image Array
 :::::
+
+$$ E = mc^2 $$ {#eq:emcsquared}
 `````
 ```table
 ---
@@ -793,7 +796,130 @@ _強制的に_ ナンバリングされます。_**バグっぽいんだけど�
 ```
 # 構築してみる編
 ## なにもないところからaptかbrewで構築する修行の章
+### インストールそしてインストールそれからインストール
+インストールしまくります。
+
+### パッケージ管理ツールのインストール
+#### Homebrew(Mac) - https://brew.sh/index_ja.html {-}
+
+全てに先んじてHomebrewのインストールをします。
+```sh
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+Ubuntuユーザはaptがほぼ全てやってくれるので特別にインストールするものはありません
+
+### 言語のインストール
+主に３言語使います - **Haskell・Python _３_・LaTeXです**。
+HaskellはPandocとpandoc-crossrefフィルタのインストールで必要です。
+Pythonはフィルタとシェルスクリプトの代わり、そしてLaTeXはPDF出力のためです。
+
+#### Mac {.unnumbered}
+```sh
+$ brew install cabal-install
+$ brew install python3
+$ brew cask install mactex
+```
+
+#### Ubuntu {.unnumbered}
+```sh
+$ sudo apt-get install python3 python3-pip
+$ sudo apt-get install texlive-xetex
+```
+
+参考サイト： https://texwiki.texjp.org
+
+### 各言語のパッケージのインストール
+#### Mac {.unnumbered}
+```sh
+$ pip3 install pyyaml pillow
+$ pip3 install pantable csv2table
+$ pip3 install six pandoc-imagine
+$ pip3 install svgutils
+$ pip3 install git+https://github.com/K4zuki/wavedrompy.git
+$ pip3 install git+https://github.com/K4zuki/bitfieldpy.git
+$ pip3 install git+https://github.com/K4zuki/pandocker-filters.git
+$ pip3 install git+https://github.com/pandocker/removalnotes.git
+
+$ wget -c https://github.com/zr-tex8r/BXptool/archive/v0.4.zip
+$ unzip v0.4.zip
+$ sudo mkdir -p /usr/local/texlive/2015basic/texmf-local/BXptool/
+$ sudo cp BXptool-0.4/bx*.{sty,def} /usr/local/texlive/2015basic/texmf-local/BXptool/
+$ sudo mktexlsr
+$ tlmgr install oberdiek
+```
+<!-- pandoc-crossrefがpandocに依存しているので自動的にインストールされます。 -->
+
+#### Ubuntu {.unnumbered}
+aptで入るpandocは1.16でだいぶ古いのでpandocのGitHubサイト^[https://github.com/jgm/pandoc/releases]
+からdebファイルを落としてきます
+```sh
+$ wget -c https://github.com/jgm/pandoc/releases/download/2.1.3/pandoc-2.1.3-1-amd64.deb
+$ sudo dpkg -i pandoc-2.1.3-1-amd64.deb
+$ sudo -H pip3 install pyyaml pillow
+$ sudo -H pip3 install pantable csv2table
+$ sudo -H pip3 install six pandoc-imagine
+$ sudo -H pip3 install svgutils
+$ sudo -H pip3 install git+https://github.com/K4zuki/wavedrompy.git
+$ sudo -H pip3 install git+https://github.com/K4zuki/bitfieldpy.git
+$ sudo -H pip3 install git+https://github.com/K4zuki/pandocker-filters.git
+$ sudo -H pip3 install git+https://github.com/pandocker/removalnotes.git
+
+$ sudo apt-get install xzdec texlive-lang-japanese
+$ tlmgr init-usertree
+$ tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
+$ wget -c https://github.com/zr-tex8r/BXptool/archive/v0.4.zip
+$ unzip v0.4.zip
+$ sudo mkdir -p /usr/share/texlive/texmf-dist/tex/latex/BXptool/
+$ sudo cp BXptool-0.4/bx*.{sty,def} /usr/share/texlive/texmf-dist/tex/latex/BXptool/
+$ sudo mktexlsr
+$ tlmgr install oberdiek
+```
+### ツールのインストール
+#### Mac {.unnumbered}
+```sh
+$ brew install librsvg gpp wget
+```
+
+#### Ubuntu {.unnumbered}
+```sh
+$ sudo apt-get install librsvg2-bin gpp
+$ sudo apt-get install graphviz
+```
+### フォントのインストール
+各リポジトリからアーカイブをダウンロード・解凍してTTFファイル(TrueTypeフォント)を全部、
+ユーザフォントディレクトリにコピーします。
+```sh
+mkdir -p $HOME/.local/share/fonts/
+cd $HOME/.local/share/fonts/
+wget -c https://github.com/adobe-fonts/source-code-pro/archive/2.030R-ro/1.050R-it.zip
+wget -c https://github.com/adobe-fonts/source-sans-pro/archive/2.020R-ro/1.075R-it.zip
+wget -c https://github.com/mzyy94/RictyDiminished-for-Powerline/archive/3.2.4-powerline-early-2016.zip
+```
+
+### PlantUMLのダウンロード・インストール
+homebrew/aptで入手できるバージョンは古いので直接ダウンロード・インストールします。
+```sh
+curl -fsSL https://sourceforge.net/projects/plantuml/files/plantuml.1.2017.18.jar/download -o /usr/local/plantuml.jar
+echo "#!/bin/bash" > /usr/local/bin/plantuml
+echo "java -jar /usr/local/plantuml.jar -Djava.awt.headless=true \$@" >> /usr/local/bin/plantuml
+chmod +x /usr/local/bin/plantuml
+```
+
+## ダウンロード
+### pandoc_misc
+ビルドスクリプトのMakefileが収められたリポジトリです。`$(HOME)/.pandoc`にクローンします。
+`--recursive`オプションでサブモジュールも同時にクローンされます。
+```sh
+$ cd ~/.pandoc
+$ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
+```
+
+ここまでやって _運が良ければ_ `make init -f ~/.pandoc/pandoc_misc/Makefile; make clean/all/html/tex/pdf`が動きます。
+上記の内容で動いていたのですが、**とくにMacの環境構築は途中から更新しておらず、バージョン間の相性が発生するかもしれません。**
+
 ## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
+上記のインストール祭りが`docker install`で可能になります。
+
 # Appendix {-}
 ### Web Hook Tree {-}
 今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
