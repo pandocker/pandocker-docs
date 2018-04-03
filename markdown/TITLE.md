@@ -122,7 +122,7 @@ width:
 
 [^zenkaku]: 読者諸氏は全角スペースをファイル名に使うような素人さんではないと信じたい
 
-### ファイル名・ディレクトリ名の設定(Makefile)
+### ファイル名・ディレクトリ名の設定(Makefile) {#sec:config-makefile}
 タイトルファイル名、ディレクトリ名を変更した場合は、そのことをビルドスクリプトに知らせる必要があります。
 ビルドスクリプトはタイトルページのファイル名と各種ディレクトリ名をMakefileから取得します。
 ディレクトリ名はすべてMakefileが置かれたディレクトリからの相対パスです。
@@ -203,10 +203,14 @@ INPUT += Appendix.md
 ```
 
 #### GPPでプリプロセスする {#sec:use-gpp-preprocess}
-Generic Preprocessor^[https://github.com/logological/gpp]を使います。
-C言語で`＃include "stdio.h"`などと記述するアレです。
-C言語風そのままだとヘッダと間違われるのでHTML風に&lt;`＃include "ファイル名"`&gt;
+Generic Preprocessor（汎用プリプロセッサ）^[https://github.com/logological/gpp]を使います。
+プリプロセッサというのはC言語などで`＃include "stdio.h"`などと記述すると、予めヘッダファイルを
+読み込んでおいてくれるあの機能を持ったプログラムのことです。
+C言語風そのままだとヘッダと間違われるのでHTML風に`<＃include "ファイル名">`
 と記述します。該当部分は指定されたファイルに置き換えられます(入れ子になっていても機能します)。
+ファイル名は相対パス指定で動きます。予約されている`$(MDDIR)`、`$(DATADIR)`、`$(TARGETDIR)`
+ディレクトリにあるファイルはファイル名指定のみで動作します。それぞれのデフォルト値は
+[@sec:config-makefile]を参照ください。GPPの入れ子は２５６段階らしいです。
 
 GPPの良くないところは
 **バックスラッシュ`\\`(または半角の`￥`)が1つだけ使われていると強制的に消されてしまうことです。**
@@ -809,15 +813,16 @@ $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/inst
 Ubuntuユーザはaptがほぼ全てやってくれるので特別にインストールするものはありません
 
 ### 言語のインストール
-主に３言語使います - **Haskell・Python _３_・LaTeXです**。
-HaskellはPandocとpandoc-crossrefフィルタのインストールで必要です。
+主に２言語使います - **Python _３_・LaTeXです**。
 Pythonはフィルタとシェルスクリプトの代わり、そしてLaTeXはPDF出力のためです。
+従来はHaskellとNodeJSも必要としていましたが、NodeJSはWindows上の動作に問題がありPythonに移植されたものを
+使うので削除、Haskellはコンパイル済バイナリを入手するだけで済むことがわかったので不要となりました。
 
 #### Mac {.unnumbered}
 ```sh
-$ brew install cabal-install
 $ brew install python3
 $ brew cask install mactex
+$ brew install wget
 ```
 
 #### Ubuntu {.unnumbered}
@@ -831,6 +836,12 @@ $ sudo apt-get install texlive-xetex
 ### 各言語のパッケージのインストール
 #### Mac {.unnumbered}
 ```sh
+$ wget -c https://github.com/jgm/pandoc/releases/download/2.1.3/pandoc-2.1.3-macOS.pkg
+# インストーラが /usr/local/bin/pandoc にインストールしてくれる
+$ wget -c https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.0.2/osx-ghc82-pandoc21.tar.gz
+$ tar zxf osx-ghc82-pandoc21.tar.gz
+$ sudo mv pandoc-crossref /usr/local/bin/
+
 $ pip3 install pyyaml pillow
 $ pip3 install pantable csv2table
 $ pip3 install six pandoc-imagine
@@ -855,6 +866,10 @@ aptで入るpandocは1.16でだいぶ古いのでpandocのGitHubサイト^[https
 ```sh
 $ wget -c https://github.com/jgm/pandoc/releases/download/2.1.3/pandoc-2.1.3-1-amd64.deb
 $ sudo dpkg -i pandoc-2.1.3-1-amd64.deb
+$ wget -c https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.0.2/linux-ghc82-pandoc21.tar.gz
+$ tar zxf linux-ghc82-pandoc21.tar.gz
+$ sudo mv pandoc-crossref /usr/local/bin/
+
 $ sudo -H pip3 install pyyaml pillow
 $ sudo -H pip3 install pantable csv2table
 $ sudo -H pip3 install six pandoc-imagine
@@ -877,7 +892,7 @@ $ tlmgr install oberdiek
 ### ツールのインストール
 #### Mac {.unnumbered}
 ```sh
-$ brew install librsvg gpp wget
+$ brew install librsvg gpp
 ```
 
 #### Ubuntu {.unnumbered}
@@ -914,11 +929,12 @@ $ cd ~/.pandoc
 $ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
 ```
 
-ここまでやって _運が良ければ_ `make init -f ~/.pandoc/pandoc_misc/Makefile; make clean/all/html/tex/pdf`が動きます。
-上記の内容で動いていたのですが、**とくにMacの環境構築は途中から更新しておらず、バージョン間の相性が発生するかもしれません。**
+ここまでやって _運が良ければ_ `make init -f ~/.pandoc/pandoc_misc/Makefile`、`make clean/all/html/tex/pdf`が動きます。
+筆者も上記の内容で動いていたのですが、**とくにMacの環境構築は昨年後半から更新しておらず、**
+**バージョン間の相性が発生するかもしれません。**
 
 ## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
-上記のインストール祭りが`docker install`で可能になります。
+上記のリスキーなインストール祭りが`docker install`で済むようになります。
 
 # Appendix {-}
 ### Web Hook Tree {-}
