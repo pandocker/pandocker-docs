@@ -87,7 +87,7 @@ $ pandocker -f /var/pandoc_misc/Makefile init
 
 \\newpage
 
-## 原稿リポジトリをコンパイル
+## 原稿リポジトリをとりあえずコンパイルする
 ここでいったんコンパイルできるかどうか試してみましょう。`TITLE.md`の中身が空でも
 コンパイルすることはできます。コンパイルする前に`Makefile`/`config.yaml`と
 原稿一式をリポジトリに登録して最初のコミットをします。
@@ -216,7 +216,11 @@ GPPの良くないところは
 **バックスラッシュ`\\`(または半角の`￥`)が1つだけ使われていると強制的に消されてしまうことです。**
 _このドキュメントの原稿も2個重ねてあります。_
 
-### Pandocフィルタ（プラグイン）一覧
+## Pandocフィルタ（プラグイン）を使って整形する
+
+Pandocは中間処理のためのフィルタというしくみを用意しています。簡単に言うとプラグインです。
+フィルタを使うとCSVから表に変換して挿入したり、外部ファイルを引用したり、ページを回転したりできます。
+
 **pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。
 次の項から１つずつ解説していきます。
 \\newpage
@@ -920,8 +924,7 @@ echo "java -jar /usr/local/plantuml.jar -Djava.awt.headless=true \$@" >> /usr/lo
 chmod +x /usr/local/bin/plantuml
 ```
 
-## ダウンロード
-### pandoc_misc
+### ツールキット"pandoc_misc"のダウンロード
 ビルドスクリプトのMakefileが収められたリポジトリです。`$(HOME)/.pandoc`にクローンします。
 `--recursive`オプションでサブモジュールも同時にクローンされます。
 ```sh
@@ -929,12 +932,29 @@ $ cd ~/.pandoc
 $ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
 ```
 
-ここまでやって _運が良ければ_ `make init -f ~/.pandoc/pandoc_misc/Makefile`、`make clean/all/html/tex/pdf`が動きます。
-筆者も上記の内容で動いていたのですが、**とくにMacの環境構築は昨年後半から更新しておらず、**
+ここまでやって*運が良ければ*`make init -f ~/.pandoc/pandoc_misc/Makefile`、\\
+`make clean/all/html/tex/pdf`が動きます。
+筆者も上記の内容で動いていたのですが、**とくにMacの環境構築は昨年後半から更新しておらず検証不足であり、**
 **バージョン間の相性が発生するかもしれません。**
 
 ## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
-上記のリスキーなインストール祭りが`docker install`で済むようになります。
+上記のリスキーなインストール祭りをせずに済むようにDockerイメージを構築していきます。
+構築に際して考えることが少なく済むように、Ubuntu16.04をベースイメージにします。この本が出る頃には
+もしかすると*18.04*が登場しているかもしれませんが気にしません。
+
+### Ubuntu16.04ベースの基本イメージ(pandocker-base)
+DockerイメージはTeXLiveを含めなければならず少しの変更でもビルドに時間がかかる一方
+pipで導入する自作pythonパッケージはできるだけ頻繁にアップデートしていきたいので、
+TeXを含めイメージ構築上必要なもの一式でバージョンが変化しにくいもの[^notex]を
+一つのイメージ(**pandocker-base**)にまとめました。
+
+[^notex]: TeXが不要な環境向けに*notex*ブランチも用意してあります。
+
+\\Startlandscape
+
+[](pandocker-base/Dockerfile){.listingtable type=dockerfile}
+
+\\Stoplandscape
 
 # Appendix {-}
 ### Web Hook Tree {-}
