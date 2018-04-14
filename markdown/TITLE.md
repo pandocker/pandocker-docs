@@ -20,9 +20,10 @@ Dockerがちゃんと動かないWindows機をお使いの方は外部のCIサ�
 
 [^company-machine]: 筆者の会社支給のマシンはOSごと入れ直さないと動かないっぽいのでWindowsキライ
 
-この本の内容で楽しんでもらうために読者さんに最低限済ませてほしいことは~~たぶん~~
-Gitのインストールを済ませておくことだけです。GitHubアカウントがあると楽ですが、必要というわけでもないです。
-アップロードを行わずとも使えるビルド方法を説明しますので
+この本の内容で楽しんでもらうために読者さんに最低限済ませてほしいことはGitのインストールだけです。[^github-account]
+
+[^github-account]: GitHubかBitBucketのアカウントがあるとCI構築ができるのでさらにしあわせですが、
+ホスティングサービスにアップロードを行わずとも使えるビルド方法を説明しますので絶対に必要というわけでもないです。
 
 # 使ってみる編
 #### Dockerのインストール {-}
@@ -188,7 +189,7 @@ width:
 編集方針や合同誌などの理由で複数人が原稿に関わるなどの事情によっては担当ごとにファイルを分けたほうが無難でしょう。
 方法は２つあります。
 
-#### Makefileで設定する {#sec:config-by-makefile}
+#### Makefileで設定する {.unnumbered #sec:config-by-makefile}
 Makefileに複数の原稿ファイルを書き足していけばその順番どおり連結され、
 連結されたものにコンパイル・フィルタ適用されます。下記の例なら`Appendix.md`が`TITLE.md`の直後に書かれていると
 タイトルページの直後にAppendixが現れる構成になってしまいます。
@@ -202,7 +203,7 @@ INPUT += Appendix.md
 # TARGET:= TARGET
 ```
 
-#### GPPでプリプロセスする {#sec:use-gpp-preprocess}
+#### GPPでプリプロセスする {.unnumbered #sec:use-gpp-preprocess}
 Generic Preprocessor（汎用プリプロセッサ）^[https://github.com/logological/gpp]を使います。
 プリプロセッサというのはC言語などで`＃include "stdio.h"`などと記述すると、予めヘッダファイルを
 読み込んでおいてくれるあの機能を持ったプログラムのことです。
@@ -216,15 +217,31 @@ GPPの良くないところは
 **バックスラッシュ`\\`(または半角の`￥`)が1つだけ使われていると強制的に消されてしまうことです。**
 _このドキュメントの原稿も2個重ねてあります。_
 
+## 直接記述TeXを駆使して整形する
+TeX文を直書きしておくとPDF出力時にTeXコンパイラが処理してくれます。HTML出力を選択したときは無視されます。
+
+```table
+---
+caption: TeX使用例
+header: True
+markdown: True
+---
+"TeX文","効果"
+`\\newpage`,"即時強制改ページ（直後に空行を要する）"
+`\\Begin{<env>}`~`\\End{<env>}`,"挟まれた部分に`<env>`環境を適用する"
+```
+
 ## Pandocフィルタ（プラグイン）を使って整形する
 
-Pandocは中間処理のためのフィルタというしくみを用意しています。簡単に言うとプラグインです。
+Pandocは中間処理のための*フィルタ*というしくみを用意しています。簡単に言うとプラグインです。
 フィルタを使うとCSVから表に変換して挿入したり、外部ファイルを引用したり、ページを回転したりできます。
 
 **pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。
 次の項から１つずつ解説していきます。
 \\newpage
-<div class="rmnote">
+
+:::::::::::::::::::::::::::::: rmnote
+
 ```makefile
 PANFLAGS += --filter=pandocker-rmnote
 PANFLAGS += --filter=$(PANTABLE)
@@ -238,11 +255,13 @@ PANFLAGS += --filter=pandocker-aafigure-inline
 PANFLAGS += --filter=pandocker-rotateimage
 PANFLAGS += --filter=pandocker-rotateimage-inline
 PANFLAGS += --filter=$(IMAGINE)
+PANFLAGS += --filter=pandocker-tex-landscape
 PANFLAGS += --filter=$(PCROSSREF)
 
 TEXFLAGS += --filter=pandoc-latex-barcode
 ```
-</div>
+::::::::::::::::::::::::::::::
+
 ```table
 ---
 caption: 導入済みフィルタ {#tbl:installed-filters}
@@ -264,8 +283,10 @@ width:
 "`pandocker-aafigure(-inline)`",[@sec:pandocker-aafigure],"Y","Y"
 "`pandocker-rotateimage(-inline)`",[@sec:pandocker-rotateimage],"Y","Y"
 "`pandoc-imagine`",[@sec:pandoc-magine],"Y","Y"
-"`pandoc-crossref`","","Y","Y"
+"`pandoc-crossref`","[@sec:pandoc-crossref-filter]","Y","Y"
 "`pandoc-latex-barcode`","","N","Y"
+"`pandocker-tex-landscape`","","N","Y"
+"","","",""
 ```
 \\newpage
 ### `pandocker-rmnote`フィルタ {#sec:pandocker-rmnote}
@@ -854,6 +875,7 @@ $ pip3 install git+https://github.com/K4zuki/wavedrompy.git
 $ pip3 install git+https://github.com/K4zuki/bitfieldpy.git
 $ pip3 install git+https://github.com/K4zuki/pandocker-filters.git
 $ pip3 install git+https://github.com/pandocker/removalnotes.git
+$ pip3 install git+https://github.com/pandocker/tex-landscape.git
 
 $ wget -c https://github.com/zr-tex8r/BXptool/archive/v0.4.zip
 $ unzip v0.4.zip
@@ -882,6 +904,7 @@ $ sudo -H pip3 install git+https://github.com/K4zuki/wavedrompy.git
 $ sudo -H pip3 install git+https://github.com/K4zuki/bitfieldpy.git
 $ sudo -H pip3 install git+https://github.com/K4zuki/pandocker-filters.git
 $ sudo -H pip3 install git+https://github.com/pandocker/removalnotes.git
+$ sudo -H pip3 install git+https://github.com/pandocker/tex-landscape.git
 
 $ sudo apt-get install xzdec texlive-lang-japanese
 $ tlmgr init-usertree
@@ -937,24 +960,24 @@ $ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
 筆者も上記の内容で動いていたのですが、**とくにMacの環境構築は昨年後半から更新しておらず検証不足であり、**
 **バージョン間の相性が発生するかもしれません。**
 
-## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
+## DockerとCIでﾗｸﾁﾝﾔｯﾀｰの章
 上記のリスキーなインストール祭りをせずに済むようにDockerイメージを構築していきます。
 構築に際して考えることが少なく済むように、Ubuntu16.04をベースイメージにします。この本が出る頃には
 もしかすると*18.04*が登場しているかもしれませんが気にしません。
 
-### Ubuntu16.04ベースの基本イメージ(pandocker-base)
-DockerイメージはTeXLiveを含めなければならず少しの変更でもビルドに時間がかかる一方
-pipで導入する自作pythonパッケージはできるだけ頻繁にアップデートしていきたいので、
+### Ubuntu16.04ベースの基本Dockerイメージ(pandocker-base)
+最終的に実用するDockerイメージはTeXLiveを含めなければならずビルドに時間がかかるので、
+イメージ作成を2段階にしました。
 TeXを含めイメージ構築上必要なもの一式でバージョンが変化しにくいもの[^notex]を
 一つのイメージ(**pandocker-base**)にまとめました。
+自作pythonパッケージはできるだけ頻繁にpipでアップデートしていきたいので、
+pandocker-baseイメージはUbuntu公式が用意しているUbuntu16.04LTSの最小構成イメージを継承し、apt-getなどで必要なものを追加していきます。
 
-[^notex]: TeXが不要な環境向けに*notex*ブランチも用意してあります。
+[^notex]: Git、TeX、Python(pip)、Pandoc、フォントなど。TeXが不要な環境向けに*notex*ブランチも用意してあります。
 
-\\Startlandscape
-
+:::::::::::::::::::::::::::::: LANDSCAPE
 [](pandocker-base/Dockerfile){.listingtable type=dockerfile}
-
-\\Stoplandscape
+::::::::::::::::::::::::::::::
 
 # Appendix {-}
 ### Web Hook Tree {-}
