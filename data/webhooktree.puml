@@ -2,24 +2,23 @@
 (pandoc_misc)
 (pandocker)
 (pandocker-base)
-(pandocker-alpine)
 (pandocker-filters)
 (pandocker-docs)
+(tex-landscape)
 
-(pandoc_misc) --> (pandocker) : hook by git commit\\n(core program)
-(pandoc_misc) --> (pandocker-alpine) : hook by git commit\\n(core program)
+(pandoc_misc) --> (pandocker) : hook by git commit\n(core program)
 
-(pandocker-filters) -> (pandocker-base) : hook by git commit\\n(python module)
-(pandocker-filters) --> (pandocker) : hook by git commit\\n(python module)
+(pandocker-filters) -> (pandocker) : hook by git commit\n(python module)
 
-(rmnotes) -> (pandocker) : hook by git commit\\n(python module)
-(pandocker-base) -> (pandocker) : Docker image dependency
+(rmnotes) -> (pandocker) : hook by git commit\n(python module)
+(tex-landscape) --> (pandocker) : hook by git commit\n(python module)
+(pandocker-base) ==|> (pandocker) : Docker image dependency
 
-(pandocker) -> (whalebrew-pandocker) : Docker image dependency\\n(Whalebrew module)
+(pandocker) ==|> (whalebrew-pandocker) : Docker image dependency\n(Whalebrew module)
 
-(rmnotes) .. (pandocker-docs) : git submodule
-(pandocker-base) .. (pandocker-docs) : git submodule
-(pandocker) .. (pandocker-docs) : git submodule
-(pandocker-alpine) .. (pandocker-docs) : git submodule
-(pandocker-filters) .. (pandocker-docs) : git submodule
+(rmnotes) ..u.. (pandocker-docs) : git submodule
+(tex-landscape) ..u. (pandocker-docs) : git submodule
+(pandocker-base) .u. (pandocker-docs) : git submodule
+(pandocker) .u. (pandocker-docs) : git submodule
+(pandocker-filters) ..u.. (pandocker-docs) : git submodule
 @enduml
