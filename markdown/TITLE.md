@@ -800,15 +800,7 @@ Image Array
 
 $$ E = mc^2 $$ {#eq:emcsquared}
 `````
-```table
----
-caption: オプション一覧
-header: True
-markdown: True
----
-パラメータ,機能,省略可能,初期値
-`param`,function,Y,true
-```
+
 
 ### ヘッダのナンバリングに関する注意
 デフォルトの`config.yaml`では章番号がつく設定(`--number-sections`適用済)で、例外的に`{-}`または`{.unnumbered}`で
