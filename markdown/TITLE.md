@@ -800,7 +800,18 @@ Image Array
 
 $$ E = mc^2 $$ {#eq:emcsquared}
 `````
+\\newpage
+### `pandocker-tex-landscape`[^progress] {#sec:pandocker-tex-landscape}
+一時的にTeXのgeometry設定を横長（ランドスケープ）に変更するフィルタです。"LANDSCAPE"クラスのdiv節に適用されます。
 
+`````markdown
+:::::::::::::::::::::::::::::: LANDSCAPE
+[](pandocker-base/Dockerfile){.listingtable type=dockerfile}
+::::::::::::::::::::::::::::::
+`````
+処理結果は[@lst:pandocker-base-dockerfile]を参照ください。
+
+[^progress]: ところでこのフィルタは**技術書典４本番の１週間前に実装しました**（原稿の進捗を推して知るべし）。
 
 ### ヘッダのナンバリングに関する注意
 デフォルトの`config.yaml`では章番号がつく設定(`--number-sections`適用済)で、例外的に`{-}`または`{.unnumbered}`で
@@ -968,7 +979,7 @@ pandocker-baseイメージはUbuntu公式が用意しているUbuntu16.04LTSの�
 [^notex]: Git、TeX、Python(pip)、Pandoc、フォントなど。TeXが不要な環境向けに*notex*ブランチも用意してあります。
 
 :::::::::::::::::::::::::::::: LANDSCAPE
-[](pandocker-base/Dockerfile){.listingtable type=dockerfile}
+[](pandocker-base/Dockerfile){.listingtable type=dockerfile #lst:pandocker-base-dockerfile}
 ::::::::::::::::::::::::::::::
 
 # Appendix {-}
