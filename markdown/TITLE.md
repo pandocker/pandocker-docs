@@ -26,6 +26,11 @@ Dockerがちゃんと動かないWindows機をお使いの方は外部のCIサ�
 ホスティングサービスにアップロードを行わずとも使えるビルド方法を説明しますので絶対に必要というわけでもないです。
 
 # クイックスタート：とりあえず使ってみる編
+CIなどを使わず、全てをローカルマシンで管理する前提[^dropbox]で「とりあえず使える」ようにします。
+
+[^dropbox]: Dropboxとかを使うという手もあります。CIはできないですがGitのremoteリポジトリを置いておいて
+複数のマシンで共有することはできます。
+
 #### Dockerのインストール {-}
 Dockerの入手・導入は容易です。
 
@@ -35,11 +40,13 @@ Dockerの入手・導入は容易です。
 
 #### Whalebrewのインストール {-}
 https://github.com/bfirsh/whalebrew#install に従ってWhalebrewを導入します。
+Windowsユーザは別の方法をとります。
 <!-- Windows版は https://github.com/3846masa/whalebrew#install に従います。 -->
 
 #### Dockerイメージのダウンロード {-}
-シェル上で`whalebrew install k4zuki/pandocker-whalebrew`を打ち込む。これだけです。
+シェル上で`whalebrew install k4zuki/whalebrew-pandocker`を打ち込む。これだけです。
 いい感じにインストールが行われたのち`/usr/local/bin/pandocker`として実行できるようになります。
+Windowsでは`docker pull k4zuki/pandocker`を打ち込んでください。
 
 ## で、何ができるん？何をするん？
 
@@ -56,13 +63,33 @@ https://github.com/bfirsh/whalebrew#install に従ってWhalebrewを導入しま
 - `pandocker clean`
 
 の４種類です。
+引数なしの`pandocker`ではエラーになります。
+
+### スクリプトを書く
+WindowsのひとはPATHが通っている任意の場所に以下のような感じで実行スクリプトを置いてください。
+本当はPowerShellがいいんですが筆者は書けないのでbashの例を書きます。カレントディレクトリをマウントして
+`docker run`する内容です。引数なしで実行するとコマンドプロンプトが出てきます。
+
+```{.sh #lst:pandocker_sh}
+#!/usr/bin/env bash
+
+docker run --rm -it -v $PWD:/workdir k4zuki/pandocker $@
+```
+#### 実行例 {-}
+```sh
+$ pandocker.sh # コマンドプロンプトになる
+$ pandocker.sh make [init|html|all|pdf|clean]
+$ pandocker.sh make # whalebrewでインストールした場合の`pandocker`コマンドと等価
+```
+
+今後登場する`pandocker XX`コマンドは`pandocker.sh make XX`と読み替えてください。
 
 ## 原稿リポジトリを作る
 早速本を書く準備を整えます。
 新規に原稿管理用Gitリポジトリを作りましょう。たとえば
 ホームディレクトリ直下のworkspaceディレクトリにMyBookというGitリポジトリを作ります。
 ```sh
-$ mkdir -p ~/workspace/MyBook
+$ mkdir -p ~/workspace/MyBook # ~/workspaceディレクトリが存在しなければ同時に作る
 $ cd ~/workspace/MyBook
 $ git init
 ```
@@ -185,8 +212,8 @@ width:
 これでとりあえずコンパイルが通るようになったので、実際の原稿を書けるようになりました。
 **~~デファクトスタンダードこと~~**Pandoc Flavored Markdown記法に則って書いていきます。
 
-### (必要なら)章ごとにファイルを分けてもいいよ {#sec:file-per-section}
-編集方針や合同誌などの理由で複数人が原稿に関わるなどの事情によっては担当ごとにファイルを分けたほうが無難でしょう。
+### 必要なら、章ごとにファイルを分けてもいいよ {#sec:file-per-section}
+編集方針(合同誌などの理由で複数人が原稿に関わるなど)によっては章ごとにファイルを分けたほうが無難でしょう。
 方法は２つあります。
 
 #### Makefileで設定する {.unnumbered #sec:config-by-makefile}
@@ -216,6 +243,12 @@ C言語風そのままだとヘッダと間違われるのでHTML風に`<＃incl
 GPPの良くないところは
 **バックスラッシュ`\\`(または半角の`￥`)が1つだけ使われていると強制的に消されてしまうことです。**
 _このドキュメントの原稿も2個重ねてあります。_
+
+### ヘッダのナンバリングに関する注意
+デフォルトの`config.yaml`では章番号がつく設定(`--number-sections`適用済)で、例外的に`{-}`または`{.unnumbered}`で
+つけない設定にできます。が、つけずに済ませられるのは深さ４までの章番号に限られ、深さ５より深いものは
+_強制的に_ ナンバリングされます。_**バグっぽいんだけどどうなんですかね**_。
+そこまで深く章分けする人あまりいないんですかね。
 
 # 出力を整形する編
 PDF出力を整形する方法を解説します。
@@ -816,12 +849,6 @@ $$ E = mc^2 $$ {#eq:emcsquared}
 
 [^progress]: ところでこのフィルタは**技術書典４本番の１週間前に実装しました**（原稿の進捗を推して知るべし）。
 
-### ヘッダのナンバリングに関する注意
-デフォルトの`config.yaml`では章番号がつく設定(`--number-sections`適用済)で、例外的に`{-}`または`{.unnumbered}`で
-つけない設定にできます。が、つけずに済ませられるのは深さ４までの章番号に限られ、深さ５より深いものは
-_強制的に_ ナンバリングされます。_**バグっぽいんだけどどうなんですかね**_。
-そこまで深く章分けする人あまりいないんですかね。
-
 ```markdown
 # 深さ1：章番号なし {.unnumbered}
 ## 深さ2：章番号なし {.unnumbered}
@@ -844,9 +871,9 @@ $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/inst
 Ubuntuユーザはaptがほぼ全てやってくれるので特別にインストールするものはありません
 
 ### 言語のインストール
-主に２言語使います - **Python _３_・LaTeXです**。
+主に２言語使います - **Python*３*・LaTeXです**。
 Pythonはフィルタとシェルスクリプトの代わり、そしてLaTeXはPDF出力のためです。
-従来はHaskellとNodeJSも必要としていましたが、NodeJSはWindows上の動作に問題がありPythonに移植されたものを
+従来はHaskellとNodeJS(npm)も必要としていましたが、npmモジュールはWindows上の動作に問題がありPythonに移植されたものを
 使うので削除、Haskellはコンパイル済バイナリを入手するだけで済むことがわかったので不要となりました。
 
 #### Mac {.unnumbered}
@@ -969,26 +996,32 @@ $ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
 ## DockerとCIでﾗｸﾁﾝﾔｯﾀｰの章
 上記のリスキーなインストール祭りをせずに済むようにDockerイメージを構築していきます。
 構築に際して考えることが少なく済むように、Ubuntu16.04をベースイメージにします。この本が出る頃には
-もしかすると*18.04*が登場しているかもしれませんが気にしません。
+もしかすると*18.04*が登場しているかもしれませんが気にしません[^ubuntu1804]。
+
+[^ubuntu1804]: 調べてみたらこの原稿が落ちない限りファイナルβですね https://wiki.ubuntu.com/BionicBeaver/ReleaseSchedule
 
 ### Ubuntu16.04ベースの基本Dockerイメージ(pandocker-base)
 最終的に実用するDockerイメージはTeXLiveを含めなければならずビルドに時間がかかるので、
-イメージ作成を2段階にしました。
-TeXを含めイメージ構築上必要なもの一式でバージョンが変化しにくいもの[^notex]を
+イメージ作成を2段階にしました：
+- TeXを含めイメージ構築上必要なもの一式でバージョンが変化しにくいもの[^notex]を
 一つのイメージ(**pandocker-base**)にまとめました。
-自作pythonパッケージはできるだけ頻繁にpipでアップデートしていきたいので、
 pandocker-baseイメージはUbuntu公式が用意しているUbuntu16.04LTSの最小構成イメージを継承し、apt-getなどで必要なものを追加していきます。
+- 自作pythonパッケージはできるだけ頻繁にpipでアップデートしていきたいので、**pandocker**イメージにまとめます。
+ツールキットpandoc_miscのダウンロードもこちらのイメージで行います。
 
 [^notex]: Git、TeX、Python(pip)、Pandoc、フォントなど。TeXが不要な環境向けに*notex*ブランチも用意してあります。
 
 :::::::::::::::::::::::::::::: LANDSCAPE
-[](pandocker-base/Dockerfile){.listingtable type=dockerfile #lst:pandocker-base-dockerfile}
+pandocker-base/pandockerイメージのDockerfileを以下に全文掲載します。
+
+[**pandocker-base**イメージのDockerfile](pandocker-base/Dockerfile){.listingtable type=dockerfile #lst:pandocker-base-dockerfile}
+
+[**pandocker**イメージのDockerfile](pandocker/Dockerfile){.listingtable type=dockerfile #lst:pandocker-dockerfile}
 ::::::::::::::::::::::::::::::
 
 # Appendix {-}
 ### Web Hook Tree {-}
-今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
-主に自分のためです。
+備忘録として今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
 
 ```{.plantuml im_out="img"}
 <#include "webhooktree.puml">
@@ -996,4 +1029,6 @@ pandocker-baseイメージはUbuntu公式が用意しているUbuntu16.04LTSの�
 
 # 更新履歴 {-}
 ## Revision1.0（技術書典４） {-}
+進捗ダメです！
+
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
