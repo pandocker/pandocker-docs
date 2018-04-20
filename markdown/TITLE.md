@@ -67,8 +67,10 @@ Windowsでは`docker pull k4zuki/pandocker`を打ち込んでください。
 
 ### スクリプトを書く
 WindowsのひとはPATHが通っている任意の場所に以下のような感じで実行スクリプトを置いてください。
-本当はPowerShellがいいんですが筆者は書けないのでbashの例を書きます。カレントディレクトリをマウントして
+本当はPowerShellがいいんですが筆者は詳しくない[^powershellpwd]のでbashの例を書きます。カレントディレクトリをマウントして
 `docker run`する内容です。引数なしで実行するとコマンドプロンプトが出てきます。
+
+[^powershellpwd]: Powershell流の現在ディレクトリの取得方法がわかれば書けます。
 
 ```{.sh #lst:pandocker_sh}
 #!/usr/bin/env bash
@@ -78,7 +80,7 @@ docker run --rm -it -v $PWD:/workdir k4zuki/pandocker $@
 #### 実行例 {-}
 ```sh
 $ pandocker.sh # コマンドプロンプトになる
-$ pandocker.sh make [init|html|all|pdf|clean]
+$ pandocker.sh make init|html|all|pdf|clean
 $ pandocker.sh make # whalebrewでインストールした場合の`pandocker`コマンドと等価
 ```
 
@@ -210,7 +212,7 @@ width:
 
 ## 原稿を書く {#sec:pandoc}
 これでとりあえずコンパイルが通るようになったので、実際の原稿を書けるようになりました。
-**~~デファクトスタンダードこと~~**Pandoc Flavored Markdown記法に則って書いていきます。
+Pandoc Flavored Markdown記法に則って書いていきます。
 
 ### 必要なら、章ごとにファイルを分けてもいいよ {#sec:file-per-section}
 編集方針(合同誌などの理由で複数人が原稿に関わるなど)によっては章ごとにファイルを分けたほうが無難でしょう。
@@ -320,9 +322,7 @@ width:
 "`pandocker-rotateimage(-inline)`",[@sec:pandocker-rotateimage],"Y","Y"
 "`pandoc-imagine`",[@sec:pandoc-magine],"Y","Y"
 "`pandoc-crossref`","[@sec:pandoc-crossref-filter]","Y","Y"
-"`pandoc-latex-barcode`","","N","Y"
-"`pandocker-tex-landscape`","","N","Y"
-"","","",""
+"`pandocker-tex-landscape`","[@sec:pandocker-tex-landscape]","N","Y"
 ```
 \\newpage
 ### `pandocker-rmnote`フィルタ {#sec:pandocker-rmnote}
@@ -789,6 +789,7 @@ markdown: True
 パラメータ,機能,省略可能,初期値
 `param`,function,Y,true
 ```
+::::::::::::::::::::::::::::::::::: rmnote
 \\newpage
 #### `pandoc-latex-barcode`
 `````markdown
@@ -802,6 +803,7 @@ markdown: True
 パラメータ,機能,省略可能,初期値
 `param`,function,Y,true
 ```
+:::::::::::::::::::::::::::::::::::
 \\newpage
 ### `pandoc-crossref`フィルタ {#sec:pandoc-crossref-filter}
 
@@ -842,7 +844,9 @@ $$ E = mc^2 $$ {#eq:emcsquared}
 
 `````markdown
 :::::::::::::::::::::::::::::: LANDSCAPE
-[](pandocker-base/Dockerfile){.listingtable type=dockerfile}
+[**pandocker-base**イメージのDockerfile](pandocker-base/Dockerfile){.listingtable type=dockerfile #lst:pandocker-base-dockerfile}
+
+[**pandocker**イメージのDockerfile](pandocker/Dockerfile){.listingtable type=dockerfile #lst:pandocker-dockerfile}
 ::::::::::::::::::::::::::::::
 `````
 処理結果は[@lst:pandocker-base-dockerfile]を参照ください。
@@ -856,7 +860,48 @@ $$ E = mc^2 $$ {#eq:emcsquared}
 #### 深さ4：章番号なし {.unnumbered}
 ##### 深さ5+：章番号復活 {.unnumbered}
 ```
-# 構築してみる編
+# 変換を自動化する編
+ここまでインストール以外をオフラインで済ませる方法を解説してきましたが、原稿が進んでくるといちいち
+コマンドを打ち込むのが面倒になってきます。そこでPDF/HTMLへの変換をどこかのサーバでやらせる方法
+を例示していきます。筆者はGitHubとCircleCIで連携したシステムにしましたが、読者諸氏のお気に入りのやり方があるのであれば
+GitHub＋CircleCIの組み合わせに固執する理由はありません。
+
+## GitHubのアカウントを取得する
+GitHubのガイドページ<https://guides.github.com/activities/hello-world/>やどこかのQiita -
+たとえばここ：[GitHubアカウント作成とリポジトリの作成手順 on \\@Qiita](https://qiita.com/kooohei/items/361da3c9dbb6e0c7946b)
+を参考に登録します。
+
+## GitHubアカウントを使用してCircleCIに登録する
+CircleCIのサインアップページ<https://circleci.com/signup/>に行って[Sign Up With GitHub]をクリックし、ガイドに従って
+GitHubアカウントを連携させます。
+ここが参考になります：[GitHubとCircleCIを連携させる on \\@Qiita](https://qiita.com/kooohei/items/4806fdb6b92982e47f81)
+
+## GitHub上でWebHookを設定する
+このページが最も参考になります（とくにアクセストークンの登録のあたり）：
+[PHP_CodeSniffer GitHub CircleCIでコードレビューの自動化](https://engineers.weddingpark.co.jp/?p=1080)
+
+## CIの設定ファイルをリポジトリ内に用意する
+CircleCIの設定ファイルをリポジトリ内の指定の場所(`/.circleci/config.yml`)に用意します。
+
+最初の5行でk4zuki/pandockerイメージを取得します。
+
+[](.circleci/config.yml){.listingtable to=5}
+
+そのあとの`checkout`のタイミングでリポジトリのクローンが行われます。直後にリポジトリ内のサブモジュールを取得しています。
+
+[](.circleci/config.yml){.listingtable from=4 to=10}
+
+そのあとは`run`ブロックを順次実行していきます。途中`git rev-parse --short HEAD`がたびたび登場して寿限無っぽくなってますが
+適切なやり方がわからないのでそのままです。
+
+[](.circleci/config.yml){.listingtable from=10}
+
+"Prepare QR code for this build"ブロックでGitHubのリリースページURLからQRコード画像を生成します。
+各CIビルドが終わるとHTMLとPDFファイルをコミットIDに関連付けた名前でリリースしますが（Deploy preparation/Deployブロック）、
+このQR画像ファイル名は固定しておいて、原稿内にこのファイル名を参照するように画像リンクを置いておけば、
+ビルドされたPDF/HTMLからリリースページに即ジャンプできます。即売会でのダウンロード販売が楽になります。
+
+# あえて環境を構築してみる編
 ## なにもないところからaptかbrewで構築する修行の章
 ### インストールそしてインストールそれからインストール
 インストールしまくります。
@@ -985,7 +1030,7 @@ chmod +x /usr/local/bin/plantuml
 `--recursive`オプションでサブモジュールも同時にクローンされます。
 ```sh
 $ cd ~/.pandoc
-$ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
+$ git clone --recursive -b 0.0.24 https://github.com/K4zuki/pandoc_misc.git
 ```
 
 ここまでやって*運が良ければ*`make init -f ~/.pandoc/pandoc_misc/Makefile`、\\
@@ -993,21 +1038,23 @@ $ git clone --recursive -b 0.0.21 https://github.com/K4zuki/pandoc_misc.git
 筆者も上記の内容で動いていたのですが、**とくにMacの環境構築は昨年後半から更新しておらず検証不足であり、**
 **バージョン間の相性が発生するかもしれません。**
 
-## DockerとCIでﾗｸﾁﾝﾔｯﾀｰの章
-上記のリスキーなインストール祭りをせずに済むようにDockerイメージを構築していきます。
+## Dockerでﾗｸﾁﾝﾔｯﾀｰの章
+上記のリスキーなインストール祭りを(その後のメンテナンス地獄を最小化するため)Dockerイメージで置き換えます。
 構築に際して考えることが少なく済むように、Ubuntu16.04をベースイメージにします。この本が出る頃には
-もしかすると*18.04*が登場しているかもしれませんが気にしません[^ubuntu1804]。
+もしかすると*18.04*が登場しているかもしれません[^ubuntu1804]が気にしません。
 
-[^ubuntu1804]: 調べてみたらこの原稿が落ちない限りファイナルβですね https://wiki.ubuntu.com/BionicBeaver/ReleaseSchedule
+[^ubuntu1804]: 調べてみたらこの原稿が落ちない限り、技術書典４の時点ではファイナルβですね
+-> <https://wiki.ubuntu.com/BionicBeaver/ReleaseSchedule>
 
-### Ubuntu16.04ベースの基本Dockerイメージ(pandocker-base)
+### 基本Dockerイメージ(pandocker-base)と最終形態(pandocker)を切り分ける
 最終的に実用するDockerイメージはTeXLiveを含めなければならずビルドに時間がかかるので、
 イメージ作成を2段階にしました：
-- TeXを含めイメージ構築上必要なもの一式でバージョンが変化しにくいもの[^notex]を
-一つのイメージ(**pandocker-base**)にまとめました。
-pandocker-baseイメージはUbuntu公式が用意しているUbuntu16.04LTSの最小構成イメージを継承し、apt-getなどで必要なものを追加していきます。
+
+- TeXを含めイメージ構築上必要なもの一式でバージョンが変化しにくいもの[^notex]を一つのイメージ(**pandocker-base**)
+  にまとめました。pandocker-baseイメージはUbuntu公式が用意しているUbuntu16.04LTSの最小構成イメージを継承し、
+  apt-getなどで必要なものを追加していきます。
 - 自作pythonパッケージはできるだけ頻繁にpipでアップデートしていきたいので、**pandocker**イメージにまとめます。
-ツールキットpandoc_miscのダウンロードもこちらのイメージで行います。
+  ツールキットpandoc_miscのダウンロードもこちらのイメージで行います。
 
 [^notex]: Git、TeX、Python(pip)、Pandoc、フォントなど。TeXが不要な環境向けに*notex*ブランチも用意してあります。
 
@@ -1021,7 +1068,7 @@ pandocker-base/pandockerイメージのDockerfileを以下に全文掲載しま�
 
 # Appendix {-}
 ### Web Hook Tree {-}
-備忘録として今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
+備忘録として：今まで挙げたGitHub／DockerHubリポジトリは互いに依存関係があります。依存関係ツリーを以下に示しておきます。
 
 ```{.plantuml im_out="img"}
 <#include "webhooktree.puml">
@@ -1029,6 +1076,10 @@ pandocker-base/pandockerイメージのDockerfileを以下に全文掲載しま�
 
 # 更新履歴 {-}
 ## Revision1.0（技術書典４） {-}
-進捗ダメです！
+- **このセクションは本番2日前の金曜日の21時頃に書かれました**
+- （まるまる１週間原稿追い込み有給休暇を取ったのに半分をﾌoｰｸﾗｲ5に費やした程度には）進捗ダメです！
+- 半角120文字くらいで折り返しで1100行で56ページです。500行超えたあたりで監理が難しくなったのでファイル分割してもいいんじゃないかなって思います
+- フォントはコードブロックに*Ricty Diminished*、地の文（？）に*源の角ゴシック*を使っています。
+- PDFが欲しいだと？この文章を読んでいるときに紙の本が売り切れていたなら下のQRコードを読んでいいぞ;-)
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
