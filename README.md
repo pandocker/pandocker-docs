@@ -1,3 +1,7 @@
+# このリポジトリは何
+拙作のDockerイメージ*pandocker*の解説文書です。原稿はちょっと読みづらいのでHTMLまたはPDF出力されたものを参照ください。
+最新の出力結果は[こちら](https://github.com/pandocker/pandocker-docs/releases/latest)にあります。
+
 # pandocker-docs
 Documents for _pandocker_ - Yet another ubuntu 16.04 based Docker image for pandoc
 
