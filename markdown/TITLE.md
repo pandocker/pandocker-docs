@@ -348,8 +348,8 @@ markdown: True
 \\newpage
 
 ### `pantable`フィルタ {#sec:pantable}
-CSVファイルまたは直打ちで表を挿入するフィルタです。オプション設定でセル内のmarkdownを解釈するかどうかを設定できます。
-CSVファイルが指定されているときは直打ち部分を無視します。
+CSVファイルまたは直接記述で表を挿入するフィルタです。オプション設定でセル内のmarkdownを解釈するかどうかを設定できます。
+CSVファイルが指定されているときは直接記述部分を無視します。
 
 リポジトリURLはこちら: <https://github.com/ickc/pantable>
 
@@ -387,7 +387,7 @@ When the metadata keys is invalid, the default will be used instead. Note that w
 \\newpage
 
 #### 使用例 {-}
-`#tbl:`で始まるアンカーを書いておくと"Table X.Y: zzz"の形式で変換されます（下記参照）。
+"#tbl:"で始まるアンカーを書いておくと"Table X.Y: zzz"の形式で変換されます（下記参照）。
 `````markdown
 ```table
 ---
@@ -430,6 +430,7 @@ alignment: DDCC
 `table-width`,"表の幅(ページ幅に対する割合;  \
 PDF出力のみ効果あり)",Y,1.0
 `include`,外部ファイル使用時のファイル名,Y,
+,,,
 ```
 \\newpage
 ### `pandocker-listingtable(-inline)`フィルタ {#sec:pandocker-listingtable}
@@ -479,6 +480,7 @@ markdown: True
 `type`,"ソースファイル種類(python,cpp,markdown etc.)",Y,plain
 `from`,引用元ソースの切り出し開始行,Y,1
 `to`,引用元ソースの切り出し終了行,Y,max
+,,,
 ```
 \\newpage
 
@@ -770,6 +772,9 @@ markdown: True
 巷にあふれる各種テキスト−画像コンバータプログラムをラップしたフィルタです。出力はPNGファイルになるので、
 特にPDF出力にするときはできあがりの画像サイズに注意しないとブロックノイズでガタガタになります。
 ファイル指定はできず直接記述のみに対応します。おすすめはGPPによる取り込みです。
+下の例はPlantUMLでditaaのダイアグラムをレンダリングさせる例です。gnuplotとかも使えるらしいです。
+
+より詳しいことは本家GitHubページ<https://github.com/hertogp/imagine>を参照ください。
 
 `````markdown
 ```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
@@ -780,6 +785,7 @@ markdown: True
 ```{.plantuml im_out="img" caption="PlantUML x ditaa x imagine"}
 <#include "ditaa.puml">
 ```
+::::::::::::::::::::::::::::::::::: rmnote
 ```table
 ---
 caption: オプション一覧
@@ -789,6 +795,7 @@ markdown: True
 パラメータ,機能,省略可能,初期値
 `param`,function,Y,true
 ```
+:::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::: rmnote
 \\newpage
 #### `pandoc-latex-barcode`
@@ -868,17 +875,21 @@ GitHub＋CircleCIの組み合わせに固執する理由はありません。
 
 ## GitHubのアカウントを取得する
 GitHubのガイドページ<https://guides.github.com/activities/hello-world/>やどこかのQiita -
-たとえばここ：[GitHubアカウント作成とリポジトリの作成手順 on \\@Qiita](https://qiita.com/kooohei/items/361da3c9dbb6e0c7946b)
+たとえばここ：[**GitHubアカウント作成とリポジトリの作成手順 on \\@Qiita**](https://qiita.com/kooohei/items/361da3c9dbb6e0c7946b)
 を参考に登録します。
 
 ## GitHubアカウントを使用してCircleCIに登録する
 CircleCIのサインアップページ<https://circleci.com/signup/>に行って[Sign Up With GitHub]をクリックし、ガイドに従って
 GitHubアカウントを連携させます。
-ここが参考になります：[GitHubとCircleCIを連携させる on \\@Qiita](https://qiita.com/kooohei/items/4806fdb6b92982e47f81)
+ここが参考になります：[**GitHubとCircleCIを連携させる on \\@Qiita**](https://qiita.com/kooohei/items/4806fdb6b92982e47f81)
 
 ## GitHub上でWebHookを設定する
-このページが最も参考になります（とくにアクセストークンの登録のあたり）：
-[PHP_CodeSniffer GitHub CircleCIでコードレビューの自動化](https://engineers.weddingpark.co.jp/?p=1080)
+筆者のconfig.ymlは最後のステップでリリースページにファイルをアップロードします。
+このアップロード権限をCircleCIに与える方法についてはこのページが最も参考になります
+（とくにアクセストークンの登録のあたり）：
+[**PHP_CodeSniffer GitHub CircleCIでコードレビューの自動化**](https://engineers.weddingpark.co.jp/?p=1080)
+
+アップロードを必要としない場合はslackに投げつけるなどを思いつきますが、_やり方はわかりません_。
 
 ## CIの設定ファイルをリポジトリ内に用意する
 CircleCIの設定ファイルをリポジトリ内の指定の場所(`/.circleci/config.yml`)に用意します。
@@ -889,7 +900,7 @@ CircleCIの設定ファイルをリポジトリ内の指定の場所(`/.circleci
 
 そのあとの`checkout`のタイミングでリポジトリのクローンが行われます。直後にリポジトリ内のサブモジュールを取得しています。
 
-[](.circleci/config.yml){.listingtable from=4 to=10}
+[](.circleci/config.yml){.listingtable from=5 to=10}
 
 そのあとは`run`ブロックを順次実行していきます。途中`git rev-parse --short HEAD`がたびたび登場して寿限無っぽくなってますが
 適切なやり方がわからないのでそのままです。
@@ -1076,10 +1087,10 @@ pandocker-base/pandockerイメージのDockerfileを以下に全文掲載しま�
 
 # 更新履歴 {-}
 ## Revision1.0（技術書典４） {-}
-- **このセクションは本番2日前の金曜日の21時頃に書かれました**
+- **このセクションは本番2日前の金曜日の21時頃に書かれました。FMP4を見たいので急いで書かれました**
 - （まるまる１週間原稿追い込み有給休暇を取ったのに半分をﾌoｰｸﾗｲ5に費やした程度には）進捗ダメです！
-- 半角120文字くらいで折り返しで1100行で56ページです。500行超えたあたりで監理が難しくなったのでファイル分割してもいいんじゃないかなって思います
-- フォントはコードブロックに*Ricty Diminished*、地の文（？）に*源の角ゴシック*を使っています。
+- 半角120文字くらいで折り返しで1100行でPDF56ページ分です（500行超えたあたりでスクロールがめんどくなった）
+- フォントはコードブロックに*Ricty Diminished*、地の文（？）に *源の角ゴシック* を使っています。
 - PDFが欲しいだと？この文章を読んでいるときに紙の本が売り切れていたなら下のQRコードを読んでいいぞ;-)
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
