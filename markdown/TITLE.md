@@ -12,7 +12,8 @@ Dockerイメージ、CI構築例を順に解説していきます。
 [^scratch-is-not-required]: いまさらスクラッチからの構築は不要なのですが、残します
 
 このシリーズでは「MacまたはLinux機」を動作前提環境としていましたが、「２」以降は _Dockerがちゃんと動くWindows10機_
-であれば簡単確実に動くようになったので、本当に Dockerには感謝しています。もうGtk+まわりで悩まなくていいんだょ…[^company-machine]
+であれば簡単確実に動くようになったので、本当に
+Dockerには感謝しています。もうGtk+まわりで悩まなくていいんだょ…[^company-machine]
 
 Dockerがちゃんと動かないWindows機をお使いの方は外部のCIサービスを使ってください。
 
@@ -69,8 +70,8 @@ k4zuki/pandocker`を打ち込んでください。
 ### スクリプトを書く
 
 WindowsのひとはPATHが通っている任意の場所に以下のような感じで実行スクリプトを置いてください。
-本当はPowerShellがいいんですが筆者は詳しくない[^powershellpwd]のでbashの例を書きます。カレントディレクトリをマウントして `docker
-run`する内容です。引数なしで実行するとコマンドプロンプトが出てきます。
+本当はPowerShellがいいんですが筆者は詳しくない[^powershellpwd]のでbashの例を書きます。カレントディレクトリをマウントして
+`docker run`する内容です。引数なしで実行するとコマンドプロンプトが出てきます。
 
 [^powershellpwd]: Powershell流の現在ディレクトリの取得方法がわかれば書けます。
 
@@ -128,7 +129,8 @@ $ pandocker -f /var/pandoc_misc/Makefile init
 ## 原稿リポジトリをとりあえずコンパイルする
 
 ここでいったんコンパイルできるかどうか試してみましょう。`TITLE.md`の中身が空でも
-コンパイルすることはできます。コンパイルする前に`Makefile`/`config.yaml`と 原稿一式をリポジトリに登録して最初のコミットをします。
+コンパイルすることはできます。コンパイルする前に`Makefile`/`config.yaml`と
+原稿一式をリポジトリに登録して最初のコミットをします。
 
 ```sh
 $ git add .
@@ -231,7 +233,8 @@ Markdown記法に則って書いていきます。
 
 ### 必要なら、章ごとにファイルを分けてもいいよ {#sec:file-per-section}
 
-編集方針(合同誌などの理由で複数人が原稿に関わるなど)によっては章ごとにファイルを分けたほうが無難でしょう。 方法は２つあります。
+編集方針(合同誌などの理由で複数人が原稿に関わるなど)によっては章ごとにファイルを分けたほうが無難でしょう。
+方法は２つあります。
 
 #### Makefileで設定する {.unnumbered #sec:config-by-makefile}
 
@@ -252,8 +255,9 @@ INPUT += Appendix.md
 
 Generic Preprocessor（汎用プリプロセッサ）^[https://github.com/logological/gpp]を使います。
 プリプロセッサというのはC言語などで`＃include "stdio.h"`などと記述すると、予めヘッダファイルを
-読み込んでおいてくれるあの機能を持ったプログラムのことです。 C言語風そのままだとヘッダと間違われるのでHTML風に`<＃include
-"ファイル名">` と記述します。該当部分は指定されたファイルに置き換えられます(入れ子になっていても機能します)。
+読み込んでおいてくれるあの機能を持ったプログラムのことです。
+C言語風そのままだとヘッダと間違われるのでHTML風に`<＃include "ファイル名">`
+と記述します。該当部分は指定されたファイルに置き換えられます(入れ子になっていても機能します)。
 ファイル名は相対パス指定で動きます。予約されている`$(MDDIR)`、`$(DATADIR)`、`$(TARGETDIR)`
 ディレクトリにあるファイルはファイル名指定のみで動作します。それぞれのデフォルト値は
 [@sec:config-makefile]を参照ください。GPPの入れ子は２５６段階らしいです。
@@ -291,7 +295,9 @@ markdown: True
 Pandocは中間処理のための*フィルタ*というしくみを用意しています。簡単に言うとプラグインです。
 フィルタを使うとCSVから表に変換して挿入したり、外部ファイルを引用したり、ページを回転したりできます。
 
-**pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。 次の項から１つずつ解説していきます。 \\newpage
+**pandoc_misc**環境にインストールされているフィルタの概要一覧を下に示します。 次の項から１つずつ解説していきます。
+
+\\newpage
 
 :::::::::::::::::::::::::::::: rmnote
 
@@ -469,7 +475,8 @@ PDF出力のみ効果あり)",Y,1.0
 ### `pandocker-listingtable(-inline)`フィルタ {#sec:pandocker-listingtable}
 
 テキストファイルを引用して、タイトル付きのコードブロックに変換します。pantable(@sec:pantable)
-と同様のYAMLコードブロック記述とハイパーリンク記述が使用できます。ハイパーリンク記述の前後には 改行を入れる必要があります。
+と同様のYAMLコードブロック記述とハイパーリンク記述が使用できます。ハイパーリンク記述の前後には
+改行を入れる必要があります。
 
 `````markdown
 ``` {.listingtable #lst:block-listingtable-sample}
@@ -526,9 +533,10 @@ markdown: True
 [@sec:pandocker-listingtable]と同様の文法が使えます。
 "bitfield"そのものの文法は本家(<https://github.com/drom/bitfield>)を参照ください。
 
-[@tbl:bitfield-options]にある出力オプションにかかわらず、HTML出力(`pandocker html`など) するときはSVG、TeX/PDF出力(`pandocker
-pdf`など)のときはPDFにリンクします。EPSへの変換は指定がなければ行われず、
-指定してもリンクされません。変換後のファイル名はランダムな16進数8桁です。 HTMLでもTeX/PDFでもないときはPNGをリンクします。
+[@tbl:bitfield-options]にある出力オプションにかかわらず、HTML出力(`pandocker html`など)
+するときはSVG、TeX/PDF出力(`pandocker pdf`など)のときはPDFにリンクします。EPSへの変換は指定がなければ行われず、
+指定してもリンクされません。変換後のファイル名はランダムな16進数8桁です。
+HTMLでもTeX/PDFでもないときはPNGをリンクします。
 
 もともとの`bitfield`プログラムはJSONファイルから画像に変換するものですが、入力ファイルとして
 YAMLも扱えるようになっています。内部で使うプログラムはオリジナルのJS製ではなく、
@@ -761,7 +769,8 @@ markdown: True
 
 シンプルな画像回転フィルタです。wavedrom/bitfield/aafigureとの組み合わせ、拡大縮小も可能です。
 wavedrom/bitfield/aafigureと組み合わせた場合はSVG/PDF画像の回転を試みます。 _angle_
-指定が正の数で時計回り、負の数は反時計回りです。実際の _angle_ は360で割った余りを用います。 _angle=365_ なら右に5度回転します。
+指定が正の数で時計回り、負の数は反時計回りです。実際の _angle_ は360で割った余りを用います。 _angle=365_
+なら右に5度回転します。
 
 `````markdown
 [inline aafigure sample](data/aafigure.txt){.aafigure #fig:inline-aafigure-30 png=True pdf=True eps=True .rotate angle=30 height=40%}
@@ -866,7 +875,9 @@ markdown: True
 `param`,function,Y,true
 ```
 
-::::::::::::::::::::::::::::::::::: \\newpage
+:::::::::::::::::::::::::::::::::::
+
+\\newpage
 
 ### `pandoc-crossref`フィルタ {#sec:pandoc-crossref-filter}
 
@@ -951,7 +962,8 @@ GitHubアカウントを連携させます。
 ## GitHub上でWebHookを設定する
 
 筆者のconfig.ymlは最後のステップでリリースページにファイルをアップロードします。
-このアップロード権限をCircleCIに与える方法についてはこのページが最も参考になります （とくにアクセストークンの登録のあたり）：
+このアップロード権限をCircleCIに与える方法についてはこのページが最も参考になります
+（とくにアクセストークンの登録のあたり）：
 [**PHP_CodeSniffer GitHub CircleCIでコードレビューの自動化**](https://engineers.weddingpark.co.jp/?p=1080)
 
 アップロードを必要としない場合はslackに投げつけるなどを思いつきますが、_やり方はわかりません_。
@@ -968,13 +980,14 @@ CircleCIの設定ファイルをリポジトリ内の指定の場所(`/.circleci
 
 [](.circleci/config.yml){.listingtable from=5 to=10}
 
-そのあとは`run`ブロックを順次実行していきます。途中`git rev-parse --short HEAD`がたびたび登場して寿限無っぽくなってますが
-適切なやり方がわからないのでそのままです。
+そのあとは`run`ブロックを順次実行していきます。途中`git rev-parse --short
+HEAD`がたびたび登場して寿限無っぽくなってますが 適切なやり方がわからないのでそのままです。
 
 [](.circleci/config.yml){.listingtable from=10}
 
 "Prepare QR code for this build"ブロックでGitHubのリリースページURLからQRコード画像を生成します。
-各CIビルドが終わるとHTMLとPDFファイルをコミットIDに関連付けた名前でリリースしますが（Deploy preparation/Deployブロック）、
+各CIビルドが終わるとHTMLとPDFファイルをコミットIDに関連付けた名前でリリースしますが（Deploy
+preparation/Deployブロック）、
 このQR画像ファイル名は固定しておいて、原稿内にこのファイル名を参照するように画像リンクを置いておけば、
 ビルドされたPDF/HTMLからリリースページに即ジャンプできます。即売会でのダウンロード販売が楽になります。
 
@@ -1000,7 +1013,8 @@ Ubuntuユーザはaptがほぼ全てやってくれるので特別にインス�
 
 ### 言語のインストール
 
-主に２言語使います - **Python*３*・LaTeXです**。 Pythonはフィルタとシェルスクリプトの代わり、そしてLaTeXはPDF出力のためです。
+主に２言語使います - **Python*３*・LaTeXです**。
+Pythonはフィルタとシェルスクリプトの代わり、そしてLaTeXはPDF出力のためです。
 従来はHaskellとNodeJS(npm)も必要としていましたが、npmモジュールはWindows上の動作に問題がありPythonに移植されたものを
 使うので削除、Haskellはコンパイル済バイナリを入手するだけで済むことがわかったので不要となりました。
 
@@ -1102,7 +1116,8 @@ $ sudo apt-get install graphviz
 
 ### フォントのインストール
 
-各リポジトリからアーカイブをダウンロード・解凍してTTFファイル(TrueTypeフォント)を全部、 ユーザフォントディレクトリにコピーします。
+各リポジトリからアーカイブをダウンロード・解凍してTTFファイル(TrueTypeフォント)を全部、
+ユーザフォントディレクトリにコピーします。
 
 ```sh
 mkdir -p $HOME/.local/share/fonts/
@@ -1158,7 +1173,9 @@ $ git clone --recursive -b 0.0.24 https://github.com/K4zuki/pandoc_misc.git
 
 [^notex]: Git、TeX、Python(pip)、Pandoc、フォントなど。TeXが不要な環境向けに*notex*ブランチも用意してあります。
 
-:::::::::::::::::::::::::::::: LANDSCAPE pandocker-base/pandockerイメージのDockerfileを以下に全文掲載します。
+:::::::::::::::::::::::::::::: LANDSCAPE
+
+pandocker-base/pandockerイメージのDockerfileを以下に全文掲載します。
 
 [**pandocker-base**イメージのDockerfile](pandocker-base/Dockerfile){.listingtable type=dockerfile
 #lst:pandocker-base-dockerfile}
