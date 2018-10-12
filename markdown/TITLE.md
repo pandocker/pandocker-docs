@@ -170,7 +170,9 @@ width:
 ビルドスクリプトはタイトルページのファイル名と各種ディレクトリ名をMakefileから取得します。
 ディレクトリ名はすべてMakefileが置かれたディレクトリからの相対パスです。
 
-\\newpage [Makefile](Makefile){.listingtable type=makefile}
+\\newpage
+
+[Makefile](Makefile){.listingtable type=makefile}
 
 ```table
 ---
