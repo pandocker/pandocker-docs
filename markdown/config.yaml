@@ -1,12 +1,14 @@
 ---
-title: 私的Markdown-PDF変換環境を紹介する本 ２
-abstract: "Welcome to ようこそ\\LaTeX の沼 きょうもどったんばったんおおさわぎ"
+title: 私的Markdown-PDF変換環境を紹介する本 ３
+abstract: "総集編"
 circle: KY技研
 author: "@_K4ZUKI_"
-comiket: C93
-year: 2017
+comiket: 技術書典４
+year: 2018
 publisher: キンコーズオンラインで印刷製本 秋葉原店で受取り
 docrevision: "1.0"
-# front: images/front-image.png
+front: images/markdown-logo-1664x1024.png
+# download from: https://github.com/dcurtis/markdown-mark
 verbcolored: true
+rmnote: true
 ...

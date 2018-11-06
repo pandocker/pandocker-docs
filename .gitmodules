@@ -13,3 +13,6 @@
 [submodule "removalnotes"]
 	path = removalnotes
 	url = https://github.com/pandocker/removalnotes.git
+[submodule "tex-landscape"]
+	path = tex-landscape
+	url = https://github.com/pandocker/tex-landscape.git

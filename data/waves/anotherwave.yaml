@@ -1,0 +1,23 @@
+signal:
+  - name: "区分"
+    wave: " l.l.......l.l.l...........l.l.l"
+    node: ".a.b.......c.d.e...........f.g.h"
+  - name: sck
+    # phase: 0.5
+    wave: "1.0.u0u0|.u0u0u0.u0u0|u0u0u0u01."
+  - name: sda
+    phase: 0.5
+    wave: "1.0.1.0.|.....0.1...|......0.01."
+  - name: state
+    data: [Start, "address = 0x40", "W(0)", "ACK", "data", "ACK", Stop]
+    wave: "x=.=.......=.=.=...........=.=."
+edge:
+  - a<->b START
+  - b<->c 7bit ADDRESS
+  - c<->d R/W
+  - d<->e ACK
+  - e<->f DATA
+  - f<->g ACK
+  - g<->h STOP
+config:
+  skin: narrow

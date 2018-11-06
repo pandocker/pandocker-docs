@@ -1,5 +1,9 @@
-# pandocker
-Yet another ubuntu 16.04 based Docker image for pandoc
+# このリポジトリは何
+拙作のDockerイメージ*pandocker*の解説文書です。原稿はちょっと読みづらいのでHTMLまたはPDF出力されたものを参照ください。
+最新の出力結果は[こちら](https://github.com/pandocker/pandocker-docs/releases/latest)にあります。
+
+# pandocker-docs
+Documents for _pandocker_ - Yet another ubuntu 16.04 based Docker image for pandoc
 
 ## For the first time to build your book
 #### make repository and cd to it
@@ -15,21 +19,18 @@ git init
 
 #### installation
 ```sh
-docker run --rm -it -v $PWD:/workspace k4zuki/pandocker cp /var/pandoc_misc/Makefile.txt ./Makefile
-docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make init
+docker run --rm -it -v $PWD:/workspace k4zuki/pandocker make -f /var/pandoc_misc/Makefile init
 > mkdir -p ./
+> mkdir -p ./.circleci
 > mkdir -p ./Out
 > mkdir -p ./data
 > mkdir -p ./markdown
 > mkdir -p ./images
-> mkdir -p ./data/waves
-> mkdir -p ./data/bitfields
-> mkdir -p ./data/bitfield16
 > cp -i /var/pandoc_misc/Makefile.txt ./Makefile
-> cp: overwrite './Makefile'? y
 > cp -i /var/pandoc_misc/config.txt ./markdown/config.yaml
-> touch ./markdown/TITLE.md
-> echo "Out/" > .gitignore
+> cp -i /var/pandoc_misc/gitignore.txt ./.gitignore
+> cp -i /var/pandoc_misc/circleci.yml ./.circleci/config.yml
+> touch ./markdown/TITLE.md> mkdir -p ./
 
 git add .
 git commit -m"initial commit"
