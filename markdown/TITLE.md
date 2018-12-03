@@ -7,11 +7,11 @@ Pandoc＋Docxの環境は他の方も研究しているのでN番煎じです。
 
 ## 前提環境 {-}
 
-この本では、Git、Docker及びOffice365のWordが動作するWindows10機[^company-machine]を対象にします。
-半自動ローカルビルドについても言及するのでできればJerBrains系IDEが入っていると
-いいと思います。文中ではPyCharmを例に使います。
+この本では、Git、Docker及びOffice365のWord(2016)が動作するWindows10機[^company-machine]を
+対象環境にします。半自動ローカルビルドについても言及するのでできればJerBrains系IDEが入っていると
+いいと思います。文中では*PyCharm*を例に使います。
 今更いうほどでもないですがこの本もDockerイメージとCIを使って原稿リポジトリからコンパイルされました。
-でも原稿編集はMacで行われました(なんでやねん)。
+原稿とテンプレートDocxファイルの編集、フィルタの動作確認はMacで行われました。
 
 [^company-machine]: 筆者の会社支給のマシンはOS更新してもDockerとの相性問題が残るし突然の
 シャットダウン現象が治らないしベンダーは遅延戦法で修理実行まで1ヶ月以上かかったしその割に
@@ -23,8 +23,176 @@ Dockerがちゃんと動かないWindows機をお使いの方は、WSLを有効�
 
 [^refer-previous]: 前作の「あえて環境を構築してみる編」を参照してください。
 
-この本は、初のWindowsユーザ向け環境構築ガイド、Pandocのおさらい、テンプレート作成例、
-ローカルビルド実行までを取り扱います。
+この本は、`pandocker`の更新情報、新しいフィルタの紹介、初のWindowsユーザ向け環境構築ガイド、
+テンプレート作成例、ローカルビルド実行までを取り扱います。
+
+# `pandocker`はまた更新されました
+## Docx出力専用フィルタを追加
+
+Docxファイルの取扱は本当に面倒[^dont-think-anyone-oppose]ですが、少しでもマシな使い勝手になるように
+Pandocフィルタをいくつか作りました。
+
+[^dont-think-anyone-oppose]: これは個人の感想ですが、あまり強固に反論する人もいないんではないかなって
+
+### `pandoc-docx-pagebreakpy`フィルタ
+
+`pandoc-docx-pagebreak`というHaskell製フィルタを参考にしています。Pythonで書かれています。
+
+pagebreakの名の通り原稿内の`\\newpage`を改ページに変換します。おまけとして`\\toc`を目次に変換します。
+`\\toc`はテンプレート内の`TOC Header`（`目次の見出し`）スタイルが適用されます。このフィルタと同時に
+pandocに`--toc`オプションを与えると目次が*２回出現*するので注意してください。`\\newpage`ないし`\\toc`の
+前後は必ず空行が必要です。
+
+#### インストール {-}
+
+```bash
+pip3 install git+https://github.com/pandocker/pandoc-docx-pagebreak-py
+```
+
+#### サンプルコード {-}
+
+Listing: markdown.md {#lst:markdown-md}
+
+```markdown
+# レベル１ヘッダ
+
+ここはまえがきとか
+
+\toc
+
+この上に目次が出現、この直後で改ページ
+
+\newpage
+
+### レベル３ヘッダ
+
+改ページの直後
+```
+
+#### フィルタ適用例 {-}
+
+`-F`/`--filter`オプションに`pandoc-docx-pagebreakpy`を与えるだけです。
+
+```bash
+pandoc -t docx -F pandoc-docx-pagebreakpy markdown.md -o docx.docx
+```
+
+### `pandoc-docx-utils`フィルタ
+
+Docxを扱うときに微妙に使いづらく感じる点をちょっと改善するフィルタです。Pythonで書かれています。
+
+今のところ２つの機能が実装されています([@sec:apply-style-to-images]、[@sec:unnumbered-headers])。
+いずれの機能もテンプレート内に追加のスタイル定義を必要とします。テンプレート内で定義されていない場合も
+各スタイルが適用されますが、それらは`Normal`（"標準"）スタイルを継承したものになります。
+
+#### インストール {-}
+
+```bash
+pip3 install git+https://github.com/pandocker/pandoc-docx-utils-py.git
+```
+
+#### 機能１：画像に任意のスタイルを適用する {#sec:apply-style-to-images}
+
+Docx出力では、文中でない画像引用は必ず左寄せになってしまいます。テンプレートに任意のスタイルを
+用意しておいて、画像引用に`custom-style`オプションを追加します。bitfieldやwavedromのフィルタとも
+併用できますが、その場合はフィルタの呼び出し順に注意が必要です。`custom-style`オプションを省略すると
+`Image Div`スタイルを適用します。オプション省略時のスタイル名を変更したい場合は
+Pandocのメタデータに`image-div-style`を加え、スタイル名を与えます。
+
+##### サンプルコード
+
+この例では"Centered"クラスを予め用意しておく必要があります。
+
+Listing: markdown.md {#lst:markdown-md-2}
+
+```markdown
+![sample image](images/QRcode.png){custom-style="Centered"}
+ 
+[sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Centered" #fig:centered-image} 
+
+![`Image Div`](images/QRcode.png){#fig:image-div-style} 
+```
+
+[sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Centered" #fig:centered-image}
+
+#### 機能２：`unnumbered`指定されたヘッダに番号なしスタイルを適用する {#sec:unnumbered-headers}
+
+Pandocはデフォルトで見出しに番号を振らず、`--number-sections`というオプションを追加することで
+対応します。このオプションを有効にしつつ例外的に番号なしにしたい場合は見出しに`{-}`もしくは
+`{.unnumbered}`をつけることでフラグを立ててPandocに知らせます。PandocはDocx出力のときはこのルールを
+*無視*します。これはWordの仕様の問題で、番号つき・番号なしで2種類のスタイルを予め用意しなければ
+ならないからだと思われます。
+
+このフィルタを通すと、`unnumbered`フラグがつけられているレベル１から４の見出しのスタイル
+(`Heading 1` ~ `Heading 4`)を"番号なし"(`Heading Unnumbered 1` ~ `Heading Unnumbered 4`)に
+変更します。
+
+##### サンプルコード
+
+Listing: markdown.md {#lst:markdown-md-3}
+
+```markdown
+# Heading Unnumbered 1 {-}
+## Heading Unnumbered 2 {-}
+### Heading Unnumbered 3 {-}
+#### Heading Unnumbered 4 {-}
+##### Heading Unnumbered 5 {-}
+```
+
+#### フィルタ適用例 {-}
+
+`-F`/`--filter`オプションに`pandoc-docx-utils`、`--reference-doc`にテンプレートファイル名を与えます。
+メタデータを与える場合は`-M`オプションを使います。`pandoc-crossref`と併用するときはこのフィルタをあとに記述します。
+
+```bash
+pandoc -t docx -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
+
+pandoc -t docx -F pandocker-bitfield-inline -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
+
+pandoc -t docx -F pandoc-docx-utils --reference-doc=template.docx -M image-div-style="Center" markdown.md -o docx.docx
+
+pandoc -t docx -F pandoc-crossref -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
+```
+
+## アスキーアートレンダリング系フィルタを追加
+### `pandoc-svgbob-filter`フィルタ
+
+より高度なダイアグラムが描ける[svgbob][svgbob]のファイルをレンダリングするフィルタです。Python製です。
+svgbobの*Linux用*バイナリが同時にインストールされます。
+
+[svgbob]: https://github.com/ivanceras/svgbob
+
+#### インストール {-}
+
+```bash
+pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
+```
+
+#### サンプルコード {-}
+```markdown
+[svgbob](data/bob.bob){.svgbob} 
+```
+
+[svgbob](data/svgbob.bob){.svgbob}
+
+#### オプション一覧 {-}
+
+| Option         | Purpose                                                                   | Default value |
+|:---------------|:--------------------------------------------------------------------------|:-------------:|
+| `font-family`  | Text will be rendered with this font                                      |    "Arial"    |
+| `font-size`    | text will be rendered with this font size                                 |      14       |
+| `scale`        | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
+| `stroke-width` | stroke width for all lines                                                |       2       |
+
+#### フィルタ適用例 {-}
+
+`-F`/`--filter`オプションに`pandoc-svgbob-inline`を与えるだけです。`pandoc-crossref`などと併用する場合は
+このフィルタを先に記述します。
+
+```bash
+pandoc -F pandoc-svgbob-inline markdown.md -o html.html
+pandoc -F pandoc-svgbob-inline -F pandoc-crossref markdown.md -o html.html
+```
 
 # 地獄にようこそ
 
@@ -45,26 +213,22 @@ Windows向けDockerはDocker for WindowsまたはDocker ***Toolbox*** for Window
 バージョンによっていずれかをインストールしてください。**Toolbox**はVirtualBoxのインストールを必要とする代わりに
 Home版でも使えます。Pro版ならDocker for Windowsを使います。*Hyper-Vを有効にする必要があります*。
 
-今までのところWin10機で両方うまくいかない身近な例はありません。~でも筆者の会社PCはEnterprise版のくせにToolbox
-を使ってます。~
+今までのところWin10機で両方うまくいかない身近な例はありません(筆者の会社PCなど、Enterprise版のくせにToolbox
+を使っている例はあります)。
 
 ### IDE(PyCharm)
 
 **Git(VCS)コミット時に外部ツールを起動する機能がついたバージョン**が必要です。今までにPyCharmをインストール
-したことがないなら何も考えずに最新版を入れるべきです。2018年版ならどのバージョンでもいいです。2017年版も
-行けるかもしれませんが未テストです。
+したことがないなら何も考えずに最新版(Community版・フリー版で十分です)を入れるべきです。2018年版なら
+どのバージョンでもいいです。2017年版もいけるかもしれませんが未テストです。
 
 #### Markdown用プラグイン
 
-Markdown Navigator
-
-### フォント
-
-Wordの日本語標準フォントが気に入らないので源ノ角ゴシック（日本語）に入れ替えます。
+`Markdown Navigator`をインストールします。こちらもフリー版で事足ります。
 
 ## PandocのDocx対応状況を確認しよう
 
-この本はPandocを使うことを前提にしているので、PandocとDocx
+<!--この本はPandocを使うことを前提にしているので、PandocとDocx-->
 何も考えずとりあえずDocxに出力するだけなら以下のコマンドでできます。
 
 ```bash
@@ -79,61 +243,101 @@ pandoc -t docx -o docx.docx markdown.md
 # テンプレートのスタイルを決めよう {#sec:develop-template}
 
 実はこの話題は別の方が研究中です。[参考書籍](#references)に列挙しておきます[^refer-doujinshi]。
+内容を見てみると自分とほとんど同じことしてますね。この本の存在意義が薄れちゃいますね。
 
 [^refer-doujinshi]: 参考書籍類は大半が同人誌です。狭い世界ですね。
 
 ## デフォルトテンプレートに採用されているスタイル
 
-* Title / 表題
-* Subtitle / 副題
-* Author
-* Date / 日付
-* Abstract
-* Header1〜9 / 見出し1〜9
-* First Paragraph
-* Body Text / 本文
+* `Title` / 表題
+* `Subtitle` / 副題
+* `Author`
+* `Date` / 日付
+* `Abstract`
+* `Heading 1`〜`9` / 見出し1〜9
+* `First Paragraph`
+* `Body Text` / 本文
     * Body Text Char
-* Verbatim Char
-* Hyperlink / ハイパーリンク
+* `Verbatim Char`
+* `Hyperlink`
 * 脚注参照
 * 脚注文字列
-* Block Text / ブロック
-* Compact
-* Definition
-* Definition Term
-* Figure
-* Image Caption
-* Table Caption
+* `Block Text` / ブロック
+* `Compact`
+* `Definition`
+* `Definition Term`
+* `Figure`
+* `Image Caption`
+* `Table Caption`
+* `Bullet List 1`〜`5` / 箇条書き 〜 箇条書き５
 
 ## 大方針：デフォルトから大きく変化させない
 
-テンプレートファイルの変更は無制限に行うことができますが、それらの変更の継承具合（全て正しく適用されて出力されるか）
-はわかりません。一方でデフォルトファイルのスタイルや情報は基本的に継承されるということです。したがって
-デフォルト設定を大きく逸脱させないテンプレートにします。
+テンプレートファイルの変更は無制限に行うことができますが、それらの変更の継承具合（全て正しく
+適用されて出力されるか）はわかりません。一方でデフォルトファイルのスタイルや情報は基本的に
+継承されるということです。したがってデフォルト設定を大きく逸脱させないテンプレートにします。
 
-### 共通フォント設定
+### 英語のスタイル名を用意する
 
-ほとんどのスタイルは「基準にするスタイル」と「次の段落のスタイル」を利用したツリー構造になっています。
-親スタイルの変更は子スタイルに反映されます。デフォルトでは"標準"と"本文"と"図表番号"がツリーの上位にいるので
-これらをまとめて変更します。
+Pandocが出力したテンプレートファイルを日本語版Wordで開くと上部のスタイル一覧に日本語に翻訳された
+スタイル名が並びます。Wordは"かしこいので"、自動的にスタイル名を翻訳してくれます。
+しかし、内部ではWordによる*やんごとなきスタイルID変更*が行われてしまっています。
+文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に変更されちゃうようです。
+^[<https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>]
+こういうとこやぞWord...
 
-日本語と英数字でフォントを切り分けるようになっているので源ノ角ゴシックを日本語用に、Source Code Proを英数字用に
-設定します。フォントサイズは変更なし、下の方のチェックマークは全てオンにします。
+たとえば`Bullet List 1`は日本語で`箇条書き`が対応します。実際に画面ではそのような表示になります。
+一方内部では`箇条書き`は`aa`のような適当なスタイルIDに割り当てられています。したがってテンプレート内で
+`箇条書き`スタイルに変更を行いかつ原稿内で`Bullet List 1`を指定しても、
+両者のスタイルIDが異なる、というか`Bullet List 1`スタイルはテンプレート内に存在しないので
+Pandocで変換したファイルに`箇条書き`スタイルは適用されないのです。`Body Text`風の`Bullet List 1`
+が突然現れ適用される形になります。
 
-### ページ余白
+ただし、いくつかのデフォルトスタイルではスタイル名がリンクしていました
+([@tbl:styles-correctly-converted])。
+
+Table: 正しく変換されるスタイル名一覧 {#tbl:styles-correctly-converted}
+
+| Style Name(EN) | Style Name(JP) |
+|:---------------|:---------------|
+| Title          | 表題            |
+| Subtitle       | 副題            |
+| Date           | 日付            |
+| Body Text      | 本文            |
+| Heading 1〜9   | 見出し1〜9      |
+
+### ページサイズと余白
+
+お好みでページサイズと余白を設定してください。筆者はB5で上下30ミリ・左右20ミリに設定しています。
+
 ### ヘッダ・フッタ
-### 番号つき見出しにする・番号なし見出しを追加する・レベル1見出しの前は改ページさせる
+
+ヘッダまたはフッタにページ番号などを記載させるといいと思います。
+
+### 番号つき見出しにする・番号なし見出しを追加する
+
+Pandocはデフォルトで見出しに番号を振らず、`--number-sections`というオプションを追加することで
+番号付けに対応します。PandocはDocx出力のときはこれを*無視*します。デフォルトのスタイルではオプション
+が与えられているかどうかに関係なく番号なしになります。これはWordの仕様の問題で、番号つき・番号なしで
+2種類のスタイルを予め用意しなければならないからだと思われます。
+
+### レベル1見出しの前は改ページさせる・レベル2以降はさせない
 ### コードブロック用スタイルを追加する
 ### その他オレオレスタイルを用意する
+
+`Heading Unnumbered 1`
+`Heading Unnumbered 2`
+`Heading Unnumbered 3`
+`Heading Unnumbered 4`
+`Centered`
 
 # 原稿を書こう（本題）
 ## 任意のスタイルを適用させるPandocコマンドを利用する
 
 # 参考書籍 {- #references}
 
-* "2010-2016ユーザーに向けたWORDと文書のレイアウト - 文字の配置・段落設定から図・罫線表の利用まで-", 2017.12(C93), URT. Lab
-* "PyCharm のすすめ \\~デプロイとデバッグ編\\~ 珍獣 著 2018-10-08 版", 2017.10（技術書典5）
-
+1. "2010-2016ユーザーに向けたWORDと文書のレイアウト - 文字の配置・段落設定から図・罫線表の利用まで-", 2017.12(C93), URT. Lab
+1. "PyCharm のすすめ デプロイとデバッグ編 珍獣 著 2018-10-08 版", 2017.10（技術書典5）
 
 # 更新履歴 {-}
 
