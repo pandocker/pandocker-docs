@@ -27,6 +27,23 @@ Dockerがちゃんと動かないWindows機をお使いの方は、WSLを有効�
 テンプレート作成例、ローカルビルド実行までを取り扱います。
 
 # `pandocker`はまた更新されました
+## `pandoc_misc`をpipでインストールできるようにした
+
+`pandocker`フレームワークは`pandoc_misc`というgitリポジトリを/var直下に置いて、
+Makefileなどの参照先にしています。このリポジトリにはPandocに与えるオプションや
+TeX・HTML出力のためのテンプレートファイルが用意されています。これらは従来
+`/var`に直接クローンしてくる必要がありましたが、pipでインストールできるようにしました。
+
+この変更によって、初期ファイル一式をインストールする`pandoc-misc-init`スクリプトが用意され、
+特に新規に文書リポジトリを作るときのセットアップが楽になりました。**ただし、あらかじめ
+Dockerイメージ`k4zuki/pandocker`をpullする必要があります。**
+
+### インストール {-}
+
+```bash
+pip3 install git+https://github.com/k4zuki/pandoc_misc.git@pandocker
+```
+
 ## Docx出力専用フィルタを追加
 
 Docxファイルの取扱は本当に面倒[^dont-think-anyone-oppose]ですが、少しでもマシな使い勝手になるように
@@ -93,11 +110,21 @@ pip3 install git+https://github.com/pandocker/pandoc-docx-utils-py.git
 
 #### 機能１：画像に任意のスタイルを適用する {#sec:apply-style-to-images}
 
-Docx出力では、文中でない画像引用は必ず左寄せになってしまいます。テンプレートに任意のスタイルを
-用意しておいて、画像引用に`custom-style`オプションを追加します。bitfieldやwavedromのフィルタとも
-併用できますが、その場合はフィルタの呼び出し順に注意が必要です。`custom-style`オプションを省略すると
-`Image Div`スタイルを適用します。オプション省略時のスタイル名を変更したい場合は
-Pandocのメタデータに`image-div-style`を加え、スタイル名を与えます。
+##### 困り所
+
+デフォルトのDocx出力では、段落中でない画像引用は必ず左寄せになってしまいます。
+
+##### この機能の使い方
+
+1. あらかじめテンプレートに画像引用時に使いたいスタイルを用意します。
+1. Markdownの画像引用に`custom-style`オプションを追加し、用意したスタイル名を与えます[^with-other-filters]。
+    - `custom-style`オプションを省略すると`Image Caption`スタイルを適用します。テンプレート内で
+    `Image Caption`スタイルを左寄せに設定している場合は画像も左寄せになります。
+
+[^with-other-filters]: bitfieldやwavedromのフィルタとも併用できますが、その場合はフィルタの呼び出し順に注意が必要です。
+
+オプション省略時のスタイル名を変更したい場合はPandocのメタデータに`image-div-style`を加え、
+スタイル名を与えます。ただし、*ここで与えるスタイル名はタイトルにも適用されることに注意してください。*
 
 ##### サンプルコード
 
@@ -106,6 +133,10 @@ Pandocのメタデータに`image-div-style`を加え、スタイル名を与え
 Listing: markdown.md {#lst:markdown-md-2}
 
 ```markdown
+---
+image-div-style: "Centered"
+---
+
 ![sample image](images/QRcode.png){custom-style="Centered"}
  
 [sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Centered" #fig:centered-image} 
@@ -113,19 +144,45 @@ Listing: markdown.md {#lst:markdown-md-2}
 ![`Image Div`](images/QRcode.png){#fig:image-div-style} 
 ```
 
-[sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Centered" #fig:centered-image}
+[sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Image Caption" #fig:centered-image}
 
 #### 機能２：`unnumbered`指定されたヘッダに番号なしスタイルを適用する {#sec:unnumbered-headers}
+##### 困りポイント
 
 Pandocはデフォルトで見出しに番号を振らず、`--number-sections`というオプションを追加することで
 対応します。このオプションを有効にしつつ例外的に番号なしにしたい場合は見出しに`{-}`もしくは
 `{.unnumbered}`をつけることでフラグを立ててPandocに知らせます。PandocはDocx出力のときはこのルールを
-*無視*します。これはWordの仕様の問題で、番号つき・番号なしで2種類のスタイルを予め用意しなければ
+*無視*します[^word-matter]。
+
+[^word-matter]: これはWordの仕様の問題で、番号つき・番号なしで2種類のスタイルを予め用意しなければ
 ならないからだと思われます。
 
-このフィルタを通すと、`unnumbered`フラグがつけられているレベル１から４の見出しのスタイル
-(`Heading 1` ~ `Heading 4`)を"番号なし"(`Heading Unnumbered 1` ~ `Heading Unnumbered 4`)に
-変更します。
+##### この機能の使い方
+
+1. あらかじめ`Heading Unnumbered 1``Heading Unnumbered 2`/`Heading Unnumbered 3`/`Heading Unnumbered 4`
+という番号なし見出しスタイルを用意しておきます。
+2. Markdownの見出しに`{-}`または`{.unnumbered}`フラグを与えます。
+
+`unnumbered`フラグがつけられているレベル１から４の見出しのスタイル(`Heading 1` ~ `Heading 4`)を
+"番号なし"(`Heading Unnumbered 1` ~ `Heading Unnumbered 4`)に変更します。これらのスタイル名を変更したい場合は
+yamlメタデータに`heading-unnumbered`を加え、各見出しレベルごとにスタイル名を与えます。
+
+```yaml
+---
+heading-unnumbered:
+  1: "Heading Unnumbered" # default is "Heading Unnumbered 1"
+  2: "Heading Unnumbered 2"
+  3: "Heading Unnumbered 3"
+  4: "Heading Unnumbered 4"
+---
+```
+
+レベル５以下の細かい見出しレベルについては、(1)レベル５をデフォルトで番号なしとみなし、
+(2)*レベル６〜９は使わないだろう*という前提です[^constasnt-outline-level]。
+
+[^constasnt-outline-level]: 任意のスタイル名を用意させずとも`Heading 6`~`9`ヘッダスタイルを
+利用できればと思ったのですが、`Heading X`組み込みスタイルはアウトラインレベルが固定されているようなので、
+目次に出すことができず、断念しました。
 
 ##### サンプルコード
 
@@ -145,12 +202,16 @@ Listing: markdown.md {#lst:markdown-md-3}
 メタデータを与える場合は`-M`オプションを使います。`pandoc-crossref`と併用するときはこのフィルタをあとに記述します。
 
 ```bash
+# standard usage
 pandoc -t docx -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
 
+# cooperate with bitfield filter
 pandoc -t docx -F pandocker-bitfield-inline -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
 
+# image link styled in "Center"
 pandoc -t docx -F pandoc-docx-utils --reference-doc=template.docx -M image-div-style="Center" markdown.md -o docx.docx
 
+# cooperate with pandoc-crossref filter
 pandoc -t docx -F pandoc-crossref -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
 ```
 
@@ -169,20 +230,26 @@ pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
 ```
 
 #### サンプルコード {-}
+
+[](data/svgbob.bob){.listingtable #lst:svgbob-sample}
+
 ```markdown
-[svgbob](data/bob.bob){.svgbob} 
+[svgbob](data/svgbob.bob){.svgbob} 
 ```
 
 [svgbob](data/svgbob.bob){.svgbob}
 
 #### オプション一覧 {-}
 
-| Option         | Purpose                                                                   | Default value |
-|:---------------|:--------------------------------------------------------------------------|:-------------:|
-| `font-family`  | Text will be rendered with this font                                      |    "Arial"    |
-| `font-size`    | text will be rendered with this font size                                 |      14       |
-| `scale`        | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
-| `stroke-width` | stroke width for all lines                                                |       2       |
+これらのオプションは指定がなければデフォルト値が使われます。yamlメタデータに`svgbob`を加えると
+こちらをオプション未指定時のデフォルト値として扱います。
+
+| Filter option  | yaml metadata         | Description                                                               | default value |
+|:---------------|:----------------------|:--------------------------------------------------------------------------|:-------------:|
+| `font-family`  | `svgbob.font-family`  | Text will be rendered with this font                                      |    "Arial"    |
+| `font-size`    | `svgbob.size`         | text will be rendered with this font size                                 |      14       |
+| `scale`        | `svgbob.scale`        | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
+| `stroke-width` | `svgbob.stroke-width` | stroke width for all lines                                                |       2       |
 
 #### フィルタ適用例 {-}
 
@@ -337,7 +404,9 @@ Pandocはデフォルトで見出しに番号を振らず、`--number-sections`�
 # 参考書籍 {- #references}
 
 1. "2010-2016ユーザーに向けたWORDと文書のレイアウト - 文字の配置・段落設定から図・罫線表の利用まで-", 2017.12(C93), URT. Lab
-1. "PyCharm のすすめ デプロイとデバッグ編 珍獣 著 2018-10-08 版", 2017.10（技術書典5）
+2. "すべてのExcelドキュメントを生まれる前に消し去りたい本2018 v2.0.0(正式版)", 2018.10(技術書典５), 竜睛舍
+3. "PyCharm のすすめ デプロイとデバッグ編 珍獣 著 2018-10-08 版", 2018.10（技術書典5）
+4. "R MarkdownでWord文書を作ろう", 2018.11(初版２刷), niszet工房
 
 # 更新履歴 {-}
 
