@@ -1,8 +1,8 @@
 ---
 title: 私的Markdown-PDF変換環境を紹介する本 ４
-abstract: "Windows・DOCX特集編"
+#abstract: "Windows・DOCX特集編"
 circle: KY技研
-author: "@_K4ZUKI_"
+#author: "@_K4ZUKI_"
 comiket: C95 2日目
 year: 2018
 publisher: キンコーズオンラインで印刷製本 秋葉原店で受取り
@@ -11,4 +11,23 @@ front: images/markdown-logo-1664x1024.png
 # download from: https://github.com/dcurtis/markdown-mark
 verbcolored: true
 rmnote: true
+secnumdepth: 3
+
+docx_coreprop:
+  author: "@_K4ZUKI_" # str
+  category: "Category" # str
+  comments: "Comment" # str
+  created: "2018-12-30" # datetime YYYY-MM-DD
+  keywords: "Keyword1 Keyword2" # str
+  last_modified_by: "K4ZUKI" # str
+  last_printed: "2018-12-30" # datetime YYYY-MM-DD
+  modified: "2018-12-30" # datetime YYYY-MM-DD
+  revision: 1230 # int < 32768
+  subject: "SubjecT" # str
+  title: "Title" # str
+
+  content_status: "Status" # ignored?
+  identifier: "ID" # ignored?
+  language: "Japanese" # ignored?
+  version: "Version" # ignored?
 ...

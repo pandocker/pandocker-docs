@@ -7,8 +7,9 @@ Pandoc＋Docxの環境は他の方も研究しているのでN番煎じです。
 
 ## 前提環境 {-}
 
-この本では、Git、Docker及びOffice365のWord(2016)が動作するWindows10機[^company-machine]を
-対象環境にします。半自動ローカルビルドについても言及するのでできればJerBrains系IDEが入っていると
+この本では、WSL及びWord2010以降が動作するWindows10機[^company-machine]を
+対象環境にします。OSバージョンは1803以降を前提にします。
+半自動ローカルビルドについても言及するのでできればJerBrains系IDEが入っていると
 いいと思います。文中では*PyCharm*を例に使います。
 今更いうほどでもないですがこの本もDockerイメージとCIを使って原稿リポジトリからコンパイルされました。
 原稿とテンプレートDocxファイルの編集、フィルタの動作確認はMacで行われました。
@@ -17,11 +18,8 @@ Pandoc＋Docxの環境は他の方も研究しているのでN番煎じです。
 シャットダウン現象が治らないしベンダーは遅延戦法で修理実行まで1ヶ月以上かかったしその割に
 修理そのものは2時間しなかったしWindows嫌い
 
-Dockerがちゃんと動かないWindows機をお使いの方は、WSLを有効にできるならWSL上に
-スクラッチ構築[^refer-previous]すれば等価なものができます。そうでない方は*手元でのコンパイルを諦めて*
+WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコンパイルを諦めて*
 外部CIサービスを利用してください。
-
-[^refer-previous]: 前作の「あえて環境を構築してみる編」を参照してください。
 
 この本は、`pandocker`の更新情報、新しいフィルタの紹介、初のWindowsユーザ向け環境構築ガイド、
 テンプレート作成例、ローカルビルド実行までを取り扱います。
@@ -29,7 +27,7 @@ Dockerがちゃんと動かないWindows機をお使いの方は、WSLを有効�
 # `pandocker`はまた更新されました
 ## `pandoc_misc`をpipでインストールできるようにした
 
-`pandocker`フレームワークは`pandoc_misc`というgitリポジトリを/var直下に置いて、
+`pandocker`フレームワークは`pandoc_misc`というgitリポジトリを`/var`直下に置いて、
 Makefileなどの参照先にしています。このリポジトリにはPandocに与えるオプションや
 TeX・HTML出力のためのテンプレートファイルが用意されています。これらは従来
 `/var`に直接クローンしてくる必要がありましたが、pipでインストールできるようにしました。
@@ -43,6 +41,15 @@ Dockerイメージ`k4zuki/pandocker`をpullする必要があります。**
 ```bash
 pip3 install git+https://github.com/k4zuki/pandoc_misc.git@pandocker
 ```
+
+## LaTeX用オプションを追加
+
+次節とも関連しますが、LaTeX出力のレベル５ヘッダにナンバリングされる問題がずっと続いていましたが、
+マニュアルに設定オプションがあることを発見しました^[<https://pandoc.org/MANUAL.html#variables-for-latex>]。
+
+この中の`secnumdepth`を**3**にするとうまくいくことがわかったので、デフォルト値を
+`pandoc_misc/config.yaml`に追記しました。このファイルはシステムデフォルト値を保存するために用意してあります。
+この値は原稿リポジトリ内の`markdown/config.yaml`に追記することで上書きできると思います。
 
 ## Docx出力専用フィルタを追加
 
@@ -60,7 +67,7 @@ pagebreakの名の通り原稿内の`\\newpage`を改ページに変換します
 pandocに`--toc`オプションを与えると目次が*２回出現*するので注意してください。`\\newpage`ないし`\\toc`の
 前後は必ず空行が必要です。
 
-#### インストール {-}
+#### インストール {.unnumbered}
 
 ```bash
 pip3 install git+https://github.com/pandocker/pandoc-docx-pagebreak-py
@@ -75,11 +82,11 @@ Listing: markdown.md {#lst:markdown-md}
 
 ここはまえがきとか
 
-\toc
+\\toc
 
 この上に目次が出現、この直後で改ページ
 
-\newpage
+\\newpage
 
 ### レベル３ヘッダ
 
@@ -261,7 +268,7 @@ pandoc -F pandoc-svgbob-inline markdown.md -o html.html
 pandoc -F pandoc-svgbob-inline -F pandoc-crossref markdown.md -o html.html
 ```
 
-# 地獄にようこそ
+# 新たな沼にようこそ
 
 Docxファイル（以下単にDocx）ないしMSWord（以下単にWord）と戦うのは本当に骨が折れます。
 そもそも戦うとか言ってる時点で敵視が垣間見えますが、Wordが意味不明な挙動をするので仕方がありません。
@@ -270,18 +277,54 @@ Docxファイル（以下単にDocx）ないしMSWord（以下単にWord）と�
 
 インストーラ実行祭りです。
 
-### Git
+### WSL(Windows Subsystem for Linux)
 
-Git for Windowsのインストーラをダウンロード・インストールしてください。
+Bash on Ubuntu on Windowsとして発表され、Windows10 1709版（Fall Creators Update）以降
+で正式に導入されたLinuxシステムです。悪いことは言わないので可及的速やかに1803以上にアップグレードするべきです。
 
-### Docker
+<https://docs.microsoft.com/ja-jp/windows/wsl/install-win10>をよく読んで導入してください。
 
-Windows向けDockerはDocker for WindowsまたはDocker ***Toolbox*** for Windowsとして配布されています。Windows10の
-バージョンによっていずれかをインストールしてください。**Toolbox**はVirtualBoxのインストールを必要とする代わりに
-Home版でも使えます。Pro版ならDocker for Windowsを使います。*Hyper-Vを有効にする必要があります*。
+導入後は`sudo apt update; sudo apt upgrade`で環境を新しくしておいてください。
 
-今までのところWin10機で両方うまくいかない身近な例はありません(筆者の会社PCなど、Enterprise版のくせにToolbox
-を使っている例はあります)。
+こだわりがある人は日本のサーバを参照するように設定ファイルに手を加えてもいいと思います。
+
+#### ディストリビューションはUbuntu16.04
+
+WSLで導入できるディストリビューションは複数ありますが、Ubuntu16.04を対象にします。ほかの
+ディストリは18.04もDebianも一切調べていません。
+
+### マウントポイントの設定(wsl.conf)
+
+`/etc/wsl.conf`を任意のエディタで開き編集します。
+
+```bash
+$ sudo nano /etc/wsl.conf
+```
+
+[](data/wsl.conf){.listingtable}
+
+### Git (on WSL)
+
+Gitをapt経由でインストールします。
+
+```bash
+$ sudo apt install git
+```
+これだけです。
+こだわりがあれば自力で新しいバージョンを入れてもいいです。
+
+### Docker (on WSL)
+
+Windows用のDockerディストリビューションもありますが、今回は使いません。WSL上にインストールします。
+アンインストールに問題を抱えていますが[^docker-uninstall-problem][^docker-uninstall-problem2]、困らないですよね？
+こだわりがある人は新しいバージョンを入れてもいいですが、推奨はしません。
+
+[^docker-uninstall-problem]: アンインストール時に実行されるスクリプト（動いてないデーモンを停止しようとする）がコケて全体が失敗に終わる。
+[^docker-uninstall-problem2]: <https://stackoverflow.com/questions/51377291/cant-uninstall-docker-from-ubuntu-on-wsl/51939517>
+
+```bash
+$ sudo apt install docker.io
+```
 
 ### IDE(PyCharm)
 
@@ -316,27 +359,28 @@ pandoc -t docx -o docx.docx markdown.md
 
 ## デフォルトテンプレートに採用されているスタイル
 
-* `Title` / 表題
-* `Subtitle` / 副題
-* `Author`
-* `Date` / 日付
-* `Abstract`
-* `Heading 1`〜`9` / 見出し1〜9
-* `First Paragraph`
-* `Body Text` / 本文
+* Title / 表題
+* Subtitle / 副題
+* Author
+* Date / 日付
+* Abstract
+* Heading 1〜9 / 見出し1〜9
+* First Paragraph
+* Body Text / 本文
     * Body Text Char
-* `Verbatim Char`
-* `Hyperlink`
+* Verbatim Char
+* Hyperlink / ハイパーリンク
 * 脚注参照
 * 脚注文字列
-* `Block Text` / ブロック
-* `Compact`
-* `Definition`
-* `Definition Term`
-* `Figure`
-* `Image Caption`
-* `Table Caption`
-* `Bullet List 1`〜`5` / 箇条書き 〜 箇条書き５
+* Block Text / ブロック
+* Quote / 引用文
+* Compact
+* Definition
+* Definition Term
+* Figure
+* Image Caption
+* Table Caption
+* Bullet List 1〜5 / 箇条書き 〜 箇条書き５
 
 ## 大方針：デフォルトから大きく変化させない
 
@@ -348,22 +392,22 @@ pandoc -t docx -o docx.docx markdown.md
 
 Pandocが出力したテンプレートファイルを日本語版Wordで開くと上部のスタイル一覧に日本語に翻訳された
 スタイル名が並びます。Wordは"かしこいので"、自動的にスタイル名を翻訳してくれます。
-しかし、内部ではWordによる*やんごとなきスタイルID変更*が行われてしまっています。
+しかし、内部ではWordによる**やんごとなきスタイルID変更**が行われてしまっています。
 文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に変更されちゃうようです。
 ^[<https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>]
 こういうとこやぞWord...
 
-たとえば`Bullet List 1`は日本語で`箇条書き`が対応します。実際に画面ではそのような表示になります。
-一方内部では`箇条書き`は`aa`のような適当なスタイルIDに割り当てられています。したがってテンプレート内で
-`箇条書き`スタイルに変更を行いかつ原稿内で`Bullet List 1`を指定しても、
-両者のスタイルIDが異なる、というか`Bullet List 1`スタイルはテンプレート内に存在しないので
-Pandocで変換したファイルに`箇条書き`スタイルは適用されないのです。`Body Text`風の`Bullet List 1`
+たとえば"`Bullet List 1`"は日本語で`箇条書き`が対応します。実際に画面ではそのような表示になります。
+一方内部では`箇条書き`は"`aa`"のような適当なスタイルIDに割り当てられています。したがってテンプレート内で
+`箇条書き`スタイルに変更を行いかつ原稿内で"`Bullet List 1`"を指定しても、
+両者のスタイルIDが異なる、というか"`Bullet List 1`"スタイルはテンプレート内に存在しないので
+Pandocで変換したファイルに"`箇条書き`"スタイルは適用されないのです。"`Body Text`"風の"`Bullet List 1`"
 が突然現れ適用される形になります。
 
 ただし、いくつかのデフォルトスタイルではスタイル名がリンクしていました
 ([@tbl:styles-correctly-converted])。
 
-Table: 正しく変換されるスタイル名一覧 {#tbl:styles-correctly-converted}
+Table: 正しく相互変換されるスタイル名一覧 {#tbl:styles-correctly-converted}
 
 | Style Name(EN) | Style Name(JP) |
 |:---------------|:---------------|
@@ -392,11 +436,11 @@ Pandocはデフォルトで見出しに番号を振らず、`--number-sections`�
 ### コードブロック用スタイルを追加する
 ### その他オレオレスタイルを用意する
 
-`Heading Unnumbered 1`
-`Heading Unnumbered 2`
-`Heading Unnumbered 3`
-`Heading Unnumbered 4`
-`Centered`
+- `Heading Unnumbered 1`
+- `Heading Unnumbered 2`
+- `Heading Unnumbered 3`
+- `Heading Unnumbered 4`
+- `Centered`
 
 # 原稿を書こう（本題）
 ## 任意のスタイルを適用させるPandocコマンドを利用する
