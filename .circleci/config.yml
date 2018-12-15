@@ -28,13 +28,16 @@ jobs:
     - run:
         name: Make PDF
         command: make initdir pdf
-
+    - run:
+        name: Make DOCX
+        command: make initdir docx
     - run:
         name: Deploy preparation
         command: |
           mkdir deploy
           mv Out/*.html deploy/
           mv Out/*.pdf deploy/
+          mv Out/*.docx deploy/
     - run:
         name: Deploy
         command: |
