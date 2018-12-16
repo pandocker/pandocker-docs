@@ -18,7 +18,7 @@ PROJECT= `pwd`
 # CONFIG:= config.yaml
 # INPUT:= TITLE.md
 TARGET:= Pandocker-Docs-$(HASH)
-# COREPROP := --table "Normal Table=Centered"
-# COREPROP += --paragraph "Normal=Body Text"
+# COREPROPFLAGS := --table "Normal Table=Centered"
+# COREPROPFLAGS += --paragraph "Normal=Body Text"
 ##
 include $(MISC)/Makefile
