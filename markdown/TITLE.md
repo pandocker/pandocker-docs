@@ -25,7 +25,8 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 テンプレート作成例、ローカルビルド実行までを取り扱います。
 
 # `pandocker`はまた更新されました
-## `pandoc_misc`をpipでインストールできるようにした
+## 全体的な更新事項
+### `pandoc_misc`をpipでインストールできるようにした
 
 `pandocker`フレームワークは`pandoc_misc`というgitリポジトリを`/var`直下に置いて、
 Makefileなどの参照先にしています。このリポジトリにはPandocに与えるオプションや
@@ -36,13 +37,15 @@ TeX・HTML出力のためのテンプレートファイルが用意されてい�
 特に新規に文書リポジトリを作るときのセットアップが楽になりました。**ただし、あらかじめ
 Dockerイメージ`k4zuki/pandocker`をpullする必要があります。**
 
-### インストール {-}
+##### インストール
 
 ```bash
 pip3 install git+https://github.com/k4zuki/pandoc_misc.git@pandocker
+docker pull k4zuki/pandocker
 ```
 
-## LaTeX用オプションを追加
+## LaTeX出力に関する更新事項
+### コンフィグオプションを追加
 
 次節とも関連しますが、LaTeX出力のレベル５ヘッダにナンバリングされる問題がずっと続いていましたが、
 マニュアルに設定オプションがあることを発見しました^[<https://pandoc.org/MANUAL.html#variables-for-latex>]。
@@ -51,10 +54,12 @@ pip3 install git+https://github.com/k4zuki/pandoc_misc.git@pandocker
 `pandoc_misc/config.yaml`に追記しました。このファイルはシステムデフォルト値を保存するために用意してあります。
 この値は原稿リポジトリ内の`markdown/config.yaml`に追記することで上書きできると思います。
 
-## Docx出力専用フィルタを追加
+## DOCX出力に関する追加事項
 
 Docxファイルの取扱は本当に面倒[^dont-think-anyone-oppose]ですが、少しでもマシな使い勝手になるように
-Pandocフィルタをいくつか作りました。
+Pandocフィルタとツールをいくつか作りました。
+
+### Docx出力専用フィルタを追加
 
 [^dont-think-anyone-oppose]: これは個人の感想ですが、あまり強固に反論する人もいないんではないかなって
 
@@ -67,13 +72,13 @@ pagebreakの名の通り原稿内の`\\newpage`を改ページに変換します
 pandocに`--toc`オプションを与えると目次が*２回出現*するので注意してください。`\\newpage`ないし`\\toc`の
 前後は必ず空行が必要です。
 
-#### インストール {.unnumbered}
+##### インストール
 
 ```bash
 pip3 install git+https://github.com/pandocker/pandoc-docx-pagebreak-py
 ```
 
-#### サンプルコード {-}
+##### サンプルコード
 
 Listing: markdown.md {#lst:markdown-md}
 
@@ -93,7 +98,7 @@ Listing: markdown.md {#lst:markdown-md}
 改ページの直後
 ```
 
-#### フィルタ適用例 {-}
+##### フィルタ適用例
 
 `-F`/`--filter`オプションに`pandoc-docx-pagebreakpy`を与えるだけです。
 
@@ -109,13 +114,13 @@ Docxを扱うときに微妙に使いづらく感じる点をちょっと改善�
 いずれの機能もテンプレート内に追加のスタイル定義を必要とします。テンプレート内で定義されていない場合も
 各スタイルが適用されますが、それらは`Normal`（"標準"）スタイルを継承したものになります。
 
-#### インストール {-}
+##### インストール
 
 ```bash
 pip3 install git+https://github.com/pandocker/pandoc-docx-utils-py.git
 ```
 
-#### 機能１：画像に任意のスタイルを適用する {#sec:apply-style-to-images}
+#### 画像に任意のスタイルを適用する {#sec:apply-style-to-images}
 
 ##### 困り所
 
@@ -153,7 +158,7 @@ image-div-style: "Centered"
 
 [sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Image Caption" #fig:centered-image}
 
-#### 機能２：`unnumbered`指定されたヘッダに番号なしスタイルを適用する {#sec:unnumbered-headers}
+#### `unnumbered`指定されたヘッダに番号なしスタイルを適用する {#sec:unnumbered-headers}
 ##### 困りポイント
 
 Pandocはデフォルトで見出しに番号を振らず、`--number-sections`というオプションを追加することで
@@ -203,7 +208,7 @@ Listing: markdown.md {#lst:markdown-md-3}
 ##### Heading Unnumbered 5 {-}
 ```
 
-#### フィルタ適用例 {-}
+##### フィルタ適用例
 
 `-F`/`--filter`オプションに`pandoc-docx-utils`、`--reference-doc`にテンプレートファイル名を与えます。
 メタデータを与える場合は`-M`オプションを使います。`pandoc-crossref`と併用するときはこのフィルタをあとに記述します。
@@ -230,13 +235,13 @@ svgbobの*Linux用*バイナリが同時にインストールされます。
 
 [svgbob]: https://github.com/ivanceras/svgbob
 
-#### インストール {-}
+##### インストール
 
 ```bash
 pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
 ```
 
-#### サンプルコード {-}
+##### サンプルコード
 
 [](data/svgbob.bob){.listingtable #lst:svgbob-sample}
 
@@ -246,7 +251,7 @@ pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
 
 [svgbob](data/svgbob.bob){.svgbob}
 
-#### オプション一覧 {-}
+##### オプション一覧
 
 これらのオプションは指定がなければデフォルト値が使われます。yamlメタデータに`svgbob`を加えると
 こちらをオプション未指定時のデフォルト値として扱います。
@@ -258,7 +263,7 @@ pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
 | `scale`        | `svgbob.scale`        | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
 | `stroke-width` | `svgbob.stroke-width` | stroke width for all lines                                                |       2       |
 
-#### フィルタ適用例 {-}
+##### フィルタ適用例
 
 `-F`/`--filter`オプションに`pandoc-svgbob-inline`を与えるだけです。`pandoc-crossref`などと併用する場合は
 このフィルタを先に記述します。
@@ -275,18 +280,23 @@ Docxファイル（以下単にDocx）ないしMSWord（以下単にWord）と�
 
 ## 環境構築タイム
 
-インストーラ実行祭りです。
+インストーラ実行祭りするのも面倒なのでWSL一本で行きます。新規インストールが必要なのは
+PyCharmくらいです。
 
 ### WSL(Windows Subsystem for Linux)
 
 Bash on Ubuntu on Windowsとして発表され、Windows10 1709版（Fall Creators Update）以降
 で正式に導入されたLinuxシステムです。悪いことは言わないので可及的速やかに1803以上にアップグレードするべきです。
 
+筆者の会社PCもアップグレード申請しましたが遅れています[^responsible-in-christmas]。
+
+[^responsible-in-christmas]: 担当者がクリスマス休暇に入ったぽい
+
 <https://docs.microsoft.com/ja-jp/windows/wsl/install-win10>をよく読んで導入してください。
 
 導入後は`sudo apt update; sudo apt upgrade`で環境を新しくしておいてください。
 
-こだわりがある人は日本のサーバを参照するように設定ファイルに手を加えてもいいと思います。
+こだわりがある人は日本のaptサーバを参照するように設定ファイルに手を加えてもいいと思います。
 
 #### ディストリビューションはUbuntu16.04
 
@@ -305,10 +315,10 @@ $ sudo nano /etc/wsl.conf
 
 `root = /`は絶対必要なわけではありません[^cdrive-mount]が、
 `options = "metadata,umask=22,fmask=111"`の行はマウントオプションを設定しています。この行が
-ないとWSL上ですべてのファイルに実行権限がつけられてとても都合が悪いのでつけておいてください。[^at-your-own]
+ないとWSL上ですべてのファイルに実行権限がつけられてとても都合が悪いのでつけておいてください[^at-your-own]。
 
-[^cdrive-mount]: Cドライブを`/c/`としてマウントさせるために加えてあります。
-[^at-your-own]: 意味が分かる人は自分流に改造してください
+[^cdrive-mount]: Cドライブを`/c`としてマウントさせるために加えてあります。
+[^at-your-own]: これらのオプションの意味が分かっている人は自分流に改造してもいいです
 
 ### Git (on WSL)
 
@@ -327,8 +337,7 @@ Windows用のDockerディストリビューションもありますが、今回�
 解決策はすでにあるし[^docker-uninstall-problem2]、困らないですよね？
 こだわりがある人は新しいバージョンを入れてもいいですが、実験していません。
 
-[^docker-uninstall-problem]: アンインストール時に実行されるスクリプト\\
-（動いてないデーモンを停止しようとする）がコケて全体が失敗に終わる
+[^docker-uninstall-problem]: アンインストール時に実行されるスクリプト（動いてないデーモンを停止しようとする）がコケて全体が失敗に終わる
 [^docker-uninstall-problem2]: \\
 <https://stackoverflow.com/questions/51377291/cant-uninstall-docker-from-ubuntu-on-wsl/51939517>
 
@@ -348,6 +357,7 @@ $ sudo apt install docker.io
 
 <#include "appendix.md">
 
+# IDEをセットアップする
 # 原稿を書こう（本題）
 ## 任意のスタイルを適用させるPandocコマンドを利用する
 

@@ -15,19 +15,24 @@ secnumdepth: 3
 
 docx_coreprop:
   author: "@_K4ZUKI_" # str
-  category: "Category" # str
-  comments: "Comment" # str
-  created: "2018-12-30" # datetime YYYY-MM-DD
-  keywords: "Keyword1 Keyword2" # str
-  last_modified_by: "K4ZUKI" # str
-  last_printed: "2018-12-30" # datetime YYYY-MM-DD
-  modified: "2018-12-30" # datetime YYYY-MM-DD
-  revision: 1230 # int < 32768
-  subject: "SubjecT" # str
+  #  category: "Category" # str
+  #  comments: "Comment" # str
+  #  keywords: "Keyword1 Keyword2" # str
+  #  last_modified_by: "K4ZUKI" # str
+  #  last_printed: "31-Dec-2018" # datetime DD-MMM-YYYY
+  #  modified: "31-Dec-2018" # datetime DD-MMM-YYYY
+  #  revision: 1230 # int < 32768
+  #  subject: "SubjecT" # str
   #  title: "Title" # str
 
   content_status: "Status" # ignored?
   identifier: "ID" # ignored?
   language: "Japanese" # ignored?
   version: "Version" # ignored?
+
+  table:
+    "Normal Table": "Centered"
+  paragraph:
+    "Normal": "Body Text"
+    "First Paragraph": "Body Text"
 ...
