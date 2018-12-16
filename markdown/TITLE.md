@@ -303,6 +303,13 @@ $ sudo nano /etc/wsl.conf
 
 [](data/wsl.conf){.listingtable}
 
+`root = /`は絶対必要なわけではありません[^cdrive-mount]が、
+`options = "metadata,umask=22,fmask=111"`の行はマウントオプションを設定しています。この行が
+ないとWSL上ですべてのファイルに実行権限がつけられてとても都合が悪いのでつけておいてください。[^at-your-own]
+
+[^cdrive-mount]: Cドライブを`/c/`としてマウントさせるために加えてあります。
+[^at-your-own]: 意味が分かる人は自分流に改造してください
+
 ### Git (on WSL)
 
 Gitをapt経由でインストールします。
@@ -316,11 +323,14 @@ $ sudo apt install git
 ### Docker (on WSL)
 
 Windows用のDockerディストリビューションもありますが、今回は使いません。WSL上にインストールします。
-アンインストールに問題を抱えていますが[^docker-uninstall-problem][^docker-uninstall-problem2]、困らないですよね？
-こだわりがある人は新しいバージョンを入れてもいいですが、推奨はしません。
+アンインストールに問題を抱えていますが[^docker-uninstall-problem]、
+解決策はすでにあるし[^docker-uninstall-problem2]、困らないですよね？
+こだわりがある人は新しいバージョンを入れてもいいですが、実験していません。
 
-[^docker-uninstall-problem]: アンインストール時に実行されるスクリプト（動いてないデーモンを停止しようとする）がコケて全体が失敗に終わる。
-[^docker-uninstall-problem2]: <https://stackoverflow.com/questions/51377291/cant-uninstall-docker-from-ubuntu-on-wsl/51939517>
+[^docker-uninstall-problem]: アンインストール時に実行されるスクリプト\\
+（動いてないデーモンを停止しようとする）がコケて全体が失敗に終わる
+[^docker-uninstall-problem2]: \\
+<https://stackoverflow.com/questions/51377291/cant-uninstall-docker-from-ubuntu-on-wsl/51939517>
 
 ```bash
 $ sudo apt install docker.io

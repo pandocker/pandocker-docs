@@ -2,3 +2,5 @@ Out/
 pd-images/
 svg/
 ?/
+.idea/
+build/

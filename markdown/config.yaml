@@ -24,7 +24,7 @@ docx_coreprop:
   modified: "2018-12-30" # datetime YYYY-MM-DD
   revision: 1230 # int < 32768
   subject: "SubjecT" # str
-  title: "Title" # str
+  #  title: "Title" # str
 
   content_status: "Status" # ignored?
   identifier: "ID" # ignored?
