@@ -286,17 +286,17 @@ PyCharmくらいです。
 ### WSL(Windows Subsystem for Linux)
 
 Bash on Ubuntu on Windowsとして発表され、Windows10 1709版（Fall Creators Update）以降
-で正式に導入されたLinuxシステムです。悪いことは言わないので可及的速やかに1803以上にアップグレードするべきです。
+で正式に導入されたLinuxシステムです。1709だと制限事項が多いので悪いことは言わないので
+可及的速やかに1803以上にアップグレードするべきです[^company-machine-upgraded]。
 
-筆者の会社PCもアップグレード申請しましたが遅れています[^responsible-in-christmas]。
+[^company-machine-upgraded]: 筆者の会社PCもアップグレード申請してようやく1803に
+アップグレードされました。
 
-[^responsible-in-christmas]: 担当者がクリスマス休暇に入ったぽい
+<https://docs.microsoft.com/ja-jp/windows/wsl/install-win10>をよく読んで
+Ubuntu16.04を導入してください。導入後は`sudo apt update; sudo apt upgrade`で
+環境を新しくしておいてください[^point-to-jp-server]。
 
-<https://docs.microsoft.com/ja-jp/windows/wsl/install-win10>をよく読んで導入してください。
-
-導入後は`sudo apt update; sudo apt upgrade`で環境を新しくしておいてください。
-
-こだわりがある人は日本のaptサーバを参照するように設定ファイルに手を加えてもいいと思います。
+[^point-to-jp-server]: こだわりがある人は日本のaptサーバを参照するように設定ファイルに手を加えてもいいと思います。
 
 #### ディストリビューションはUbuntu16.04
 
@@ -333,17 +333,23 @@ $ sudo apt install git
 ### Docker (on WSL)
 
 Windows用のDockerディストリビューションもありますが、今回は使いません。WSL上にインストールします。
-アンインストールに問題を抱えていますが[^docker-uninstall-problem]、
-解決策はすでにあるし[^docker-uninstall-problem2]、困らないですよね？
-こだわりがある人は新しいバージョンを入れてもいいですが、実験していません。
+12月半ばのアップデートでDockerが18系にアップグレードされてしまったので[^xenial-docker-18]、17系を
+Dockerからダウンロード・インストールします。
 
-[^docker-uninstall-problem]: アンインストール時に実行されるスクリプト（動いてないデーモンを停止しようとする）がコケて全体が失敗に終わる
-[^docker-uninstall-problem2]: \\
-<https://stackoverflow.com/questions/51377291/cant-uninstall-docker-from-ubuntu-on-wsl/51939517>
+17系を使わなければならない理由について書かれたブログがありました[^docker-18-bad-example]。Windows10-1803の
+時点ではDockerのバージョン*17.09.1*で導入された機能に対応していないので、`docker run`がコケてしまいます。
+対策としてこのブログでは*17.09.0*をインストールしています。これにならって以下のようにインストールします：
 
 ```bash
-$ sudo apt install docker.io
+$ curl -O https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_17.09.0~ce-0~debian_amd64.deb
+$ sudo apt install -y ./docker-ce_17.09.0~ce-0~debian_amd64.deb
 ```
+
+これまで筆者が見つけた各ブログで先人たちはは`sudo apt install docker.io`でサクッとインストールしてますが、
+今後は上のやり方でないとうまくいかないということですね。
+
+[^xenial-docker-18]: <https://launchpad.net/ubuntu/+source/docker.io>
+[^docker-18-bad-example]: "どうしても Docker on Ubuntu 18.04 on WSL したかった" <https://qiita.com/guchio/items/3eb0818df44fdbab3d14>
 
 ### IDE(PyCharm)
 
