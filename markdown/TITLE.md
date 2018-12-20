@@ -44,6 +44,51 @@ pip3 install git+https://github.com/k4zuki/pandoc_misc.git@pandocker
 docker pull k4zuki/pandocker
 ```
 
+### アスキーアート系フィルタ`pandoc-svgbob-filter`を追加
+
+より高度なダイアグラムが描ける[svgbob][svgbob]のファイルをレンダリングするフィルタです。Python製です。
+svgbobの*Linux用*バイナリが同時にインストールされます。
+
+[svgbob]: https://github.com/ivanceras/svgbob
+
+##### インストール
+
+```bash
+pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
+```
+
+##### サンプルコード
+
+[](data/svgbob.bob){.listingtable #lst:svgbob-sample}
+
+```markdown
+[svgbob](data/svgbob.bob){.svgbob} 
+```
+
+[svgbob](data/svgbob.bob){.svgbob}
+
+##### オプション一覧
+
+これらのオプションは指定がなければデフォルト値が使われます。yamlメタデータに`svgbob`を加えると
+こちらをオプション未指定時のデフォルト値として扱います。
+
+| Filter option  | yaml metadata         | Description                                                               | default value |
+|:---------------|:----------------------|:--------------------------------------------------------------------------|:-------------:|
+| `font-family`  | `svgbob.font-family`  | Text will be rendered with this font                                      |    "Arial"    |
+| `font-size`    | `svgbob.size`         | text will be rendered with this font size                                 |      14       |
+| `scale`        | `svgbob.scale`        | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
+| `stroke-width` | `svgbob.stroke-width` | stroke width for all lines                                                |       2       |
+
+##### フィルタ適用例
+
+`-F`/`--filter`オプションに`pandoc-svgbob-inline`を与えるだけです。`pandoc-crossref`などと併用する場合は
+このフィルタを先に記述します。
+
+```bash
+pandoc -F pandoc-svgbob-inline markdown.md -o html.html
+pandoc -F pandoc-svgbob-inline -F pandoc-crossref markdown.md -o html.html
+```
+
 ## LaTeX出力に関する更新事項
 ### コンフィグオプションを追加
 
@@ -59,7 +104,7 @@ docker pull k4zuki/pandocker
 Docxファイルの取扱は本当に面倒[^dont-think-anyone-oppose]ですが、少しでもマシな使い勝手になるように
 Pandocフィルタとツールをいくつか作りました。
 
-### Docx出力専用フィルタを追加
+### Docx出力専用フィルタを追加 {-}
 
 [^dont-think-anyone-oppose]: これは個人の感想ですが、あまり強固に反論する人もいないんではないかなって
 
@@ -106,7 +151,7 @@ Listing: markdown.md {#lst:markdown-md}
 pandoc -t docx -F pandoc-docx-pagebreakpy markdown.md -o docx.docx
 ```
 
-### `pandoc-docx-utils`フィルタ
+### `pandoc-docx-utils`フィルタ(1)
 
 Docxを扱うときに微妙に使いづらく感じる点をちょっと改善するフィルタです。Pythonで書かれています。
 
@@ -158,6 +203,7 @@ image-div-style: "Centered"
 
 [sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Image Caption" #fig:centered-image}
 
+### `pandoc-docx-utils`フィルタ(2)
 #### `unnumbered`指定されたヘッダに番号なしスタイルを適用する {#sec:unnumbered-headers}
 ##### 困りポイント
 
@@ -225,52 +271,6 @@ pandoc -t docx -F pandoc-docx-utils --reference-doc=template.docx -M image-div-s
 
 # cooperate with pandoc-crossref filter
 pandoc -t docx -F pandoc-crossref -F pandoc-docx-utils --reference-doc=template.docx markdown.md -o docx.docx
-```
-
-## アスキーアートレンダリング系フィルタを追加
-### `pandoc-svgbob-filter`フィルタ
-
-より高度なダイアグラムが描ける[svgbob][svgbob]のファイルをレンダリングするフィルタです。Python製です。
-svgbobの*Linux用*バイナリが同時にインストールされます。
-
-[svgbob]: https://github.com/ivanceras/svgbob
-
-##### インストール
-
-```bash
-pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
-```
-
-##### サンプルコード
-
-[](data/svgbob.bob){.listingtable #lst:svgbob-sample}
-
-```markdown
-[svgbob](data/svgbob.bob){.svgbob} 
-```
-
-[svgbob](data/svgbob.bob){.svgbob}
-
-##### オプション一覧
-
-これらのオプションは指定がなければデフォルト値が使われます。yamlメタデータに`svgbob`を加えると
-こちらをオプション未指定時のデフォルト値として扱います。
-
-| Filter option  | yaml metadata         | Description                                                               | default value |
-|:---------------|:----------------------|:--------------------------------------------------------------------------|:-------------:|
-| `font-family`  | `svgbob.font-family`  | Text will be rendered with this font                                      |    "Arial"    |
-| `font-size`    | `svgbob.size`         | text will be rendered with this font size                                 |      14       |
-| `scale`        | `svgbob.scale`        | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
-| `stroke-width` | `svgbob.stroke-width` | stroke width for all lines                                                |       2       |
-
-##### フィルタ適用例
-
-`-F`/`--filter`オプションに`pandoc-svgbob-inline`を与えるだけです。`pandoc-crossref`などと併用する場合は
-このフィルタを先に記述します。
-
-```bash
-pandoc -F pandoc-svgbob-inline markdown.md -o html.html
-pandoc -F pandoc-svgbob-inline -F pandoc-crossref markdown.md -o html.html
 ```
 
 # 新たな沼にようこそ
@@ -345,7 +345,7 @@ $ curl -O https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd
 $ sudo apt install -y ./docker-ce_17.09.0~ce-0~debian_amd64.deb
 ```
 
-これまで筆者が見つけた各ブログで先人たちはは`sudo apt install docker.io`でサクッとインストールしてますが、
+これまで筆者が見つけた各ブログで先人たちは`sudo apt install docker.io`でサクッとインストールしてますが、
 今後は上のやり方でないとうまくいかないということですね。
 
 [^xenial-docker-18]: <https://launchpad.net/ubuntu/+source/docker.io>
