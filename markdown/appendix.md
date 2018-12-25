@@ -1,4 +1,4 @@
-# テンプレートのスタイルを決めよう {#sec:develop-template}
+# 付録：秘伝のテンプレートを熟成する章 {#sec:develop-template}
 
 実はこの話題は別の方が研究中です。[参考書籍](#references)に列挙しておきます[^refer-doujinshi]。
 内容を見てみると自分とほとんど同じことしてますね。この本の存在意義が薄れちゃいますね。
@@ -16,8 +16,12 @@ pandoc -t docx -o docx.docx markdown.md
 
 出力ファイル`docx.docx`はデフォルトのスタイルを適用したものになります。デフォルトのスタイルが
 どういうものかを確認するには
-`pandoc --print-default-data-file reference.docx > template.docx`{.bash}で出力した`template.docx`
-を参照します。このファイルを叩き台にして独自テンプレートにします([@sec:develop-template])。
+
+```bash
+pandoc --print-default-data-file reference.docx > template.docx
+```
+
+で出力した`template.docx`を参照します。このファイルを叩き台にして独自テンプレートにします([@sec:develop-template])。
 
 ## デフォルトテンプレートに採用されているスタイル
 
@@ -55,8 +59,8 @@ pandoc -t docx -o docx.docx markdown.md
 Pandocが出力したテンプレートファイルを日本語版Wordで開くと上部のスタイル一覧に日本語に翻訳された
 スタイル名が並びます。Wordは"かしこいので"、自動的にスタイル名を翻訳してくれます。
 しかし、内部ではWordによる**やんごとなきスタイルID変更**が行われてしまっています。
-文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に変更されちゃうようです。
-^[<https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>]
+文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に
+変更されちゃうようです^[<https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>]。
 こういうとこやぞWord...
 
 たとえば"`Bullet List 1`"は日本語で`箇条書き`が対応します。実際に画面ではそのような表示になります。
