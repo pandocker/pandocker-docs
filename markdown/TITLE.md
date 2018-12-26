@@ -377,6 +377,8 @@ $ sudo apt install -y ./docker-ce_17.09.0~ce-0~debian_amd64.deb
 
 タスクスケジューラにDockerデーモンの自動起動タスクを追加します。
 
+![Start Task Scheduler](images/start-task-scheduler.png){.rotate angle=-90 #fig:start-task-scheduler}
+
 ### IDE(PyCharm)
 
 **Git(VCS)コミット時に外部ツールを起動する機能がついたバージョン**が必要です。今までにPyCharmをインストール
@@ -411,22 +413,33 @@ PyCharm IDEを例にしてプロジェクトの作り方と外部ツールの設
 
 ![Create Project](images/pycharm-project.png){#fig:create-project height=70mm}
 
-原稿ディレクトリを"Content Root"([@fig:content-root])としてPyCharmに登録します。この図では
-①と②の2つのディレクトリが登録されています。
+### Content Root {#sec:register-content-root}
 
-![Content Root](images/pycharm-content-root.png){#fig:content-root height=50mm}
+原稿ディレクトリを"Content Root"([@fig:content-root])としてPyCharmに登録します。
+Settingsを開き、**Project Structure**サブメニューに行き、右上の**＋**で任意のディレクトリを登録します。
+この図では2箇所が登録されています。**OK**をクリックして一旦画面を閉じます。
 
-原稿ディレクトリをgitリポジトリとしてPyCharmに認識させます()。
+![Content Root](images/register-content-root.png){#fig:content-root height=70mm}
 
-## 外部ツールの登録
+### VCS(Git)リポジトリ
+
+原稿ディレクトリをgitリポジトリとしてPyCharmに認識させます([@fig:register-vcs])。
+Settingsを再度開き、**Version Control**サブメニューに行き、グレーアウトされている**Unregistered roots**
+から目的のディレクトリを選択し、右上の**＋**で登録します。**Apply**または**OK**をクリックして確定します。
+
+\\newpage
+
+![VCS repository](images/register-vcs-repository.png){#fig:register-vcs height=60mm}
+
+## External Toolsの登録
 
 pandockerを使ったHTML/PDF/DOCXへの出力と出力ディレクトリの削除(CLEAN)を外部ツールとして登録します。
 マクロの一種と考えることもできます。
 
-Settingsを開き、**Tools** -> **External Tools**に行き、新規作成のため**＋**をクリックします。
+Settingsを開き、**Tools** → **External Tools**に行き、新規作成のため**＋**をクリックします。
 ([@fig:external-tools-1])
 
-![External tools](images/pycharm-external-tools.png){#fig:external-tools-1 height=50mm}
+![External tools](images/register-external-tools.png){#fig:external-tools-1 height=70mm}
 
 [@fig:external-tools-edit]を参考にしてName(*HTML*)とGroup(*Pandocker*)に値を入れ、
 [@tbl:external-tools-parameters]のように編集します。
@@ -436,13 +449,16 @@ Table: External Tools parameters {#tbl:external-tools-parameters}
 
 | Parameter            | Value                                                          |
 |:---------------------|:---------------------------------------------------------------|
-| (1)Program           | `wsl.exe`                                                      |
-| (2)Arguments         | `docker run --rm -v /$PWD:/workdir k4zuki/pandocker make html` |
-| (3)Working Directory | `$ContentRoot$`                                                |
+| ① Program           | `wsl.exe`                                                      |
+| ② Arguments         | `docker run --rm -v /$PWD:/workdir k4zuki/pandocker make html` |
+| ③ Working Directory | `$ContentRoot$`                                                |
 
 ![Edit External Tools](images/pycharm-external-tools-edit.png){#fig:external-tools-edit}
 
 一つ作ればあとはコピーしてNameとArgumentsを変更すればすぐに作れます。
+
+原稿を開いて右クリックメニューを出すと下の方にExternal Toolsサブメニューが現れ任意の
+コマンドを実行できるようになっています。
 
 # 原稿を書こう（本題）
 ## 任意のスタイルを適用させるPandocコマンドを利用する
