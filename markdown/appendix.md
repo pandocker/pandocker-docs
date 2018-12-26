@@ -23,7 +23,7 @@ pandoc --print-default-data-file reference.docx > template.docx
 
 で出力した`template.docx`を参照します。このファイルを叩き台にして独自テンプレートにします([@sec:develop-template])。
 
-## デフォルトテンプレートに採用されているスタイル
+## デフォルトテンプレートに採用されているスタイル {#sec:default-styles}
 
 * Title / 表題
 * Subtitle / 副題
@@ -81,29 +81,26 @@ Table: 正しく相互変換されるスタイル名一覧 {#tbl:styles-correctl
 | Subtitle       | 副題            |
 | Date           | 日付            |
 | Body Text      | 本文            |
-| Heading 1〜9   | 見出し1〜9      |
+| Heading 1〜9   | 見出し 1〜9     |
 
-### ページサイズと余白
+### その他諸々...は他誌に譲ります
 
-お好みでページサイズと余白を設定してください。筆者はB5で上下30ミリ・左右20ミリに設定しています。
+- ページサイズの設定
+- 余白の設定
+- ヘッダ・フッタの設定
+- 見出しに連番をつける・つけない
+- 見出し１の前に改ページ
 
-### ヘッダ・フッタ
+これらの設定方法は主に参考書籍(2)に書かれていることを踏襲します。
 
-ヘッダまたはフッタにページ番号などを記載させるといいと思います。
+### 秘伝のテンプレートないの？
 
-### 番号つき見出しにする・番号なし見出しを追加する
+*pandocker*の組み込み用に簡単なものは用意してあります。GitHub[^pandoc-misc-repository]
+から**pythonize**ブランチをクローンするか、リポジトリをZipでダウンロード・解凍しブランチを切り替えて
+入手してください。
 
-Pandocはデフォルトで見出しに番号を振らず、`--number-sections`というオプションを追加することで
-番号付けに対応します。PandocはDocx出力のときはこれを*無視*します。デフォルトのスタイルではオプション
-が与えられているかどうかに関係なく番号なしになります。これはWordの仕様の問題で、番号つき・番号なしで
-2種類のスタイルを予め用意しなければならないからだと思われます。
+```bash
+git clone -b pythonize https://github.com/K4zuki/pandoc_misc.git
+```
 
-### レベル1見出しの前は改ページさせる・レベル2以降はさせない
-### コードブロック用スタイルを追加する
-### その他オレオレスタイルを用意する
-
-- `Heading Unnumbered 1`
-- `Heading Unnumbered 2`
-- `Heading Unnumbered 3`
-- `Heading Unnumbered 4`
-- `Centered`
+[^pandoc-misc-repository]: <https://github.com/K4zuki/pandoc_misc/tree/pythonize>

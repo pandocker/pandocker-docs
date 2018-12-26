@@ -385,6 +385,8 @@ $ sudo apt install -y ./docker-ce_17.09.0~ce-0~debian_amd64.deb
 したことがないなら何も考えずに最新版(Community版・フリー版で十分です)を入れるべきです。2018年版なら
 どのバージョンでもいいです。2017年版もいけるかもしれませんが未テストです。
 
+最新版はこちらからダウンロードできます：<https://www.jetbrains.com/pycharm/download/>
+
 #### Markdown用プラグイン
 
 `Markdown Navigator`[^markdown-navigator]をインストールします。筆者は有料版を使っていますがこちらもフリー版で事足ります。
@@ -433,8 +435,10 @@ Settingsを再度開き、**Version Control**サブメニューに行き、グ�
 
 ## External Toolsの登録
 
+External Tools(外部ツール)が登録されていると上部メニューのToolsまたは右クリックメニュー
+から実行可能になります。外部ツールはマクロの一種と考えることもできます。
+
 pandockerを使ったHTML/PDF/DOCXへの出力と出力ディレクトリの削除(CLEAN)を外部ツールとして登録します。
-マクロの一種と考えることもできます。
 
 Settingsを開き、**Tools** → **External Tools**に行き、新規作成のため**＋**をクリックします。
 ([@fig:external-tools-1])
@@ -459,6 +463,14 @@ Table: External Tools parameters {#tbl:external-tools-parameters}
 
 原稿を開いて右クリックメニューを出すと下の方にExternal Toolsサブメニューが現れ任意の
 コマンドを実行できるようになっています。
+
+### コミット時に自動実行させる
+
+IDE上で原稿の変更をコミットするときに上記の外部ツールを自動実行させます。いわゆるコミットフックです。
+まずコミットウィンドウを開きます([@fig:pycharm-git-commit])。右側の**After Commit**→**Run Tool**
+から登録済の外部ツールを選択します。この図ではすでに"PDF"に設定されています。
+
+![Git Commit](images/pycharm-git-commit.png){#fig:pycharm-git-commit}
 
 # 原稿を書こう（本題）
 ## 任意のスタイルを適用させるPandocコマンドを利用する
