@@ -375,9 +375,29 @@ $ sudo apt install -y ./docker-ce_17.09.0~ce-0~debian_amd64.deb
 
 ### Docker daemonの自動起動を設定
 
-タスクスケジューラにDockerデーモンの自動起動タスクを追加します。
+(この節の内容は先人のブログで見つけたもの[^docker-daemon-blog]をちょっと焼き直したものです。)
+
+[^docker-daemon-blog]: "WSLのdocker daemonを自動起動させる" <https://qiita.com/forest1/items/ab6d8b345653c614229b>
+
+タスクスケジューラにDockerデーモンの自動起動タスクを追加します。スタートメニューで"task"を検索して
+タスクスケジューラを起動します([@fig:start-task-scheduler])。
 
 ![Start Task Scheduler](images/start-task-scheduler.png){.rotate angle=-90 #fig:start-task-scheduler}
+
+起動したら右側の"タスクのインポート"をクリックして[@sec:clone-pandocker]でクローンしたリポジトリから
+"Docker.xml"を選択します。すぐに[@fig:change-username]の画面になるのでWindowsのユーザ名
+を入力し"名前の確認"→"OK"をクリックして一旦インポートを完了します。
+
+![Change Username](images/task-change-username.png){#fig:change-username}
+
+インポートしたタスクを再度編集し、デーモン起動スクリプトのパスを変更します。
+
+"操作"タブに移動し"編集"をクリック→"引数を追加"の内容を[@sec:clone-pandocker]の
+リポジトリ内の`dockerstart.sh`へのパスに変更して"OK"→操作タブで"OK"して完了します([@fig:edit-task-script])。
+
+![Edit Task](images/task-edit-script.png){#fig:edit-task-script}
+
+これでPCを再起動すると、ログイン時にWSLターミナルが起動しrootパスワードを求められます(これは再起動のたびに求められます)。
 
 ### IDE(PyCharm)
 
@@ -427,7 +447,7 @@ Settingsを開き、**Project Structure**サブメニューに行き、右上の
 
 原稿ディレクトリをgitリポジトリとしてPyCharmに認識させます([@fig:register-vcs])。
 Settingsを再度開き、**Version Control**サブメニューに行き、グレーアウトされている**Unregistered roots**
-から目的のディレクトリを選択し、右上の**＋**で登録します。**Apply**または**OK**をクリックして確定します。
+から目的のディレクトリを選択し(①)、右上の**＋**で登録します(②)。**Apply**または**OK**をクリックして確定します(③)。
 
 \\newpage
 
