@@ -30,7 +30,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 外部CIサービスを利用してください。
 
 この本は、`pandocker`の更新情報、新しいフィルタの紹介、初のWindowsユーザ向け環境構築ガイド、
-テンプレート作成例、ローカルビルド実行までを取り扱います。
+ローカルビルド実行までを取り扱います。秘伝のテンプレート熟成は次回に持ち越します。
 
 # `pandocker`はまた更新されました
 ## 全体的な更新事項
@@ -54,10 +54,10 @@ docker pull k4zuki/pandocker
 
 ### アスキーアート系フィルタ`pandoc-svgbob-filter`を追加
 
-より高度なダイアグラムが描ける[svgbob][svgbob]のファイルをレンダリングするフィルタです。Python製です。
-svgbobの*Linux用*バイナリが同時にインストールされます。
+より高度なダイアグラムが描けるsvgbob[^svgbob]のファイルをレンダリングするフィルタです。Python製です。
+いまのところLinux専用です(svgbobの*Linux用*バイナリが同時にインストールされます)。
 
-[svgbob]: https://github.com/ivanceras/svgbob
+[^svgbob]: <https://github.com/ivanceras/svgbob>
 
 ##### インストール
 
@@ -102,14 +102,14 @@ pandoc -F pandoc-svgbob-inline -F pandoc-crossref markdown.md -o html.html
 ## LaTeX出力に関する更新事項
 ### コンフィグオプションを追加
 
-次節とも関連しますが、LaTeX出力のレベル５ヘッダにナンバリングされる問題がずっと続いていましたが、
+従来LaTeX出力のレベル５ヘッダにナンバリングされる問題がずっと続いていましたが、
 マニュアルに設定オプションがあることを発見しました^[<https://pandoc.org/MANUAL.html#variables-for-latex>]。
 
 この中の`secnumdepth`を**3**にするとうまくいくことがわかったので、デフォルト値を
 `pandoc_misc/config.yaml`に追記しました。このファイルはシステムデフォルト値を保存するために用意してあります。
-この値は原稿リポジトリ内の`markdown/config.yaml`に追記することで上書きできると思います。
+この値は原稿リポジトリ内の`markdown/config.yaml`に追記することで上書きでき(ると思い)ます。
 
-## DOCX出力に関する追加事項
+## DOCX出力に関する追加事項 {#sec:updates-for-docx-output}
 
 Docxファイルの取扱は本当に面倒[^dont-think-anyone-oppose]ですが、少しでもマシな使い勝手になるように
 Pandocフィルタとツールをいくつか作りました。
@@ -166,7 +166,7 @@ pandoc -t docx -F pandoc-docx-pagebreakpy markdown.md -o docx.docx
 Docxを扱うときに微妙に使いづらく感じる点をちょっと改善するフィルタです。Pythonで書かれています。
 
 今のところ２つの機能が実装されています([@sec:apply-style-to-images]、[@sec:unnumbered-headers])。
-いずれの機能もテンプレート内に追加のスタイル定義を必要とします。テンプレート内で定義されていない場合も
+いずれの機能もテンプレート内に追加の段落スタイル定義を必要とします。テンプレート内で定義されていない場合も
 各スタイルが適用されますが、それらは`Normal`（"標準"）スタイルを継承したものになります。
 
 ##### インストール
@@ -174,6 +174,8 @@ Docxを扱うときに微妙に使いづらく感じる点をちょっと改善�
 ```bash
 pip3 install git+https://github.com/pandocker/pandoc-docx-utils-py.git
 ```
+
+\\newpage
 
 #### 画像に任意のスタイルを適用する {#sec:apply-style-to-images}
 
@@ -212,6 +214,8 @@ image-div-style: "Centered"
 ```
 
 [sample bitfield image](data/bitfields/bit.yaml){.bitfield custom-style="Image Caption" #fig:centered-image}
+
+\\newpage
 
 ### `pandoc-docx-utils`フィルタ(2)
 #### `unnumbered`指定されたヘッダに番号なしスタイルを適用する {#sec:unnumbered-headers}
@@ -263,6 +267,8 @@ Listing: markdown.md {#lst:markdown-md-3}
 #### Heading Unnumbered 4 {-}
 ##### Heading Unnumbered 5 {-}
 ```
+
+\\newpage
 
 ##### フィルタ適用例
 
@@ -384,11 +390,13 @@ $ sudo apt install -y ./docker-ce_17.09.0~ce-0~debian_amd64.deb
 
 ![Start Task Scheduler](images/start-task-scheduler.png){.rotate angle=-90 #fig:start-task-scheduler}
 
-起動したら右側の"タスクのインポート"をクリックして[@sec:clone-pandocker]でクローンしたリポジトリから
+起動したら[@fig:import-task]右側の"タスクのインポート"をクリックして[@sec:clone-pandocker]でクローンしたリポジトリから
 "Docker.xml"を選択します。すぐに[@fig:change-username]の画面になるのでWindowsのユーザ名
 を入力し"名前の確認"→"OK"をクリックして一旦インポートを完了します。
 
-![Change Username](images/task-change-username.png){#fig:change-username}
+![Import Task](images/import-task.png){#fig:import-task}
+
+![Change Username](images/task-change-username.png){#fig:change-username height=60mm}
 
 インポートしたタスクを再度編集し、デーモン起動スクリプトのパスを変更します。
 
@@ -443,15 +451,17 @@ Settingsを開き、**Project Structure**サブメニューに行き、右上の
 
 ![Content Root](images/register-content-root.png){#fig:content-root height=70mm}
 
+\\newpage
+
 ### VCS(Git)リポジトリ
 
 原稿ディレクトリをgitリポジトリとしてPyCharmに認識させます([@fig:register-vcs])。
 Settingsを再度開き、**Version Control**サブメニューに行き、グレーアウトされている**Unregistered roots**
 から目的のディレクトリを選択し(①)、右上の**＋**で登録します(②)。**Apply**または**OK**をクリックして確定します(③)。
 
-\\newpage
+![VCS repository](images/register-vcs-repository.png){#fig:register-vcs}
 
-![VCS repository](images/register-vcs-repository.png){#fig:register-vcs height=60mm}
+\\newpage
 
 ## External Toolsの登録
 
@@ -463,7 +473,7 @@ pandockerを使ったHTML/PDF/DOCXへの出力と出力ディレクトリの削�
 Settingsを開き、**Tools** → **External Tools**に行き、新規作成のため**＋**をクリックします。
 ([@fig:external-tools-1])
 
-![External tools](images/register-external-tools.png){#fig:external-tools-1 height=70mm}
+![External tools](images/register-external-tools.png){#fig:external-tools-1}
 
 [@fig:external-tools-edit]を参考にしてName(*HTML*)とGroup(*Pandocker*)に値を入れ、
 [@tbl:external-tools-parameters]のように編集します。
@@ -477,12 +487,16 @@ Table: External Tools parameters {#tbl:external-tools-parameters}
 | ② Arguments         | `docker run --rm -v /$PWD:/workdir k4zuki/pandocker make html` |
 | ③ Working Directory | `$ContentRoot$`                                                |
 
+\\newpage
+
 ![Edit External Tools](images/pycharm-external-tools-edit.png){#fig:external-tools-edit}
 
 一つ作ればあとはコピーしてNameとArgumentsを変更すればすぐに作れます。
 
 原稿を開いて右クリックメニューを出すと下の方にExternal Toolsサブメニューが現れ任意の
 コマンドを実行できるようになっています。
+
+\\newpage
 
 ### コミット時に自動実行させる
 
