@@ -90,8 +90,6 @@ pip3 install git+https://github.com/pandocker/pandoc-svgbob-filter.git
 |    `scale`     |    `svgbob.scale`     | scale the entire svg (dimensions, font size, stroke width) by this factor |       1       |
 | `stroke-width` | `svgbob.stroke-width` |                        stroke width for all lines                         |       2       |
 
-\\newpage
-
 ##### フィルタ適用例
 
 `-F`/`--filter`オプションに`pandoc-svgbob-inline`を与えるだけです。`pandoc-crossref`などと併用する場合は
@@ -509,6 +507,22 @@ IDE上で原稿の変更をコミットするときに上記の外部ツール�
 
 ![Git Commit](images/pycharm-git-commit.png){#fig:pycharm-git-commit}
 
+\\newpage
+
+### ショートカットキーを登録する
+
+外部ツールを右クリックから選択しなくても、ショートカットを登録すればキーストロークのみで
+呼び出すことができます。PDFにコンパイルするショートカット(Ctrl＋P、Ctrl＋O)を登録する例を示します。
+
+Settingsを開き、**Keymap**→**External Tools**→**Pandocker**→**PDF**と選択します([@fig:pycharm-keymap])。
+
+![Keymap](images/pycharm-keymap.png){#fig:pycharm-keymap}
+
+PDFで右クリックして**Add Keyboard Shortcut**を選択します。
+*Second stroke*にチェックを入れて、Ctrl＋PとCtrl＋Oを実際にキーボードから入力します([@fig:key-stroke])。
+
+![Register Key Stroke](images/pycharm-keymap-register.png){#fig:key-stroke width=80mm}
+
 # 原稿を書こう（本題）
 ## 任意のスタイルを適用させるPandocコマンドを利用する
 
@@ -549,19 +563,20 @@ Bullet List 1
 デフォルトでは各章・節の最初の段落には"First Paragraph"スタイルが自動的に適用されます。
 このスタイルに標準もしくは本文を継承させるよりも、いずれかに強制的に差し替えてしまえと
 いうことで、Python製の後工程ツールを作りました。このツールはテーブルスタイルの強制差し替えもできます。
-使い方は以下のような感じです。
+使い方は以下のような感じです：
 
-- 原稿リポジトリ内の`markdown/config.yaml`に以下のようなエントリを加えます。
-  この例では"Normal"と"First Paragraph"スタイルの段落を全部"Body Text"に差し替えます。
-  さらに"Normal Table"スタイルのテーブルを全部"Centered"に差し替えます。
-  ```yaml
+原稿リポジトリ内の`markdown/config.yaml`に以下のようなエントリを加えます。
+この例では"Normal"と"First Paragraph"スタイルの段落を全部"Body Text"に差し替えます。
+さらに"Normal Table"スタイルのテーブルを全部"Centered"に差し替えます。
+
+```yaml
 docx_coreprop:
   table:
     "Normal Table": "Centered"
   paragraph:
     "Normal": "Body Text"
     "First Paragraph": "Body Text" # <-
-  ```
+```
 
 このツールはエントリに列記されたスタイルを必ず必要とします。ただし後工程ツールなので、
 必要なスタイルが未定義の場合はエラーを吐きつつ何も変更せず終了します。CIさせている場合は
@@ -580,7 +595,7 @@ docx_coreprop:
 
 ## Revision4.0（C95） {-}
 
-- この文章は本番３日前の１２月２７日１６時３０分頃に書かれました。(本番は２日目)
+- この文章は本番３日前の１２月２７日１７時頃に書かれました。(本番は２日目)
 - Pandocのややこしいバグを踏んで一時コンパイルが通らなくて焦ったw
 - UbuntuのDockerパッケージアップデートを踏んで一時Dockerイメージが落とせなくて焦った()
 - アサクリ？やってますね。
