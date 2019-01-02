@@ -1,6 +1,17 @@
 # このリポジトリは何
 拙作のDockerイメージ*pandocker*の解説文書です。原稿はちょっと読みづらいのでHTMLまたはPDF出力されたものを参照ください。
 最新の出力結果は[こちら](https://github.com/pandocker/pandocker-docs/releases/latest)にあります。
+以前のバージョンは以下の通り：
+
+## バージョン４：コミケ９５版
+
+- Windows・DOCX特集編
+- [ビルド`eaa7294`](https://github.com/pandocker/pandocker-docs/releases/tag/build-Dec-27-2018-eaa7294)
+
+## バージョン３：技術書典４版
+
+- 総集編
+- [ビルド`7737f1a`](https://github.com/pandocker/pandocker-docs/releases/tag/build-7737f1a)
 
 # pandocker-docs
 Documents for _pandocker_ - Yet another ubuntu 16.04 based Docker image for pandoc
