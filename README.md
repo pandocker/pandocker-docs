@@ -11,6 +11,7 @@
 ## バージョン３：技術書典４版
 
 - 総集編
+- まずこれを読みましょう
 - [ビルド`7737f1a`](https://github.com/pandocker/pandocker-docs/releases/tag/build-7737f1a)
 
 # pandocker-docs
