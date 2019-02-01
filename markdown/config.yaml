@@ -1,10 +1,10 @@
 ---
-title: 私的Markdown-PDF変換環境を紹介する本 ４
-abstract: "Windows・DOCX特集編"
+title: 私的Markdown-PDF変換環境を紹介する本 ５
+abstract: "秘伝のDocxテンプレートを熟成する編"
 circle: KY技研
 author: "@_K4ZUKI_"
-comiket: C95 2日目
-year: 2018
+comiket: 技術書典６
+year: 2019
 publisher: キンコーズオンラインで印刷製本 秋葉原店で受取り
 docrevision: "1.0"
 front: images/markdown-logo-1664x1024.png
@@ -23,7 +23,7 @@ docx_coreprop:
   #  modified: "31-Dec-2018" # datetime DD-MMM-YYYY
   #  revision: 1230 # int < 32768
   #  subject: "SubjecT" # str
-  title: "私的Markdown-PDF変換環境を紹介する本 ４" # str
+  title: "私的Markdown-PDF変換環境を紹介する本 ５" # str
 
   content_status: "Status" # ignored?
   identifier: "ID" # ignored?
