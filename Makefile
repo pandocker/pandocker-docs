@@ -17,7 +17,8 @@ PROJECT= `pwd`
 
 # CONFIG:= config.yaml
 # INPUT:= TITLE.md
-TARGET:= Pandocker-Docs-$(HASH)
+BRANCH:= '$(shell git rev-parse --abbrev-ref HEAD)'
+TARGET:= Pandocker-Docs-$(BRANCH)-$(HASH)
 # COREPROPFLAGS := --table "Normal Table=Centered"
 # COREPROPFLAGS += --paragraph "Normal=Body Text"
 ##
