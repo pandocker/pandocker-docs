@@ -25,7 +25,35 @@ HTTPが遮断されWSL上のaptが効かなくなってて本当にどうしよ�
 WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコンパイルを諦めて*
 外部CIサービスを利用してください。KSﾍﾟﾙｽｷｰは即時削除してください。
 
-この本は、
+この本は、恒例のpandocker環境の更新情報と、テンプレートファイル作成のヒント集で
+構成されています。
+
+# 今回の更新情報は？！
+
+## Pandocが2.6になったよ！
+
+まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6をリリースしました。[^pandoc-2.6]
+更新内容はいろいろありますが、個人的に大事なのはPandoc式Markdown書式にタスクリストが
+追加されたことです[^pandoc-issue-3051]。
+多くの出力で何らかの形で対応していて、Docxでは箇条書きの黒丸の直後に四角か四角にチェック(X)が入った
+文字が置かれます。PDF出力では黒丸の代わりに四角・チェック入り四角が使われます。
+
+もうひとつはコミケ95直前に遭遇して困った末にレポートした最高に意味わからんバグの修正です。
+どうやら上流ライブラリのバグだったようで、pandoc側では解析のためにスタックダンプまで
+行われていました[^pandoc-issue-5177]。
+
+[^pandoc-2.6]: https://github.com/jgm/pandoc/releases/tag/2.6
+[^pandoc-issue-3051]: https://github.com/jgm/pandoc/issues/3051
+[^pandoc-issue-5177]: https://github.com/jgm/pandoc/issues/5177
+
+## python-docxが0.8.10になったよ！
+
+*pandocker*内で後処理に使っているpython-docxのバージョンが上がったんですが、筆者を含む数名が
+インストール不能状態になりました[^python-docx-issue-594]。結果的に`setuptools`のバージョンが古すぎたせいでした。
+読者の中でpython-docxの更新に失敗したひとがいれば、まず`setuptools`を更新してみてください。
+いままでのところpython-docx側でsetuptoolsに対する依存関係を明示していないので、手動で更新する必要があります。
+
+[^python-docx-issue-594]: https://github.com/python-openxml/python-docx/issues/594
 
 # テンプレート作成のヒント集 {#sec:develop-template}
 
@@ -161,6 +189,7 @@ git clone -b pythonize https://github.com/K4zuki/pandoc_misc.git
 ## Revision5.0（技術書典６） {-}
 
 - その後KSﾍﾟﾙｽｷｰの設定は是正され無事人権が回復しました。助かったｗ
-- 特定の条件下でsvgbobから生成したPNGへのリンクが壊れるわけわからんバグに遭遇した
+- Win7の環境下でsvgbobから生成したPNGへのリンクが壊れるわけわからんバグに遭遇した
+けどそのうちOS入れ替わるしほっといてもいいよね？？
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
