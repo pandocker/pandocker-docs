@@ -15,12 +15,14 @@
 対象環境にします。Windows10のOSバージョンは1803以降を前提にします。前作の手順に従い
 環境を構築してあるものとします。
 
-今更いうほどでもないですがこの本もDockerイメージとCIを使って原稿リポジトリからコンパイルされました。
-原稿とテンプレートDocxファイルの編集、フィルタの動作確認はMacで行われました。
-スクリーンショットを撮るのだけはWindowsマシンを使いました。
-
 [^company-machine]: 筆者の会社支給のマシンは**いつの間にかKSﾍﾟﾙｽｷｰの設定が変更されて
 HTTPが遮断されWSL上のaptが効かなくなってて本当にどうしようもなくなりました**。
+
+今更いうほどでもないですがこの本もDockerイメージとCIを使って原稿リポジトリからコンパイルされました。
+原稿とテンプレートDocxファイルの編集、フィルタの動作確認はMacで行われました。
+スクリーンショットを撮るのだけはWindowsマシンを使いました。[^pdf-print]
+
+[^pdf-print]: 実用に堪えないので印刷はPDF出力を使用しました。
 
 WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコンパイルを諦めて*
 外部CIサービスを利用してください。KSﾍﾟﾙｽｷｰは即時削除してください。
@@ -161,6 +163,79 @@ Table: List of Styles
 文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に
 変更されちゃうようです^[<https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>]。
 こういうとこやぞWord...
+
+### スタイルIDとスタイル名が一致するとは限らない
+
+ちょっと用語を解説します。さきほどからスタイル名とかスタイルIDとか述べていますが、
+簡単に言うと、`スタイルID`がWord内部での参照IDで、`スタイル名`はユーザが目にするスタイルの名前です。
+これはユーザがスタイルを追加するときに名付ける名前も含みます。これらの文字列はたいてい等しいのですが、
+スタイル名に非英語圏の文字が使われている場合や半角スペースが含まれていると一致しなくなります。
+`Heading 1`スタイルのIDが`Heading1`だったりします。
+
+ややこしいことに、一部組み込みスタイル名は
+各言語に翻訳されてUIに表示されます[^does-anyone-know-how-to-stop-this]。
+例えば日本語版でdocxファイルを新規作成して、適当な日本語文字列にデフォルトの`表題`スタイルを適用し、
+保存したものを英語版で開くと`Title`と表示されます。
+
+[^does-anyone-know-how-to-stop-this]: どなたかこれをやめさせる方法知りませんかね
+
+先述の通り、やんごとない状況下[^precious-situation]ではスタイル名が英語ではなくなる可能性があることから、
+Wordは一律に非組込みスタイルに（擬似ランダムな）英数文字列のスタイルIDを与えます。これによってUIでは
+`TOC Heading`であるスタイルのIDが`af2`だったりする*重大事故*が起きます。
+
+[^precious-situation]: 非英語圏版またはOS
+
+手持ちのファイルがどんな目にあっているのかを参照するため以下のようなコードで確認してみました。
+段落スタイルのうちスタイルIDと"スタイル名から半角スペースを取り除いたもの"が一致しないものを表示します。
+
+Listing: スタイルID抽出 {#lst:extract-style-id}
+
+```python
+import docx
+from docx.enum.style import WD_STYLE_TYPE 
+
+doc = docx.Document("ref.docx")
+st = [s for s in doc.styles if s.type==WD_STYLE_TYPE.PARAGRAPH]  # pick up paragraph styles
+for s in st:
+    name= s.name
+    short = name.replace(" ", "")
+    if s.style_id != short:
+        print(name, s.style_id, short)
+```
+
+結果は次ページの通り、一見では命名法則があるのかどうかもわかりません。
+
+\\newpage
+
+Table: スタイル名/スタイルID/短縮スタイル名 {#tbl:style-name-vs-id-looks-unrelated}
+
+| Style Name     | Style ID | Style Name (Shorten) |
+|:---------------|:---------|:---------------------|
+| Normal         | a0       | Normal               |
+| Heading 1      | 1        | Heading1             |
+| Heading 2      | 20       | Heading2             |
+| Heading 3      | 30       | Heading3             |
+| Heading 4      | 4        | Heading4             |
+| Heading 5      | 5        | Heading5             |
+| Body Text      | a4       | BodyText             |
+| Title          | a6       | Title                |
+| Subtitle       | a8       | Subtitle             |
+| Date           | aa       | Date                 |
+| Bibliography   | ab       | Bibliography         |
+| Block Text     | ac       | BlockText            |
+| footnote text  | ad       | footnotetext         |
+| Caption        | ae       | Caption              |
+| TOC Heading    | af2      | TOCHeading           |
+| toc 1          | 11       | toc1                 |
+| toc 2          | 26       | toc2                 |
+| toc 3          | 32       | toc3                 |
+| Balloon Text   | afc      | BalloonText          |
+| Quote          | aff0     | Quote                |
+| Intense Quote  | 22       | IntenseQuote         |
+| List Bullet    | a        | ListBullet           |
+| List Bullet 2  | 2        | ListBullet2          |
+| List Bullet 3  | 3        | ListBullet3          |
+| endnote text   | aff7     | endnotetext          |
 
 ### その他諸々...は他誌に譲ります
 
