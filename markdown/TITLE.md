@@ -32,19 +32,20 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 
 # 今回の更新情報は？！
 
-## Pandocが2.6になったよ！
+## Pandocが~~2.6~~**2.7**になったよ！
 
-まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6をリリースしました。[^pandoc-2.6]
+まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6及び2.7をリリースしました。[^pandoc-2.6][^pandoc-2.7]
 更新内容はいろいろありますが、個人的に大事なのはPandoc式Markdown書式にタスクリストが
-追加されたことです[^pandoc-issue-3051]。
+追加されたこと(@2.6)です[^pandoc-issue-3051]。
 多くの出力で何らかの形で対応していて、Docxでは箇条書きの黒丸の直後に四角か四角にチェック(X)が入った
 文字が置かれます。PDF出力では黒丸の代わりに四角・チェック入り四角が使われます。
 
-もうひとつはコミケ95直前に遭遇して困った末にレポートした最高に意味わからんバグの修正です。
+もうひとつはコミケ95直前に遭遇して困った末にレポートした最高に意味わからんバグの修正です(@2.6)。
 どうやら上流ライブラリのバグだったようで、pandoc側では解析のためにスタックダンプまで
 行われていました[^pandoc-issue-5177]。
 
 [^pandoc-2.6]: https://github.com/jgm/pandoc/releases/tag/2.6
+[^pandoc-2.7]: https://github.com/jgm/pandoc/releases/tag/2.7
 [^pandoc-issue-3051]: https://github.com/jgm/pandoc/issues/3051
 [^pandoc-issue-5177]: https://github.com/jgm/pandoc/issues/5177
 
@@ -89,6 +90,8 @@ pandoc --print-default-data-file reference.docx > template.docx
 以下のようなPythonコードを使っています。動作には`python-docx`パッケージを必要とします。
 このスクリプトは**`template.docx`ファイルをWordで開く前に**実行してください。
 
+\\newpage
+
 ```python
 import docx
 
@@ -99,46 +102,47 @@ print(styles)
 ```
 
 実行結果を示します。日本語名と種類を併記します。
+"脚注参照"と"脚注文字列"に対応する英語スタイル名はなぜか*先頭が小文字にすり替わります*。
 
 Table: List of Styles
 
-| スタイル名                | 日本語名      | 種類 | 備考                                                     |
-|:-------------------------|:-------------|:-----|:--------------------------------------------------------|
-| `Abstract`               |              | 段落 |                                                         |
-| `Author`                 |              | 段落 |                                                         |
-| `Bibliography`           | 文献目録      | 段落 |                                                         |
-| `Block Text`             | ブロック      | 段落 |                                                         |
-| `Body Text`              | 本文          | 段落 |                                                         |
-| `Body Text Char`         |              | 文字 |                                                         |
-| `Caption`                | 図表番号      | 段落 |                                                         |
-| `Captioned Figure`       |              | 段落 |                                                         |
-| `Compact`                |              | 段落 | 番号なしリストに適用されるっぽい                            |
-| `Date`                   | 日付          | 段落 |                                                         |
-| `Default Paragraph Font` |              | 文字 |                                                         |
-| `Definition`             |              | 段落 |                                                         |
-| `Definition Term`        |              | 段落 |                                                         |
-| `Figure`                 |              | 段落 |                                                         |
-| `First Paragraph`        |              | 段落 | Pandoc独自スタイル。"標準"スタイルを継承                    |
-| `Footnote Reference`     | 脚注参照      | 段落 | Wordで開いて保存して再度実行すると`footnote reference`になる |
-| `Footnote Text`          | 脚注文字列    | 段落 | Wordで開いて保存して再度実行すると`footnote text`になる      |
-| `Heading 1`              | 見出し 1      | 段落 |                                                         |
-| `Heading 2`              | 見出し 2      | 段落 |                                                         |
-| `Heading 3`              | 見出し 3      | 段落 |                                                         |
-| `Heading 4`              | 見出し 4      | 段落 |                                                         |
-| `Heading 5`              | 見出し 5      | 段落 |                                                         |
-| `Heading 6`              | 見出し 6      | 段落 |                                                         |
-| `Heading 7`              | 見出し 7      | 段落 |                                                         |
-| `Heading 8`              | 見出し 8      | 段落 |                                                         |
-| `Heading 9`              | 見出し 9      | 段落 |                                                         |
-| `Hyperlink`              | ハイパーリンク | 段落 |                                                         |
-| `Image Caption`          |              | 段落 | 画像のタイトルに適用される                                  |
-| `Normal`                 | 標準          | 段落 |                                                         |
-| `Subtitle`               | 副題          | 段落 |                                                         |
-| `TOC Heading`            | 目次の見出し   | 段落 | スペース大事                                              |
-| `Table`                  |              | 表   |                                                         |
-| `Table Caption`          |              | 段落 | 表のタイトルに適用される                                   |
-| `Title`                  | 表題          | 段落 |                                                         |
-| `Verbatim Char`          |              | 文字 |                                                         |
+| スタイル名                | 日本語名      | 種類 | 備考                                 |
+|:-------------------------|:-------------|:----|:-------------------------------------|
+| `Abstract`               |              | 段落 |                                      |
+| `Author`                 |              | 段落 |                                      |
+| `Bibliography`           | 文献目録      | 段落 |                                      |
+| `Block Text`             | ブロック      | 段落 |                                      |
+| `Body Text`              | 本文         | 段落 |                                      |
+| `Body Text Char`         |              | 文字 |                                      |
+| `Caption`                | 図表番号      | 段落 |                                      |
+| `Captioned Figure`       |              | 段落 |                                      |
+| `Compact`                |              | 段落 | 番号なしリストに適用されるっぽい         |
+| `Date`                   | 日付         | 段落 |                                      |
+| `Default Paragraph Font` |              | 文字 |                                      |
+| `Definition`             |              | 段落 |                                      |
+| `Definition Term`        |              | 段落 |                                      |
+| `Figure`                 |              | 段落 |                                      |
+| `First Paragraph`        |              | 段落 | Pandoc独自スタイル。"標準"スタイルを継承 |
+| `Footnote Reference`     | 脚注参照      | 段落 | *`footnote`*にすり替わる　            |
+| `Footnote Text`          | 脚注文字列    | 段落 | `footnote`にすり替わる                |
+| `Heading 1`              | 見出し 1      | 段落 |                                      |
+| `Heading 2`              | 見出し 2      | 段落 |                                      |
+| `Heading 3`              | 見出し 3      | 段落 |                                      |
+| `Heading 4`              | 見出し 4      | 段落 |                                      |
+| `Heading 5`              | 見出し 5      | 段落 |                                      |
+| `Heading 6`              | 見出し 6      | 段落 |                                      |
+| `Heading 7`              | 見出し 7      | 段落 |                                      |
+| `Heading 8`              | 見出し 8      | 段落 |                                      |
+| `Heading 9`              | 見出し 9      | 段落 |                                      |
+| `Hyperlink`              | ハイパーリンク | 段落 |                                      |
+| `Image Caption`          |              | 段落 | 画像のタイトルに適用される              |
+| `Normal`                 | 標準         | 段落 |                                      |
+| `Subtitle`               | 副題         | 段落 |                                      |
+| `TOC Heading`            | 目次の見出し  | 段落 | スペース大事                          |
+| `Table`                  |              | 表  |                                      |
+| `Table Caption`          |              | 段落 | 表のタイトルに適用される                |
+| `Title`                  | 表題         | 段落 |                                      |
+| `Verbatim Char`          |              | 文字 |                                      |
 
 ## 熟成プラン１：Pandocデフォルトテンプレートを編集する
 
@@ -179,11 +183,11 @@ Table: List of Styles
 
 [^does-anyone-know-how-to-stop-this]: どなたかこれをやめさせる方法知りませんかね
 
-先述の通り、やんごとない状況下[^precious-situation]ではスタイル名が英語ではなくなる可能性があることから、
+先述の通り、やんごとない状況下[^specific-situation]ではスタイル名が英語ではなくなる可能性があることから、
 Wordは一律に非組込みスタイルに（擬似ランダムな）英数文字列のスタイルIDを与えます。これによってUIでは
 `TOC Heading`であるスタイルのIDが`af2`だったりする*重大事故*が起きます。
 
-[^precious-situation]: 非英語圏版またはOS
+[^specific-situation]: 非英語圏版またはOS
 
 手持ちのファイルがどんな目にあっているのかを参照するため以下のようなコードで確認してみました。
 段落スタイルのうちスタイルIDと"スタイル名から半角スペースを取り除いたもの"が一致しないものを表示します。
@@ -207,35 +211,35 @@ for s in st:
 
 \\newpage
 
-Table: スタイル名/スタイルID/短縮スタイル名 {#tbl:style-name-vs-id-looks-unrelated}
+Table: スタイル名/短縮スタイル名/スタイルID {#tbl:style-name-vs-id-looks-unrelated}
 
-| Style Name     | Style ID | Style Name (Shorten) |
-|:---------------|:---------|:---------------------|
-| Normal         | a0       | Normal               |
-| Heading 1      | 1        | Heading1             |
-| Heading 2      | 20       | Heading2             |
-| Heading 3      | 30       | Heading3             |
-| Heading 4      | 4        | Heading4             |
-| Heading 5      | 5        | Heading5             |
-| Body Text      | a4       | BodyText             |
-| Title          | a6       | Title                |
-| Subtitle       | a8       | Subtitle             |
-| Date           | aa       | Date                 |
-| Bibliography   | ab       | Bibliography         |
-| Block Text     | ac       | BlockText            |
-| footnote text  | ad       | footnotetext         |
-| Caption        | ae       | Caption              |
-| TOC Heading    | af2      | TOCHeading           |
-| toc 1          | 11       | toc1                 |
-| toc 2          | 26       | toc2                 |
-| toc 3          | 32       | toc3                 |
-| Balloon Text   | afc      | BalloonText          |
-| Quote          | aff0     | Quote                |
-| Intense Quote  | 22       | IntenseQuote         |
-| List Bullet    | a        | ListBullet           |
-| List Bullet 2  | 2        | ListBullet2          |
-| List Bullet 3  | 3        | ListBullet3          |
-| endnote text   | aff7     | endnotetext          |
+| Style Name     | Style Name (Shorten) | Style ID |
+|:---------------|:---------------------|:---------|
+| Normal         | Normal               | a0       |
+| Heading 1      | Heading1             | 1        |
+| Heading 2      | Heading2             | 20       |
+| Heading 3      | Heading3             | 30       |
+| Heading 4      | Heading4             | 4        |
+| Heading 5      | Heading5             | 5        |
+| Body Text      | BodyText             | a4       |
+| Title          | Title                | a6       |
+| Subtitle       | Subtitle             | a8       |
+| Date           | Date                 | aa       |
+| Bibliography   | Bibliography         | ab       |
+| Block Text     | BlockText            | ac       |
+| footnote text  | footnotetext         | ad       |
+| Caption        | Caption              | ae       |
+| TOC Heading    | TOCHeading           | af2      |
+| toc 1          | toc1                 | 11       |
+| toc 2          | toc2                 | 26       |
+| toc 3          | toc3                 | 32       |
+| Balloon Text   | BalloonText          | afc      |
+| Quote          | Quote                | aff0     |
+| Intense Quote  | IntenseQuote         | 22       |
+| List Bullet    | ListBullet           | a        |
+| List Bullet 2  | ListBullet2          | 2        |
+| List Bullet 3  | ListBullet3          | 3        |
+| endnote text   | endnotetext          | aff7     |
 
 ### その他諸々...は他誌に譲ります
 
@@ -263,8 +267,10 @@ git clone -b pythonize https://github.com/K4zuki/pandoc_misc.git
 
 ## Revision5.0（技術書典６） {-}
 
-- その後KSﾍﾟﾙｽｷｰの設定は是正され無事人権が回復しました。助かったｗ
+- その後も仕事PCはKSﾍﾟﾙｽｷｰに振り回されている
 - Win7の環境下でsvgbobから生成したPNGへのリンクが壊れるわけわからんバグに遭遇した
 けどそのうちOS入れ替わるしほっといてもいいよね？？
+- ｱｲｴｪｪ!右端!右端ﾅﾝﾃﾞ（ﾐｷﾚﾘｱﾘﾃｨｼｮｯｸ（表の幅がページ幅を超えてもセル内で折り返してくれない）を受けている）
+- Pandocの更新頻度ェ...
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
