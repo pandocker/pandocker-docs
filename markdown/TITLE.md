@@ -44,11 +44,11 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 どうやら上流ライブラリのバグだったようで、pandoc側では解析のためにスタックダンプまで
 行われていました[^pandoc-issue-5177]。
 
-[^pandoc-2.6]: https://github.com/jgm/pandoc/releases/tag/2.6
-[^pandoc-2.7]: https://github.com/jgm/pandoc/releases/tag/2.7
-[^pandoc-2.7.1]: https://github.com/jgm/pandoc/releases/tag/2.7.1
-[^pandoc-issue-3051]: https://github.com/jgm/pandoc/issues/3051
-[^pandoc-issue-5177]: https://github.com/jgm/pandoc/issues/5177
+[^pandoc-2.6]: <https://github.com/jgm/pandoc/releases/tag/2.6>
+[^pandoc-2.7]: <https://github.com/jgm/pandoc/releases/tag/2.7>
+[^pandoc-2.7.1]: <https://github.com/jgm/pandoc/releases/tag/2.7.1>
+[^pandoc-issue-3051]: <https://github.com/jgm/pandoc/issues/3051>
+[^pandoc-issue-5177]: <https://github.com/jgm/pandoc/issues/5177>
 
 ## python-docxが0.8.10になったよ！
 
@@ -57,7 +57,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 読者の中でpython-docxの更新に失敗したひとがいれば、まず`setuptools`を更新してみてください。
 いままでのところpython-docx側でsetuptoolsに対する依存関係を明示していないので、手動で更新する必要があります。
 
-[^python-docx-issue-594]: https://github.com/python-openxml/python-docx/issues/594
+[^python-docx-issue-594]: <https://github.com/python-openxml/python-docx/issues/594>
 
 # テンプレート作成のヒント集 {#sec:develop-template}
 
@@ -199,7 +199,7 @@ Listing: スタイルID抽出 {#lst:extract-style-id}
 
 ```python
 import docx
-from docx.enum.style import WD_STYLE_TYPE 
+from docx.enum.style import WD_STYLE_TYPE
 
 doc = docx.Document("ref.docx")
 st = [s for s in doc.styles if s.type==WD_STYLE_TYPE.PARAGRAPH]  # pick up paragraph styles
