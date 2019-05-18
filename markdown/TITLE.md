@@ -15,8 +15,8 @@
 対象環境にします。Windows10のOSバージョンは1803以降を前提にします。前作の手順に従い
 環境を構築してあるものとします。
 
-[^company-machine]: 筆者の会社支給のマシンは**いつの間にかKSﾍﾟﾙｽｷｰの設定が変更されて
-HTTPが遮断されWSL上のaptが効かなくなってて本当にどうしようもなくなりました**。
+[^company-machine]: 筆者の会社支給のマシンはついに第8世代Core-i7マシンにアップグレードされ、
+多くの悩みが解消しました。長かった...
 
 今更いうほどでもないですがこの本もDockerイメージとCIを使って原稿リポジトリからコンパイルされました。
 原稿とテンプレートDocxファイルの編集、フィルタの動作確認はMacで行われました。
@@ -32,9 +32,9 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 
 # 今回の更新情報は？！
 
-## Pandocが~~2.6~~ ~~2.7~~ **2.7.1**になったよ！
+## Pandocが~~2.6~~ ~~2.7~~ **2.7.2**になったよ！
 
-まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6、2.7及び2.7.1をリリースしました。[^pandoc-2.6][^pandoc-2.7][^pandoc-2.7.1]
+まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6、2.7、2.7.1及び2.7.2をリリースしました。[^pandoc-2.6][^pandoc-2.7][^pandoc-2.7.1][^pandoc-2.7.2]
 更新内容はいろいろありますが、個人的に大事なのはPandoc式Markdown書式にタスクリストが
 追加されたこと（\\@2.6）です[^pandoc-issue-3051]。
 多くの出力で何らかの形で対応していて、Docxでは箇条書きの黒丸の直後に四角か四角にチェック(X)が入った
@@ -47,6 +47,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 [^pandoc-2.6]: <https://github.com/jgm/pandoc/releases/tag/2.6>
 [^pandoc-2.7]: <https://github.com/jgm/pandoc/releases/tag/2.7>
 [^pandoc-2.7.1]: <https://github.com/jgm/pandoc/releases/tag/2.7.1>
+[^pandoc-2.7.2]: <https://github.com/jgm/pandoc/releases/tag/2.7.2>
 [^pandoc-issue-3051]: <https://github.com/jgm/pandoc/issues/3051>
 [^pandoc-issue-5177]: <https://github.com/jgm/pandoc/issues/5177>
 
@@ -59,6 +60,30 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 
 [^python-docx-issue-594]: <https://github.com/python-openxml/python-docx/issues/594>
 
+## WordドキュメントからMarkdownに逆変換するオプションを追加したよ
+
+よく考えたらいままでWordドキュメントから逆変換するための方策は用意して・されていませんでした。
+そこでreverse-docxオプションを足してみることにしました。^[オプションとか言ってますが
+実際はMakefileのターゲットです。]実際のPandocコマンドオプションは以下のようになっています：
+
+```makefile
+PANREVERSEDOCX = -f docx-styles+header_attributes
+PANREVERSEDOCX += -t markdown-simple_tables-multiline_tables+grid_tables+pipe_tables+header_attributes
+PANREVERSEDOCX += --filter=pantable2csv
+PANREVERSEDOCX += --extract-media=$(IMAGEDIR)
+PANREVERSEDOCX += --wrap=preserve
+PANREVERSEDOCX += --atx-headers
+
+reverse-docx:
+	$(PANDOC) $(PANREVERSEDOCX) $(TARGETDIR)/$(REVERSE_INPUT) -o $(MDDIR)/$(INPUT)
+```
+
+これに伴って`$(REVERSE_INPUT)`という変数を用意しました。変換元のWordファイル名を格納します。
+デフォルトでは`reverse-input.docx`です。`Out/reverse-input.docx`から`markdown/TITLE.md`に変換します。
+Wordドキュメント内の画像はPNGとして、`rIdxx.png`のような読みにくい名前で`images/media/`に保存されます。
+出力ファイル内の画像リンクもここを参照します。Wordの機能で作った図形は正しく保存されない可能性が
+高い^[Pandocの仕様です]ので注意が必要です。
+
 # テンプレート作成のヒント集 {#sec:develop-template}
 
 実はこの話題は別の方が研究中です。[参考書籍](#references)に列挙しておきます[^refer-doujinshi]。
@@ -66,7 +91,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 
 [^refer-doujinshi]: 参考書籍類は大半が同人誌です。狭い世界ですね。
 
-## 下準備：PandocのDocx対応状況を確認しよう
+## 下準備：PandocのDocx対応状況を確認する
 
 <!--この本はPandocを使うことを前提にしているので、PandocとDocx-->
 何も考えずとりあえずDocxに出力するだけなら以下のコマンドでできます。
@@ -83,9 +108,9 @@ pandoc --print-default-data-file reference.docx > template.docx
 ```
 
 で出力した`template.docx`を参照します。このファイルを叩き台にして独自テンプレートにするのが
-一般的な使われ方だと思います([@sec:develop-template])^[ここまでテンプレ]。
+一般的な使われ方だと思います^[ここまでの内容は各種ブログでよく言及されてますね]。
 
-## デフォルトテンプレートに採用されているスタイル {#sec:default-styles}
+## 下準備２：デフォルトテンプレートに採用されているスタイルを確認する {#sec:confirm-default-styles}
 
 先のコマンドで出力したデフォルトテンプレートファイルに採用されているスタイルをPythonで抽出してみました。
 以下のようなPythonコードを使っています。動作には`python-docx`パッケージを必要とします。
@@ -112,11 +137,11 @@ Table: List of Styles
 | `Abstract`               |              | 段落 |                                      |
 | `Author`                 |              | 段落 |                                      |
 | `Bibliography`           | 文献目録      | 段落 |                                      |
-| `Block Text`             | ブロック      | 段落 |                                      |
-| `Body Text`              | 本文         | 段落 |                                      |
-| `Body Text Char`         |              | 文字 |                                      |
+| `Block␣Text`             | ブロック      | 段落 |                                      |
+| `Body␣Text`              | 本文         | 段落 |                                      |
+| `Body␣Text␣Char`          |              | 文字 |                                      |
 | `Caption`                | 図表番号      | 段落 |                                      |
-| `Captioned Figure`       |              | 段落 |                                      |
+| `Captioned␣Figure`       |              | 段落 |                                      |
 | `Compact`                |              | 段落 | 番号なしリストに適用されるっぽい         |
 | `Date`                   | 日付         | 段落 |                                      |
 | `Default Paragraph Font` |              | 文字 |                                      |
@@ -124,7 +149,7 @@ Table: List of Styles
 | `Definition Term`        |              | 段落 |                                      |
 | `Figure`                 |              | 段落 |                                      |
 | `First Paragraph`        |              | 段落 | Pandoc独自スタイル。"標準"スタイルを継承 |
-| `Footnote Reference`     | 脚注参照      | 段落 | *`footnote`*にすり替わる　            |
+| `Footnote Reference`     | 脚注参照      | 段落 | *`footnote`*にすり替わる              |
 | `Footnote Text`          | 脚注文字列    | 段落 | `footnote`にすり替わる                |
 | `Heading 1`              | 見出し 1      | 段落 |                                      |
 | `Heading 2`              | 見出し 2      | 段落 |                                      |
@@ -147,37 +172,50 @@ Table: List of Styles
 
 ## 熟成プラン１：Pandocデフォルトテンプレートを編集する
 
-テンプレートファイルの変更は無制限に行うことができますが、それらの変更の継承具合（全て正しく
-適用されて出力されるか）はわかりません。一方でデフォルトファイルのスタイルや情報は基本的に
-継承されるということです。したがってデフォルト設定を大きく逸脱させないテンプレートにします。
+テンプレートファイルの変更は無制限に行うことができますが、それらの変更が出力ファイルに正しく継承されるかどうか
+はやってみないとわかりません。一方でデフォルトファイルのスタイルや情報は基本的に
+継承されるということです。したがってデフォルト設定を大きく逸脱させないテンプレートにします。つまり、
+上記のスタイルを編集するだけにとどめます。後述しますが編集は英語OS上で行うことを強くおすすめします。
+**またはOOXMLを直接編集しましょう**[^dive-into-deeper-hell]。
+
+[^dive-into-deeper-hell]: さらなる地獄に突入ですね。闇が深すぎますね。
 
 ## 熟成プラン２：Microsoft謹製テンプレートを編集する
 
-+:------------------------------------------------------------------------:+\
-| **警告：これ正直ライセンス的に微妙です。頒布するものには使わないほうがいい、かも** |\
-+--------------------------------------------------------------------------+\
++:------------------------------------------------------------------------:+
+| **警告：ライセンス周りを調査してません。頒布するものには使わないほうがいい、かも** |
++--------------------------------------------------------------------------+
 
 マイクロソフトさんはつよいので、Word/Excel/PowerPoint用のテンプレート例を公開しています[^templates-for-word]。
 このテンプレをダウンロードして流用してしまえというのがプランBです。
 
 [^templates-for-word]: <https://templates.office.com/en-US/templates-for-Word>
 
+これらのテンプレートの弱点は、ページサイズがアメリカ的**Letter**に統一されていることです。
+A4やB5に変更するとレイアウトが若干崩れます。こちらもまた英語OSでスタイルの編集を行うべきです。
+
 \\newpage
 
-### 英語のスタイル名を用意する
+## 英語のスタイル名を用意するべし {#prepare-english-style-name}
 
+なぜ英語OSを強くおすすめするのか、それは、Wordの多言語対応がタコだからですね。
 内部ではWordによる**やんごとなきスタイルID変更**が行われてしまっています。
 文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に
-変更されちゃうようです^[<https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>]。
+変更されちゃうようです[^persudo-random-style-id] 。
 こういうとこやぞWord...
 
-### スタイルIDとスタイル名が一致するとは限らない
+[^persudo-random-style-id]: <https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>
+
+### スタイルIDとは・スタイル名とは
 
 ちょっと用語を解説します。さきほどからスタイル名とかスタイルIDとか述べていますが、
 簡単に言うと、`スタイルID`がWord内部での参照IDで、`スタイル名`はユーザが目にするスタイルの名前です。
 これはユーザがスタイルを追加するときに名付ける名前も含みます。これらの文字列はたいてい等しいのですが、
-スタイル名に非英語圏の文字が使われている場合や半角スペースが含まれていると一致しなくなります。
-`Heading 1`スタイルのIDが`Heading1`だったりします。
+スタイル名に非英語圏の文字[^non-english-style-name]が使われている場合や半角スペースが含まれていると一致しなくなります。
+ちなみに英語圏版でも`Heading 1`スタイルのIDが`Heading1`だったりします。でも`Heading 1`は標準スタイル名だったりします。
+こういうとこやぞ(ry
+
+[^non-english-style-name]: 非英語圏の文字`=,UTF-8
 
 ややこしいことに、一部組み込みスタイル名は
 各言語に翻訳されてUIに表示されます[^does-anyone-know-how-to-stop-this]。
@@ -278,7 +316,3 @@ git clone -b pythonize https://github.com/K4zuki/pandoc_misc.git
 - Pandocの更新頻度ェ...
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
-
-+------+\
-| hoge |\
-+------+\
