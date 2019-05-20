@@ -20,11 +20,10 @@ author: "\_K4ZUKI\_"
 - Makefileでオプションとフィルタを管理
 - 叩き台としてのDockerイメージつくってみた
 - HTML / Word / PDFに出力
-- PyCharmで
 
 ## Pandocを見つけるまで（うろおぼえ）
 
-- 「Ｄ社のBluetooth ICが入ったモジュール試してみた」的な本
+- 「Ｄ社のICが入ったモジュール試してみた」的な本
 - gitbookを使ってみたがPDF出力のレイアウトに不満
 - *markdown pdf convert* で検索してPandocのサイトを発見
 
@@ -62,7 +61,8 @@ author: "\_K4ZUKI\_"
 
 ## 現環境(1)
 
-- Ubuntu16.04ベース *k4zuki/pandocker* <https://cloud.docker.com/repository/docker/k4zuki/pandocker-base>
+- *k4zuki/pandocker* <https://cloud.docker.com/repository/docker/k4zuki/pandocker>
+  - Ubuntu16.04ベース
 - レイヤを分割
   - LaTeX/Git/Makeとそれ以外
   - 派生イメージも比較的作りやすい
@@ -85,13 +85,15 @@ reverse-docx|pdf`
 ## 現環境(3)
 
 1. `pandoc-misc-init`
-2. `pandocker <command>`
+2. `pandocker <command>`またはシェルスクリプト(下記)
+3. PyCharmなどJetBrains系IDEなら*External Tools*を用意すればなんとか
 
 ```bash
 #!/usr/bin/env bash
 
 docker run --rm -v /$PWD:/workdir k4zuki/pandocker $@
 ```
+
 
 ## まとめ
 
