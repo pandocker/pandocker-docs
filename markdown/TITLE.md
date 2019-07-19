@@ -1,13 +1,15 @@
-\\newpage
+\newpage
 
-\\newpage
+\newpage
 
-\\toc
+\toc
 
 # まえがき {-}
 
 このドキュメントは、コミケ９５にて発表した「私的Markdown-PDF変換環境を紹介する本４」の内容を
-補完し、秘伝のWordドキュメントテンプレートを構築するガイドです。
+補完し、秘伝のWordドキュメントテンプレートを構築するガイド*を書こうと思ってましたが*、**闇があまりに深い**ので、
+話題を「Luaフィルタいっぱいつくってみた」と「Alpineベース環境復活してみた」に絞ることにしました。
+Wordの話はまた今度にします。
 
 ## 前提環境 {-}
 
@@ -32,26 +34,28 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 
 # 今回の更新情報は？！
 
-## Pandocが~~2.6~~ ~~2.7~~ **2.7.2**になったよ！
+## Pandocが~~2.6~~ ~~2.7~~ **2.7.3**に更新
 
-まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6、2.7、2.7.1及び2.7.2をリリースしました。[^pandoc-2.6][^pandoc-2.7][^pandoc-2.7.1][^pandoc-2.7.2]
+まずは上流プログラムの更新情報です。Pandoc本家がバージョン2.6〜2.7.3を
+リリースしました。[^pandoc-2.6][^pandoc-2.7][^pandoc-2.7.1][^pandoc-2.7.2][^pandoc-2.7.3]
 更新内容はいろいろありますが、個人的に大事なのはPandoc式Markdown書式にタスクリストが
-追加されたこと（\\@2.6）です[^pandoc-issue-3051]。
-多くの出力で何らかの形で対応していて、Docxでは箇条書きの黒丸の直後に四角か四角にチェック(X)が入った
+追加されたこと（\@2.6）です[^pandoc-issue-3051]。
+多くの出力形式で対応していて、Docxでは箇条書きの黒丸の直後に四角か四角にチェック(X)が入った
 文字が置かれます。PDF出力では黒丸の代わりに四角・チェック入り四角が使われます。
 
-もうひとつはコミケ95直前に遭遇して困った末にレポートした最高に意味わからんバグの修正です（\\@2.6）。
+もうひとつはコミケ95直前に遭遇して困った末にレポートした最高に意味わからんバグの修正です（\@2.6）。
 どうやら上流ライブラリのバグだったようで、pandoc側では解析のためにスタックダンプまで
 行われていました[^pandoc-issue-5177]。
 
-[^pandoc-2.6]: <https://github.com/jgm/pandoc/releases/tag/2.6>
-[^pandoc-2.7]: <https://github.com/jgm/pandoc/releases/tag/2.7>
+[^pandoc-2.6]: <https://github.com/jgm/pandoc/releases/tag/2.6/>
+[^pandoc-2.7]: <https://github.com/jgm/pandoc/releases/tag/2.7/>
 [^pandoc-2.7.1]: <https://github.com/jgm/pandoc/releases/tag/2.7.1>
 [^pandoc-2.7.2]: <https://github.com/jgm/pandoc/releases/tag/2.7.2>
+[^pandoc-2.7.3]: <https://github.com/jgm/pandoc/releases/tag/2.7.3>
 [^pandoc-issue-3051]: <https://github.com/jgm/pandoc/issues/3051>
 [^pandoc-issue-5177]: <https://github.com/jgm/pandoc/issues/5177>
 
-## python-docxが0.8.10になったよ！
+## python-docxが0.8.10に更新
 
 *pandocker*内で後処理に使っているpython-docxのバージョンが上がったんですが、筆者を含む数名が
 インストール不能状態になりました[^python-docx-issue-594]。結果的に`setuptools`のバージョンが古すぎたせいでした。
@@ -60,7 +64,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 
 [^python-docx-issue-594]: <https://github.com/python-openxml/python-docx/issues/594>
 
-## WordドキュメントからMarkdownに逆変換するオプションを追加したよ
+## WordドキュメントからMarkdownに逆変換するオプションを追加
 
 よく考えたらいままでWordドキュメントから逆変換するための方策は用意して・されていませんでした。
 そこでreverse-docxオプションを足してみることにしました。^[オプションとか言ってますが
@@ -84,235 +88,163 @@ Wordドキュメント内の画像はPNGとして、`rIdxx.png`のような読�
 出力ファイル内の画像リンクもここを参照します。Wordの機能で作った図形は正しく保存されない可能性が
 高い^[Pandocの仕様です]ので注意が必要です。
 
-# テンプレート作成のヒント集 {#sec:develop-template}
+## Ubuntu18.04系ブランチを追加 {#sec:ubuntu18-base-image}
 
-実はこの話題は別の方が研究中です。[参考書籍](#references)に列挙しておきます[^refer-doujinshi]。
-内容を見てみると自分とほとんど同じことしてますね。この本の存在意義が薄れちゃいますね。
+従来の安定版Ubuntu16.04ベースのイメージに加えて、Luaフィルタの実験等のためにUbunutu18.04ベースの
+環境を作り始めました[^base-image-branches]。
 
-[^refer-doujinshi]: 参考書籍類は大半が同人誌です。狭い世界ですね。
+[^base-image-branches]: これに伴い、pandocker-baseイメージをUbuntu16系・18系に分けています。
 
-## 下準備：PandocのDocx対応状況を確認する
+従来の16系ベースイメージは`k4zuki/pandocker-base:latest`、
+18系は`k4zuki/pandocker-base:18.04`を使用してください。
 
-<!--この本はPandocを使うことを前提にしているので、PandocとDocx-->
-何も考えずとりあえずDocxに出力するだけなら以下のコマンドでできます。
+`docker pull k4zuki/pandocker:lua-filter`で入手できます。
+
+[^multi-stage-build]: DockerのMulti Stage Build 機能を使っています。
+
+# Pandocker-Alpineの研究（？）を再開した話 {#sec:pandocker-alpine-restart}
+
+以前行っていたAlpine LinuxベースのPandocker環境研究を再開しました。前回断念したときは
+3.6をベースイメージにしていましたが、本家の更新が進んで現在は3.10系です。`docker pull k4zuki/pandocker-alpine`で
+入手できます。
+
+Pandocの実行ファイルは本家イメージをコピーしてくるようになっていて[^multi-stage-build]、
+現在は`pandoc/latex:2.7.3`を使っています。その他にも、Rictyフォントを`Ubuntu:18.04`から
+拾ってきています。
+
+一つ問題があって、pandoc-crossrefフィルタのバージョンがかなり古いものになっています。
+中断する前にビルドしていたのですが、やり方を失念しました。
+
+# Luaフィルタでpanflute系フィルタを置き換えた話
+
+従来Pythonライブラリ"panflute"を使用した各種フィルタを作ってきましたが、特にWSLで使うときに
+一部フィルタが**耐えられない遅さ**[^native-linux-reasonable-speed]だったのでLuaフィルタで高速化しました。
+
+[^native-linux-reasonable-speed]: WSLで遅いのはファイルシステムにアクセスしているからで、
+ネイティブまたはVMのLinux上では実用的な速さです。たぶん。
+
+## インストール
+
+インストールはpipで行います：
 
 ```bash
-pandoc -t docx -o docx.docx markdown.md
+$ pip install git+https://github.com/pandocker/pandocker-lua-filters.git
 ```
 
-出力ファイル`docx.docx`はデフォルトのスタイルを適用したものになります。デフォルトのスタイルが
-どういうものかを確認するには
-
-```bash
-pandoc --print-default-data-file reference.docx > template.docx
-```
-
-で出力した`template.docx`を参照します。このファイルを叩き台にして独自テンプレートにするのが
-一般的な使われ方だと思います^[ここまでの内容は各種ブログでよく言及されてますね]。
-
-## 下準備２：デフォルトテンプレートに採用されているスタイルを確認する {#sec:confirm-default-styles}
-
-先のコマンドで出力したデフォルトテンプレートファイルに採用されているスタイルをPythonで抽出してみました。
-以下のようなPythonコードを使っています。動作には`python-docx`パッケージを必要とします。
-このスクリプトは**`template.docx`ファイルをWordで開く前に**実行してください。
-
-\\newpage
+インストール先はPythonの設定によりますが、`/usr/local/share/lua/5.3/pandocker` または
+`/usr/share/lua/5.3/pandocker`です。`/usr/local`か`/usr`かはPythonコンソールで
 
 ```python
-import docx
+import site
 
-doc = docx.Document("template.docx") # default template
-styles = [s.name for s in doc.styles]
-styles.sort() # sort by alphabetic order
-print(styles)
+print(site.getsitepackages()[0].split("/lib/")[0])
+# site.getsitepackages() -> ['/usr/local/lib/python3.6/dist-packages','/usr/lib/...']
+# site.getsitepackages()[0] -> '/usr/local/lib/python3.6/dist-packages'
+# site.getsitepackages()[0].split("/lib/") -> ['/usr/local','python3.6/dist-packages']
+# site.getsitepackages()[0].split("/lib/")[0] -> '/usr/local'
 ```
 
-実行結果を示します。日本語名と種類を併記します。
-"脚注参照"と"脚注文字列"に対応する英語スタイル名はなぜか*先頭が小文字にすり替わります*。
+などと入れてみると参考になります。手元で試したところ、Ubuntu系は`/usr/local`、Alpineは(APKで導入した場合)`/usr`を返しました。
+Macはhomebrewで導入したので`/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6`
+などでした。
 
-Table: List of Styles
+## 各フィルタの解説（呼び出し方とか使いどころとか）
 
-| スタイル名                | 日本語名      | 種類 | 備考                                 |
-|:-------------------------|:-------------|:----|:-------------------------------------|
-| `Abstract`               |              | 段落 |                                      |
-| `Author`                 |              | 段落 |                                      |
-| `Bibliography`           | 文献目録      | 段落 |                                      |
-| `Block␣Text`             | ブロック      | 段落 |                                      |
-| `Body␣Text`              | 本文         | 段落 |                                      |
-| `Body␣Text␣Char`          |              | 文字 |                                      |
-| `Caption`                | 図表番号      | 段落 |                                      |
-| `Captioned␣Figure`       |              | 段落 |                                      |
-| `Compact`                |              | 段落 | 番号なしリストに適用されるっぽい         |
-| `Date`                   | 日付         | 段落 |                                      |
-| `Default Paragraph Font` |              | 文字 |                                      |
-| `Definition`             |              | 段落 |                                      |
-| `Definition Term`        |              | 段落 |                                      |
-| `Figure`                 |              | 段落 |                                      |
-| `First Paragraph`        |              | 段落 | Pandoc独自スタイル。"標準"スタイルを継承 |
-| `Footnote Reference`     | 脚注参照      | 段落 | *`footnote`*にすり替わる              |
-| `Footnote Text`          | 脚注文字列    | 段落 | `footnote`にすり替わる                |
-| `Heading 1`              | 見出し 1      | 段落 |                                      |
-| `Heading 2`              | 見出し 2      | 段落 |                                      |
-| `Heading 3`              | 見出し 3      | 段落 |                                      |
-| `Heading 4`              | 見出し 4      | 段落 |                                      |
-| `Heading 5`              | 見出し 5      | 段落 |                                      |
-| `Heading 6`              | 見出し 6      | 段落 |                                      |
-| `Heading 7`              | 見出し 7      | 段落 |                                      |
-| `Heading 8`              | 見出し 8      | 段落 |                                      |
-| `Heading 9`              | 見出し 9      | 段落 |                                      |
-| `Hyperlink`              | ハイパーリンク | 段落 |                                      |
-| `Image Caption`          |              | 段落 | 画像のタイトルに適用される              |
-| `Normal`                 | 標準         | 段落 |                                      |
-| `Subtitle`               | 副題         | 段落 |                                      |
-| `TOC Heading`            | 目次の見出し  | 段落 | スペース大事                          |
-| `Table`                  |              | 表  |                                      |
-| `Table Caption`          |              | 段落 | 表のタイトルに適用される                |
-| `Title`                  | 表題         | 段落 |                                      |
-| `Verbatim Char`          |              | 文字 |                                      |
+このフィルタ集に含まれるフィルタはLaTeX出力専用・DOCX出力専用・汎用の3種に大別されます。また
+大半は外部ライブラリを必要としませんが、一部既存のLuaライブラリを利用しているものもあります。
 
-## 熟成プラン１：Pandocデフォルトテンプレートを編集する
+### `csv2table.lua`
 
-テンプレートファイルの変更は無制限に行うことができますが、それらの変更が出力ファイルに正しく継承されるかどうか
-はやってみないとわかりません。一方でデフォルトファイルのスタイルや情報は基本的に
-継承されるということです。したがってデフォルト設定を大きく逸脱させないテンプレートにします。つまり、
-上記のスタイルを編集するだけにとどめます。後述しますが編集は英語OS上で行うことを強くおすすめします。
-**またはOOXMLを直接編集しましょう**[^dive-into-deeper-hell]。
+CSVファイルへのリンクを表に変換します。`pantable-inline`フィルタの置き換えです。
+`pantable-inline`に比べて**WSL上での処理が有意に速くなります**。
+部分切り出し・各列の幅・アライメント・ヘッダ列の有無の指定ができます。
 
-[^dive-into-deeper-hell]: さらなる地獄に突入ですね。闇が深すぎますね。
+アライメント未指定時はすべて`D`が指定されます。表の列数に比べて指定した列数が少ないときは`D`で補完します。
 
-## 熟成プラン２：Microsoft謹製テンプレートを編集する
+列幅指定の合計は1.0を超えてもエラーにはなりませんが、ページから表がはみ出す可能性があります。
+列幅指定を省略した時は、Pandocがセルの内容に基づいていい感じにバランスを取ります。
+表の列数に比べて指定した列数が少ないときは`0.0`で補完します。
 
-+:------------------------------------------------------------------------:+
-| **警告：ライセンス周りを調査してません。頒布するものには使わないほうがいい、かも** |
-+--------------------------------------------------------------------------+
+- **`汎用`**
+- 外部ライブラリ依存：**`Penlight`**および**`csv`**
+- オプション：
+  - `subset_from=(y1,x1)`：部分切り出し始点(y1,x1)の指定。省略可能
+  - `subset_to=(y2,x2)`：部分切り出し終点(y2,x2)の指定。省略可能
+  - `alignment=DDD...`：列ごとのの幅寄せの指定。L(左寄せ) / C(中央寄せ) / R(右寄せ)またはD(デフォルト)。省略可能（すべて`D`扱い）
+  - `width=[0,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0`扱い)
 
-マイクロソフトさんはつよいので、Word/Excel/PowerPoint用のテンプレート例を公開しています[^templates-for-word]。
-このテンプレをダウンロードして流用してしまえというのがプランBです。
+#### 文法
 
-[^templates-for-word]: <https://templates.office.com/en-US/templates-for-Word>
+リンクにtableクラスをつけます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
 
-これらのテンプレートの弱点は、ページサイズがアメリカ的**Letter**に統一されていることです。
-A4やB5に変更するとレイアウトが若干崩れます。こちらもまた英語OSでスタイルの編集を行うべきです。
-
-\\newpage
-
-## 英語のスタイル名を用意するべし {#prepare-english-style-name}
-
-なぜ英語OSを強くおすすめするのか、それは、Wordの多言語対応がタコだからですね。
-内部ではWordによる**やんごとなきスタイルID変更**が行われてしまっています。
-文字コード周辺の問題で、UTF8なスタイル名を見つけるとスタイルIDが適当なランダムっぽい値に
-変更されちゃうようです[^persudo-random-style-id] 。
-こういうとこやぞWord...
-
-[^persudo-random-style-id]: <https://github.com/jgm/pandoc/issues/5074#issuecomment-440938368>
-
-### スタイルIDとは・スタイル名とは
-
-ちょっと用語を解説します。さきほどからスタイル名とかスタイルIDとか述べていますが、
-簡単に言うと、`スタイルID`がWord内部での参照IDで、`スタイル名`はユーザが目にするスタイルの名前です。
-これはユーザがスタイルを追加するときに名付ける名前も含みます。これらの文字列はたいてい等しいのですが、
-スタイル名に非英語圏の文字[^non-english-style-name]が使われている場合や半角スペースが含まれていると一致しなくなります。
-ちなみに英語圏版でも`Heading 1`スタイルのIDが`Heading1`だったりします。でも`Heading 1`は標準スタイル名だったりします。
-こういうとこやぞ(ry
-
-[^non-english-style-name]: 非英語圏の文字`=,UTF-8
-
-ややこしいことに、一部組み込みスタイル名は
-各言語に翻訳されてUIに表示されます[^does-anyone-know-how-to-stop-this]。
-例えば日本語版でdocxファイルを新規作成して、適当な日本語文字列にデフォルトの`表題`スタイルを適用し、
-保存したものを英語版で開くと`Title`と表示されます。
-
-[^does-anyone-know-how-to-stop-this]: どなたかこれをやめさせる方法知りませんかね
-
-先述の通り、やんごとない状況下[^specific-situation]ではスタイル名が英語ではなくなる可能性があることから、
-Wordは一律に非組込みスタイルに（擬似ランダムな）英数文字列のスタイルIDを与えます。これによってUIでは
-`TOC Heading`であるスタイルのIDが`af2`だったりする*重大事故*が起きます。
-
-[^specific-situation]: 非英語圏版またはOS
-
-手持ちのファイルがどんな目にあっているのかを参照するため以下のようなコードで確認してみました。
-段落スタイルのうちスタイルIDと"スタイル名から半角スペースを取り除いたもの"が一致しないものを表示します。
-
-Listing: スタイルID抽出 {#lst:extract-style-id}
-
-```python
-import docx
-from docx.enum.style import WD_STYLE_TYPE
-
-doc = docx.Document("ref.docx")
-st = [s for s in doc.styles if s.type==WD_STYLE_TYPE.PARAGRAPH]  # pick up paragraph styles
-for s in st:
-    name= s.name
-    short = name.replace(" ", "")
-    if s.style_id != short:
-        print(name, s.style_id, short)
+```markdown
+<!--空行-->
+[表のタイトル](path/to/file){.table subset_from=(y1,x1) subset_to=(y2,x2) alignment=DDDCC width=[0.2,0.2,0.2]}
+<!--空行-->
 ```
 
-結果は次ページの通り、一見では命名法則があるのかどうかもわかりません。
+### `listingtable.lua`
 
-\\newpage
+任意のテキストファイルへのリンクをコードブロックとして引用します。
 
-Table: スタイル名/短縮スタイル名/スタイルID {#tbl:style-name-vs-id-looks-unrelated}
+### `preprocess.lua`
 
-| Style Name     | Style Name (Shorten) | Style ID |
-|:---------------|:---------------------|:---------|
-| Normal         | Normal               | a0       |
-| Heading 1      | Heading1             | 1        |
-| Heading 2      | Heading2             | 20       |
-| Heading 3      | Heading3             | 30       |
-| Heading 4      | Heading4             | 4        |
-| Heading 5      | Heading5             | 5        |
-| Body Text      | BodyText             | a4       |
-| Title          | Title                | a6       |
-| Subtitle       | Subtitle             | a8       |
-| Date           | Date                 | aa       |
-| Bibliography   | Bibliography         | ab       |
-| Block Text     | BlockText            | ac       |
-| footnote text  | footnotetext         | ad       |
-| Caption        | Caption              | ae       |
-| TOC Heading    | TOCHeading           | af2      |
-| toc 1          | toc1                 | 11       |
-| toc 2          | toc2                 | 26       |
-| toc 3          | toc3                 | 32       |
-| Balloon Text   | BalloonText          | afc      |
-| Quote          | Quote                | aff0     |
-| Intense Quote  | IntenseQuote         | 22       |
-| List Bullet    | ListBullet           | a        |
-| List Bullet 2  | ListBullet2          | 2        |
-| List Bullet 3  | ListBullet3          | 3        |
-| endnote text   | endnotetext          | aff7     |
+原稿ファイルを連結します。GPPの置き換えです。文法が変わりますが**バックスラッシュを二重にする必要がなくなります**。
+多重インクルードにも対応します。取り込まれたファイルはMarkdownファイルとしてPandoc内部形式にマージされます。
 
-### その他諸々...は他誌に譲ります
+- **`汎用`**
+- 外部ライブラリ依存：**`なし`** もしかしたら**`Penlight.List`**
+- オプション：**`なし`**
 
-- ページサイズの設定
-- 余白の設定
-- ヘッダ・フッタの設定
-- 見出しに連番をつける・つけない
-- 見出し１の前に改ページ
+#### 文法
 
-これらの設定方法は主に参考書籍(2)に書かれていることを踏襲します。
+ヘッダにC言語風のinclude節をつけるだけです。ヘッダの深さは制限しません。`#include`
+と`"ファイル名.md"`の間には*必ず*スペースを入れる必要があります。
 
-### 秘伝のテンプレートないの？
-
-*pandocker*の組み込み用に簡単なものは用意してあります。GitHub[^pandoc-misc-repository]
-から**pythonize**ブランチをクローンするか、リポジトリをZipでダウンロード・解凍しブランチを切り替えて
-入手してください。
-
-```bash
-git clone -b pythonize https://github.com/K4zuki/pandoc_misc.git
+```markdown
+# #include "連結したいファイル名.md"
 ```
 
-[^pandoc-misc-repository]: <https://github.com/K4zuki/pandoc_misc/tree/pythonize>
+### `removable-note.lua`
+
+- **`汎用`**
+
+### `svgcomvert.lua`
+
+- **`汎用`**
+
+### `wavedrom.lua`
+
+- **`汎用`**
+
+### `docx-pagebreak-toc.lua`
+
+- **DOCX出力専用**
+
+### `docx-unnumberedheadings.lua`
+
+- **DOCX出力専用**
+
+### `tex-landscape.lua`
+
+- **LaTeX出力専用**
+
+### `tex-rowcolors-reset.lua`
+
+- **LaTeX出力専用**
+
+# #include "appendix.md" {.unnumbered parse=false}
 
 # 更新履歴 {-}
 
-## Revision5.0（技術書典６） {-}
+## Revision5.0（C96） {-}
 
 - その後も仕事PCはKSﾍﾟﾙｽｷｰに振り回されているけどプロキシ設定でhttp遮断問題は回避できるようになったので当面は大丈夫そう
 - 本業でいしころころころしてて書く時間がないんだょ
 - Win7の環境下でsvgbobから生成したPNGへのリンクが壊れるわけわからんバグに遭遇した
 けどそのうちOS入れ替わるしほっといてもいいよね？？
-- ｱｲｴｪｪ!右端!右端ﾅﾝﾃﾞ（ﾐｷﾚﾘｱﾘﾃｨｼｮｯｸ（表の幅がページ幅を超えてもセル内で折り返してくれない）を受けている）
+- ｱｲｴｪｪ!右端!右端ﾅﾝﾃﾞ（ﾐｷﾚﾘｱﾘﾃｨｼｮｯｸ（pipe_tablesを使うとの幅がページ幅を超えてもセル内で折り返してくれない）を受けている）
 - Pandocの更新頻度ェ...
+- 7月18日の京アニ放火テロ事件で原稿が手につかない
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
