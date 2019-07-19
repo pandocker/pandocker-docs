@@ -14,7 +14,7 @@ jobs:
             mkdir build
             cd build
             wget -c https://github.com/tcnksm/ghr/releases/download/v0.5.4/ghr_v0.5.4_linux_amd64.zip
-            unzip -e ghr_v0.5.4_linux_amd64.zip
+            unzip ghr_v0.5.4_linux_amd64.zip
             cp ./ghr /usr/local/bin
       - run:
           name: Prepare QR code for this build
