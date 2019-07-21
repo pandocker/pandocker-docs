@@ -7,7 +7,7 @@
 # まえがき {-}
 
 このドキュメントは、コミケ９５にて発表した「私的Markdown-PDF変換環境を紹介する本４」の内容を
-補完し、秘伝のWordドキュメントテンプレートを構築するガイド*を書こうと思ってましたが*、**闇があまりに深い**ので、
+補完し、秘伝のWordドキュメントテンプレートを構築するガイド*にするつもりでしたが*、**闇があまりに深い**ので、
 話題を「Luaフィルタいっぱいつくってみた」と「Alpineベース環境復活してみた」に絞ることにしました。
 Wordの話はまた今度にします。
 
@@ -43,7 +43,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 多くの出力形式で対応していて、Docxでは箇条書きの黒丸の直後に四角か四角にチェック(X)が入った
 文字が置かれます。PDF出力では黒丸の代わりに四角・チェック入り四角が使われます。
 
-もうひとつはコミケ95直前に遭遇して困った末にレポートした最高に意味わからんバグの修正です（\@2.6）。
+もうひとつはコミケ95直前に遭遇して困った末にレポートした、最高に意味わからんバグの修正です（\@2.6）。
 どうやら上流ライブラリのバグだったようで、pandoc側では解析のためにスタックダンプまで
 行われていました[^pandoc-issue-5177]。
 
@@ -58,7 +58,7 @@ WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコ
 ## python-docxが0.8.10に更新
 
 *pandocker*内で後処理に使っているpython-docxのバージョンが上がったんですが、筆者を含む数名が
-インストール不能状態になりました[^python-docx-issue-594]。結果的に`setuptools`のバージョンが古すぎたせいでした。
+インストール不能状態になりました[^python-docx-issue-594]。結果的に*setuptools*のバージョンが古すぎたせいでした。
 読者の中でpython-docxの更新に失敗したひとがいれば、まず`setuptools`を更新してみてください。
 いままでのところpython-docx側でsetuptoolsに対する依存関係を明示していないので、手動で更新する必要があります。
 
@@ -98,9 +98,9 @@ Wordドキュメント内の画像はPNGとして、`rIdxx.png`のような読�
 従来の16系ベースイメージは`k4zuki/pandocker-base:latest`、
 18系は`k4zuki/pandocker-base:18.04`を使用してください。
 
-`docker pull k4zuki/pandocker:lua-filter`で入手できます。
+18系Pandockerは`docker pull k4zuki/pandocker:lua-filter`で入手できます。
 
-[^multi-stage-build]: DockerのMulti Stage Build 機能を使っています。
+## Pandoc公式サイトの実行バイナリはスタティックビルドだった
 
 # Pandocker-Alpineの研究（？）を再開した話 {#sec:pandocker-alpine-restart}
 
@@ -112,16 +112,32 @@ Pandocの実行ファイルは本家イメージをコピーしてくるよう�
 現在は`pandoc/latex:2.7.3`を使っています。その他にも、Rictyフォントを`Ubuntu:18.04`から
 拾ってきています。
 
-一つ問題があって、pandoc-crossrefフィルタのバージョンがかなり古いものになっています。
-中断する前にビルドしていたのですが、やり方を失念しました。
+[^multi-stage-build]: DockerのMulti Stage Build 機能を使っています。
+
+一つ問題があって、pandoc-crossrefフィルタのバージョンがやや古いもの(`0.3.0.0`)になっています。
+pandoc-crossrefフィルタをソースからインストールするブランチを切ってみたのですが、pandoc-crossrefが
+依存しているPandoc本体のビルドに2時間もかかってしまってやってられないですね。
 
 # Luaフィルタでpanflute系フィルタを置き換えた話
 
-従来Pythonライブラリ"panflute"を使用した各種フィルタを作ってきましたが、特にWSLで使うときに
-一部フィルタが**耐えられない遅さ**[^native-linux-reasonable-speed]だったのでLuaフィルタで高速化しました。
+従来のPythonライブラリ"panflute"を使用した各種フィルタを使った、特にWSLで使うときに
+一部フィルタが**耐えられない遅さ**[^native-linux-reasonable-speed]
+であったPandockerがLuaフィルタに移植したことで高速化されました。
 
-[^native-linux-reasonable-speed]: WSLで遅いのはファイルシステムにアクセスしているからで、
+[^native-linux-reasonable-speed]: WSLで遅いのはファイルシステムに*Write*アクセスしているからで、
 ネイティブまたはVMのLinux上では実用的な速さです。たぶん。
+
+## 移植元のPanflute系フィルタ
+
+移植元のフィルタは複数のリポジトリに分散しています。PyPIには未登録なものがほとんどです。
+
+- `pandocker-filters`
+  - `pandocker-bitfield-inline`
+  - `pandocker-listingtable-inline`
+  - `pandocker-wavedrom-inline`
+  - `pandocker-pantable-inline`
+- `pandoc-docx-pagebreak-py`
+  - `pandoc-docx-pagebreakpy`
 
 ## インストール
 
@@ -134,7 +150,7 @@ $ pip install git+https://github.com/pandocker/pandocker-lua-filters.git
 インストール先はPythonの設定によりますが、`/usr/local/share/lua/5.3/pandocker` または
 `/usr/share/lua/5.3/pandocker`です。`/usr/local`か`/usr`かはPythonコンソールで
 
-```python
+`````python
 import site
 
 print(site.getsitepackages()[0].split("/lib/")[0])
@@ -142,7 +158,7 @@ print(site.getsitepackages()[0].split("/lib/")[0])
 # site.getsitepackages()[0] -> '/usr/local/lib/python3.6/dist-packages'
 # site.getsitepackages()[0].split("/lib/") -> ['/usr/local','python3.6/dist-packages']
 # site.getsitepackages()[0].split("/lib/")[0] -> '/usr/local'
-```
+`````
 
 などと入れてみると参考になります。手元で試したところ、Ubuntu系は`/usr/local`、Alpineは(APKで導入した場合)`/usr`を返しました。
 Macはhomebrewで導入したので`/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6`
@@ -150,12 +166,17 @@ Macはhomebrewで導入したので`/usr/local/Cellar/python/3.6.5/Frameworks/Py
 
 ## 各フィルタの解説（呼び出し方とか使いどころとか）
 
-このフィルタ集に含まれるフィルタはLaTeX出力専用・DOCX出力専用・汎用の3種に大別されます。また
-大半は外部ライブラリを必要としませんが、一部既存のLuaライブラリを利用しているものもあります。
+このフィルタライブラリに含まれるフィルタはLaTeX出力専用・DOCX出力専用・汎用の3種に大別されます。また
+大半は外部ライブラリを必要としませんが、一部既存のLua・Pythonライブラリを利用しているものもあります。
+
+### `metadata-file.yaml`
+
+このフィルタライブラリで共用されている、メタデータのデフォルト値を収めたファイルです。
+このファイルはLuaファイルと同じディレクトリに置かれます。デフォルト値は原稿ファイル内で再定義することで上書きできます。
 
 ### `csv2table.lua`
 
-CSVファイルへのリンクを表に変換します。`pantable-inline`フィルタの置き換えです。
+CSVファイルへのリンクを表に変換します。`pandocker-pantable-inline`フィルタの置き換えです。
 `pantable-inline`に比べて**WSL上での処理が有意に速くなります**。
 部分切り出し・各列の幅・アライメント・ヘッダ列の有無の指定ができます。
 
@@ -166,14 +187,19 @@ CSVファイルへのリンクを表に変換します。`pantable-inline`フィ
 表の列数に比べて指定した列数が少ないときは`0.0`で補完します。
 
 - **`汎用`**
-- 外部ライブラリ依存：**`Penlight`**および**`csv`**
+- 外部Luaライブラリ依存：
+  - **`Penlight`**： `luarocks install penlight`
+  - **`csv`**： `luarocks install csv`
+- 外部Pythonライブラリ依存：**`なし`**
 - オプション：
   - `subset_from=(y1,x1)`：部分切り出し始点(y1,x1)の指定。省略可能
   - `subset_to=(y2,x2)`：部分切り出し終点(y2,x2)の指定。省略可能
-  - `alignment=DDD...`：列ごとのの幅寄せの指定。L(左寄せ) / C(中央寄せ) / R(右寄せ)またはD(デフォルト)。省略可能（すべて`D`扱い）
+  - `alignment=DDD...`：列ごとのの幅寄せの指定。L(左寄せ) / C(中央寄せ) / R(右寄せ)またはD(デフォルト)。
+省略可能（すべて`D`扱い）
   - `width=[0,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0`扱い)
+  - `header=true|false`：最初の行をヘッダとして扱うかどうかを指定する。省略可能(`true`)
 
-#### 文法
+#### 記法
 
 リンクにtableクラスをつけます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
 
@@ -185,18 +211,29 @@ CSVファイルへのリンクを表に変換します。`pantable-inline`フィ
 
 ### `listingtable.lua`
 
-任意のテキストファイルへのリンクをコードブロックとして引用します。
+任意のテキストファイルへのリンクをコードブロックとして引用します。`pandocker-listingtable-inline`フィルタの移植版です。
+部分切り出し・ファイルタイプ指定・行番号表示位置指定・表示開始行番号の指定ができます。
+
+- **`汎用`**
+- 外部ライブラリ依存：**`なし`**
+- オプション：
+  - `from=y1`： 部分切り出し開始行の指定。省略可能（`1`）
+  - `startFrom=y3`： 表示開始行番号の指定。省略可能（`y3=y1`）
+  - `to=y2`： 部分切り出し終了行の指定。省略可能（`-1`）
+  - `type`： ファイルタイプの指定。省略可能（`plain`）
+  - `numbers=left|right`： 行番号表示位置の指定。省略可能（`left`）
 
 ### `preprocess.lua`
 
 原稿ファイルを連結します。GPPの置き換えです。文法が変わりますが**バックスラッシュを二重にする必要がなくなります**。
-多重インクルードにも対応します。取り込まれたファイルはMarkdownファイルとしてPandoc内部形式にマージされます。
+多重インクルードにも対応します。取り込まれたファイルは*Markdownファイルとして*Pandoc内部形式にマージされます。
 
 - **`汎用`**
-- 外部ライブラリ依存：**`なし`** もしかしたら**`Penlight.List`**
+- 外部ライブラリ依存：**`なし`**
+<!--- もしかしたら**`Penlight.List`**-->
 - オプション：**`なし`**
 
-#### 文法
+#### 記法
 
 ヘッダにC言語風のinclude節をつけるだけです。ヘッダの深さは制限しません。`#include`
 と`"ファイル名.md"`の間には*必ず*スペースを入れる必要があります。
@@ -207,31 +244,53 @@ CSVファイルへのリンクを表に変換します。`pantable-inline`フィ
 
 ### `removable-note.lua`
 
+メタデータ`rmnote`をフラグとして、原稿内の`rmnote`クラスのDiv節をビルド時に削除します。
+デフォルト値は**`false`**です。
+
 - **`汎用`**
+- 外部ライブラリ依存：**`なし`**
+- オプション： なし
 
 ### `svgcomvert.lua`
 
+SVG画像へのリンクを探し出してPNGまたはPDFに変換します。出力形式（`FORMAT`の値）で変換するかどうかを判断します。
+画像の変換には`rsvg-convert`を使うので、予めインストールしパスを通しておく必要があります。
+Linuxなら`librsvg-bin`などの名前でパッケージが用意されていると思います。
+
 - **`汎用`**
+- 外部ライブラリ依存：
+  - **`rsvg-convert` / `librsvg`**： `apt install librsvg-bin`など
 
 ### `wavedrom.lua`
 
+`pandocker-wabedrom-inline`と`pandocker-bitfield-inline`の置き換えです。
+WavedromのPythonポーティング版"wavedrompy"に依存します。
+
 - **`汎用`**
+- 外部ライブラリ依存：
+  - **`wavedrompy`**： `pip install wavedrom`
 
 ### `docx-pagebreak-toc.lua`
 
-- **DOCX出力専用**
+LaTeXコマンド`\newpage`と`\toc`をDOCX出力にも適用します。
+
+- **`DOCX出力専用`**
+- 外部ライブラリ依存：**`なし`**
 
 ### `docx-unnumberedheadings.lua`
 
-- **DOCX出力専用**
+- **`DOCX出力専用`**
+- 外部ライブラリ依存：**`なし`**
 
 ### `tex-landscape.lua`
 
-- **LaTeX出力専用**
+- **`LaTeX出力専用`**
+- 外部ライブラリ依存：**`なし`**
 
 ### `tex-rowcolors-reset.lua`
 
-- **LaTeX出力専用**
+- **`LaTeX出力専用`**
+- 外部ライブラリ依存：**`なし`**
 
 # #include "appendix.md" {.unnumbered parse=false}
 
