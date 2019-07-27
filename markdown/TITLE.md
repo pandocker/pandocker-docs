@@ -27,7 +27,7 @@ Wordの話はまた今度にします。
 [^pdf-print]: 実用に堪えないので印刷はPDF出力を使用しました。
 
 WSLがちゃんと動かないWindows機をお使いの方は、*手元でのコンパイルを諦めて*
-外部CIサービスを利用してください。KSﾍﾟﾙｽｷｰは即時削除してください。
+外部CIサービスを利用してください。~~KSﾍﾟﾙｽｷｰは即時削除してください。~~
 
 この本は、恒例のpandocker環境の更新情報と、テンプレートファイル作成のヒント集で
 構成されています。
@@ -116,16 +116,27 @@ Pandocの実行ファイルは本家イメージをコピーしてくるよう�
 
 一つ問題があって、pandoc-crossrefフィルタのバージョンがやや古いもの(`0.3.0.0`)になっています。
 pandoc-crossrefフィルタをソースからインストールするブランチを切ってみたのですが、pandoc-crossrefが
-依存しているPandoc本体のビルドに2時間もかかってしまってやってられないですね。
+依存しているPandoc本体のビルドに2時間もかかってしまってやってられないです。
+
+本家のメンテナというかjgm本人が「pandoc-crossrefも一緒に入れてビルドしたほうがいいかもしれない」という趣旨の
+issueを立てたのでツイッタで`:+1:`するよう推したりしました。
 
 # Luaフィルタでpanflute系フィルタを置き換えた話
+#### Luaフィルタは速いぞ {-}
 
-従来のPythonライブラリ"panflute"を使用した各種フィルタを使った、特にWSLで使うときに
-一部フィルタが**耐えられない遅さ**[^native-linux-reasonable-speed]
-であったPandockerがLuaフィルタに移植したことで高速化されました。
+ここ最近、Pandoc界隈ではLuaフィルタに注目が集まってます。LuaフィルタはPandoc2系のどこか
+のバージョンで実装されました（が、具体的なバージョンは覚えてないっす）。Pandocにインタプリタが内蔵されているそうです。
 
-[^native-linux-reasonable-speed]: WSLで遅いのはファイルシステムに*Write*アクセスしているからで、
-ネイティブまたはVMのLinux上では実用的な速さです。たぶん。
+Pandocマニュアルにも従来のJSON系よりも速いよって書いてあるほどなので、実際速いんでしょうが、
+ここまで積み上げてきたPanflute系（すなわちJSON系）のコード資産があって*悔しいので*手を出さずにいました。
+典型的な、新しくていいものが出てきたときにやってはならない行動パターンですね。
+
+実際のところ、それまでのPandockerは、特にWSLで使うときに一部フィルタが
+**耐えられない遅さ**[^native-linux-reasonable-speed]であったのですが、
+Luaフィルタに移植したことで高速化されました。
+
+[^native-linux-reasonable-speed]: Panfluteを養護しておくと、WSLで遅いのはファイルシステムに
+*Write*アクセスしているからで、ネイティブ（またはVM） のLinux上では実用的な速さです。
 
 ## 移植元のPanflute系フィルタ
 
@@ -138,6 +149,8 @@ pandoc-crossrefフィルタをソースからインストールするブラン�
   - `pandocker-pantable-inline`
 - `pandoc-docx-pagebreak-py`
   - `pandoc-docx-pagebreakpy`
+- `pandoc-docx-utils-py`
+  - `pandoc-docx-utils`
 
 ## インストール
 
@@ -147,8 +160,8 @@ pandoc-crossrefフィルタをソースからインストールするブラン�
 $ pip install git+https://github.com/pandocker/pandocker-lua-filters.git
 ```
 
-インストール先はPythonの設定によりますが、`/usr/local/share/lua/5.3/pandocker` または
-`/usr/share/lua/5.3/pandocker`です。`/usr/local`か`/usr`かはPythonコンソールで
+インストール先はPythonの設定によりますが、`/usr/local/share/lua/5.3/pandocker` \
+または`/usr/share/lua/5.3/pandocker`です。`/usr/local`か`/usr`かはPythonコンソールで
 
 `````python
 import site
@@ -161,7 +174,8 @@ print(site.getsitepackages()[0].split("/lib/")[0])
 `````
 
 などと入れてみると参考になります。手元で試したところ、Ubuntu系は`/usr/local`、Alpineは(APKで導入した場合)`/usr`を返しました。
-Macはhomebrewで導入したので`/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6`
+Macはhomebrewで導入したので\
+`/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6`
 などでした。
 
 ## 各フィルタの解説（呼び出し方とか使いどころとか）
@@ -196,10 +210,10 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
   - `subset_to=(y2,x2)`：部分切り出し終点(y2,x2)の指定。省略可能
   - `alignment=DDD...`：列ごとのの幅寄せの指定。L(左寄せ) / C(中央寄せ) / R(右寄せ)またはD(デフォルト)。
 省略可能（すべて`D`扱い）
-  - `width=[0,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0`扱い)
+  - `width=[0,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0.01`扱い)
   - `header=true|false`：最初の行をヘッダとして扱うかどうかを指定する。省略可能(`true`)
 
-#### 記法
+#### 記法 {-}
 
 リンクにtableクラスをつけます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
 
@@ -223,23 +237,43 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
   - `type`： ファイルタイプの指定。省略可能（`plain`）
   - `numbers=left|right`： 行番号表示位置の指定。省略可能（`left`）
 
+#### 記法 {-}
+
+リンクにlistingtableクラスをつけます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
+
+```markdown
+<!--空行-->
+[タイトル](path/to/file){.listingtable from=y1 to=y2 type=yaml}
+<!--空行-->
+```
+
 ### `preprocess.lua`
 
 原稿ファイルを連結します。GPPの置き換えです。文法が変わりますが**バックスラッシュを二重にする必要がなくなります**。
-多重インクルードにも対応します。取り込まれたファイルは*Markdownファイルとして*Pandoc内部形式にマージされます。
+多重インクルードにも対応します。指定されたファイルの形式を自動判別し、Pandoc内部形式にマージされます。。
+サーチパスはPandocのオプション`--resource-path`[^resource-path]に与えられた値を利用します。
+
+[^resource-path]: <https://pandoc.org/MANUAL.html#option--resource-path>
 
 - **`汎用`**
 - 外部ライブラリ依存：**`なし`**
 <!--- もしかしたら**`Penlight.List`**-->
 - オプション：**`なし`**
+- デフォルト値：
+```yaml
+include: []
+```
 
-#### 記法
+#### 記法 {-}
 
-ヘッダにC言語風のinclude節をつけるだけです。ヘッダの深さは制限しません。`#include`
-と`"ファイル名.md"`の間には*必ず*スペースを入れる必要があります。
+ヘッダにC言語風のinclude文をつけるだけです。ヘッダの深さは制限しません。`#include`
+と`"ファイル名.md"`の間には*必ず*一つ以上のスペース`█`を入れる必要があります。全角スペースは無効です。
 
 ```markdown
-# #include "連結したいファイル名.md"
+<!--       この引用符は一重(')でも二重(")でもよい
+           |                       | -->
+# #include█"連結したいファイル名.md"
+<!--      |__________________________この空白は1個以上なら何個でもよい-->
 ```
 
 ### `removable-note.lua`
@@ -253,7 +287,7 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 
 ### `svgcomvert.lua`
 
-SVG画像へのリンクを探し出してPNGまたはPDFに変換します。出力形式（`FORMAT`の値）で変換するかどうかを判断します。
+SVG画像へのリンクを探し出して*問答無用で*PNGまたはPDFに変換します。出力形式（`-t`オプションの値）で変換するかどうかを判断します。
 画像の変換には`rsvg-convert`を使うので、予めインストールしパスを通しておく必要があります。
 Linuxなら`librsvg-bin`などの名前でパッケージが用意されていると思います。
 
@@ -261,38 +295,111 @@ Linuxなら`librsvg-bin`などの名前でパッケージが用意されてい�
 - 外部ライブラリ依存：
   - **`rsvg-convert` / `librsvg`**： `apt install librsvg-bin`など
 
+Table: 変換形式一覧 {#tbl:svgconvert-formats}
+
+| 出力形式 |     変換形式     |
+|:-------:|:---------------:|
+|  html   | SVG（変換しない） |
+|  html5  | SVG（変換しない） |
+|  latex  |       PDF       |
+|  docx   |       PNG       |
+| その他  |       PNG       |
+
 ### `wavedrom.lua`
 
-`pandocker-wabedrom-inline`と`pandocker-bitfield-inline`の置き換えです。
-WavedromのPythonポーティング版"wavedrompy"に依存します。
+`pandocker-wabedrom-inline`と`pandocker-bitfield-inline`の置き換えです。\
+WavedromのPython版"wavedrompy"に依存します。
 
 - **`汎用`**
 - 外部ライブラリ依存：
   - **`wavedrompy`**： `pip install wavedrom`
 
+#### 記法 {-}
+
+リンクにwavedromクラスをつけます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
+
+```markdown
+<!--空行-->
+[タイトル](path/to/file){.wavedrom}
+<!--空行-->
+```
+
 ### `docx-pagebreak-toc.lua`
 
 LaTeXコマンド`\newpage`と`\toc`をDOCX出力にも適用します。
+FORMATがdocxでないとき`\toc`が削除され、docxでもlatexでもないとき`\newpage`削除されます。
+例えば`FORMAT = html`のときは`\newpage`・`\toc`ともに削除されます。
 
 - **`DOCX出力専用`**
 - 外部ライブラリ依存：**`なし`**
+
+#### 記法 {-}
+
+インラインLaTeXコマンドを書きます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
+
+```markdown
+<!--空行-->
+\newpage
+<!--空行-->
+\toc
+<!--空行-->
+```
 
 ### `docx-unnumberedheadings.lua`
 
+DOCX出力で、深さ4までの章・節タイトルに番号なしスタイルを使えるようにします。
+メタデータ`heading-unnumbered`を参照して適用するスタイルを決めます。
+予めテンプレートのDOCXファイルに引用元のスタイル定義が必要です。
+
 - **`DOCX出力専用`**
 - 外部ライブラリ依存：**`なし`**
+- デフォルト値：
+```yaml
+heading-unnumbered:
+  1: "Heading Unnumbered 1"
+  2: "Heading Unnumbered 2"
+  3: "Heading Unnumbered 3"
+  4: "Heading Unnumbered 4"
+```
+
+#### 記法 {-}
+
+Header文にUnnumberedクラスを付与します。
+
+```markdown
+# Header {-}
+## Header 2 {.unnumbered}
+```
 
 ### `tex-landscape.lua`
 
+LANDSCAPEクラスのDiv節を横長のページに出力します。メタデータ`lgeometry`の内容を参照してページ余白を
+決めます。ページサイズとページ番号などの位置は既存の設定値を引き継ぎます。
+
 - **`LaTeX出力専用`**
 - 外部ライブラリ依存：**`なし`**
+- デフォルト値：
+```yaml
+lgeometry: "top=20truemm,bottom=20truemm,left=20truemm,right=20truemm"
+```
+
+#### 記法 {-}
+
+Div節にLANDSCAPEクラスを付与します。[`preprocess.lua`](#preprocesslua)と共用するときは
+このフィルタを先に通してください。Div節の中が空でも1ページは横長ページになります。
+
+```markdown
+:::LANDSCAPE:::
+<!--自由記述-->
+:::::::::::::::
+```
 
 ### `tex-rowcolors-reset.lua`
 
 - **`LaTeX出力専用`**
 - 外部ライブラリ依存：**`なし`**
 
-# #include "appendix.md" {.unnumbered parse=false}
+<!--# #include "appendix.md" {.unnumbered parse=false}-->
 
 # 更新履歴 {-}
 
