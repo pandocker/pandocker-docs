@@ -100,9 +100,7 @@ Wordドキュメント内の画像はPNGとして、`rIdxx.png`のような読�
 
 18系Pandockerは`docker pull k4zuki/pandocker:lua-filter`で入手できます。
 
-## Pandoc公式サイトの実行バイナリはスタティックビルドだった
-
-# Pandocker-Alpineの研究（？）を再開した話 {#sec:pandocker-alpine-restart}
+# Pandocker-Alpineの研究を再開した話 {#sec:pandocker-alpine-restart}
 
 以前行っていたAlpine LinuxベースのPandocker環境研究を再開しました。前回断念したときは
 3.6をベースイメージにしていましたが、本家の更新が進んで現在は3.10系です。`docker pull k4zuki/pandocker-alpine`で
@@ -118,8 +116,38 @@ Pandocの実行ファイルは本家イメージをコピーしてくるよう�
 pandoc-crossrefフィルタをソースからインストールするブランチを切ってみたのですが、pandoc-crossrefが
 依存しているPandoc本体のビルドに2時間もかかってしまってやってられないです。
 
+<!--
 本家のメンテナというかjgm本人が「pandoc-crossrefも一緒に入れてビルドしたほうがいいかもしれない」という趣旨の
-issueを立てたのでツイッタで`:+1:`するよう推したりしました。
+issueを立てた[^pandoc-docker-with-crossref]のでツイッタで`:+1:`するよう推したりしました。
+
+[^pandoc-docker-with-crossref]: <https://github.com/pandoc/dockerfiles/issues/30>
+-->
+
+## Pandoc公式サイトの実行バイナリはLuaライブラリの一部と相性が悪い
+
+Pandockerイメージは１６系・１８系ともPandocのGitHubページからビルド済DEBパッケージを
+ダウンロード・インストールしています。Luaフィルタを使うまでは問題に気づかなかったのですが、
+ビルド済バイナリは"Cライブラリを使うLuaライブラリ"[^dynamic-link-lua]を参照しているLuaフィルタが使えません。
+Luaのみで書かれている("Pure Lua")ライブラリや、LuaとC混成ライブラリのLua部分を参照する場合は問題になりません。
+たとえば、Penlightライブラリのファイルシステム周りのモジュールはCライブラリのラッパになっていますが、`"stringx"`は
+そうではないPure Luaモジュールなので、一部のpandocker-lua-filtersコードが参照・使用しています。
+
+[^dynamic-link-lua]: 具体的には、例えばYAMLパーサライブラリ"lyaml"はlibYAMLを利用しています。
+
+## Pandoc本家製Alpine系イメージを使う
+
+このダイナミックライブラリの問題に対応するためには、Pandocをソースからビルドする必要があります。でもこのビルドがバカみたいに遅くて
+困るので、退避先としてPandoc本家が用意しているDockerイメージ`pandoc/dockerfile`を使うことにしました。
+このリポジトリではLatexが含まれる`latex`バージョンとPandoc / pandoc-citeprocのみインストールされている`core`バージョン
+が用意されています。Pandocker-AlpineはLaTeX環境を必要とするので`latex`バージョンを引いています。
+
+### Pandoc本家イメージにCrossrefを入れるかも？
+
+jgm本人が提案したスレッドで、pandoc-crossrefをDockerイメージのビルドに入れるかどうかの議論を行っています。私も
+質問してみたところ`core`バージョンに入るべきだろうということで、*楽しみに待っております*。Crossrefの開発者が忙しくて
+議論に参加できていなかったのと、リポジトリ管理者が休みをとっていたということで、最近（筆者注：8月6日早朝）スレの
+スピードが*上がってしまって*います。追いかけたい人は\
+<https://github.com/pandoc/dockerfiles/issues/30>を参照してください。
 
 # Luaフィルタでpanflute系フィルタを置き換えた話
 #### Luaフィルタは速いぞ {-}
@@ -128,8 +156,8 @@ issueを立てたのでツイッタで`:+1:`するよう推したりしました
 のバージョンで実装されました（が、具体的なバージョンは覚えてないっす）。Pandocにインタプリタが内蔵されているそうです。
 
 Pandocマニュアルにも従来のJSON系よりも速いよって書いてあるほどなので、実際速いんでしょうが、
-ここまで積み上げてきたPanflute系（すなわちJSON系）のコード資産があって*悔しいので*手を出さずにいました。
-典型的な、新しくていいものが出てきたときにやってはならない行動パターンですね。
+ここまで積み上げてきたPanflute系（すなわちJSON系）のコード資産があって***悔しいので***手を出さずにいました。
+典型的な、新しくていいものが出てきたときにやってはならない行動パターンですね。なにか心理学的な名前がついていそうですね。
 
 実際のところ、それまでのPandockerは、特にWSLで使うときに一部フィルタが
 **耐えられない遅さ**[^native-linux-reasonable-speed]であったのですが、
@@ -154,29 +182,16 @@ Luaフィルタに移植したことで高速化されました。
 
 ## インストール
 
-インストールはpipで行います：
+インストールはpipで行います。
 
-```bash
+`````bash
 $ pip install git+https://github.com/pandocker/pandocker-lua-filters.git
-```
-
-インストール先はPythonの設定によりますが、`/usr/local/share/lua/5.3/pandocker` \
-または`/usr/share/lua/5.3/pandocker`です。`/usr/local`か`/usr`かはPythonコンソールで
-
-`````python
-import site
-
-print(site.getsitepackages()[0].split("/lib/")[0])
-# site.getsitepackages() -> ['/usr/local/lib/python3.6/dist-packages','/usr/lib/...']
-# site.getsitepackages()[0] -> '/usr/local/lib/python3.6/dist-packages'
-# site.getsitepackages()[0].split("/lib/") -> ['/usr/local','python3.6/dist-packages']
-# site.getsitepackages()[0].split("/lib/")[0] -> '/usr/local'
 `````
 
-などと入れてみると参考になります。手元で試したところ、Ubuntu系は`/usr/local`、Alpineは(APKで導入した場合)`/usr`を返しました。
-Macはhomebrewで導入したので\
-`/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6`
-などでした。
+pipのインストール先がLuaのサーチパスと異なる場合は`prefix`オプション[^pip-prefix]を使って
+インストール先を指定してください。大抵はroot権限を要します。
+
+[^pip-prefix]: <https://docs.python.org/ja/3/install/index.html#alternate-installation-unix-the-prefix-scheme>
 
 ## 各フィルタの解説（呼び出し方とか使いどころとか）
 
@@ -198,7 +213,8 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 
 列幅指定の合計は1.0を超えてもエラーにはなりませんが、ページから表がはみ出す可能性があります。
 列幅指定を省略した時は、Pandocがセルの内容に基づいていい感じにバランスを取ります。
-表の列数に比べて指定した列数が少ないときは`0.0`で補完します。
+表の列数に比べて指定した列数が少ないときは`0.0`で補完します。ただしDOCX出力は「無言で削除バグ」を発症するので
+`0.01`で補完します。他の出力形式（特にバイナリになるやつ、ODTとか）は影響を確認していません
 
 - **`汎用`**
 - 外部Luaライブラリ依存：
@@ -250,7 +266,7 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 ### `preprocess.lua`
 
 原稿ファイルを連結します。GPPの置き換えです。文法が変わりますが**バックスラッシュを二重にする必要がなくなります**。
-多重インクルードにも対応します。指定されたファイルの形式を自動判別し、Pandoc内部形式にマージされます。。
+多重インクルードにも対応します。指定されたファイルの形式を自動判別し、Pandoc内部形式にマージします。
 サーチパスはPandocのオプション`--resource-path`[^resource-path]に与えられた値を利用します。
 
 [^resource-path]: <https://pandoc.org/MANUAL.html#option--resource-path>
@@ -259,7 +275,7 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 - 外部ライブラリ依存：**`なし`**
 <!--- もしかしたら**`Penlight.List`**-->
 - オプション：**`なし`**
-- デフォルト値：
+- デフォルト値： カレントディレクトリのみ
 ```yaml
 include: []
 ```
@@ -279,7 +295,7 @@ include: []
 ### `removable-note.lua`
 
 メタデータ`rmnote`をフラグとして、原稿内の`rmnote`クラスのDiv節をビルド時に削除します。
-デフォルト値は**`false`**です。
+一種のブロックコメントとして機能します。フラグは全消しかまたは全残しの2択です。デフォルト値は**`false`**で、全部残します。
 
 - **`汎用`**
 - 外部ライブラリ依存：**`なし`**
@@ -411,6 +427,8 @@ Div節にLANDSCAPEクラスを付与します。[`preprocess.lua`](#preprocesslu
 けどそのうちOS入れ替わるしほっといてもいいよね？？
 - ｱｲｴｪｪ!右端!右端ﾅﾝﾃﾞ（ﾐｷﾚﾘｱﾘﾃｨｼｮｯｸ（pipe_tablesを使うとの幅がページ幅を超えてもセル内で折り返してくれない）を受けている）
 - Pandocの更新頻度ェ...
-- 7月18日の京アニ放火テロ事件で原稿が手につかない
+- Pandoc-Crossrefが本番1週間前になってから2.7.3向けビルドを公開したのほんと困りますねぇ
+- 7月18日の京アニ放火テロ事件でその日は原稿が手につかなかった。コメダでニュース見て涙こらえてたし未だミュート解除できない。
+\#PrayForKyoani
 
 ![原稿PDFへのリンク](images/QRcode.png){#img:manuscript width=30%}
