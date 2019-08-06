@@ -13,8 +13,8 @@ jobs:
           command: |
             mkdir build
             cd build
-            wget -c https://github.com/tcnksm/ghr/releases/download/v0.5.4/ghr_v0.5.4_linux_amd64.zip
-            unzip ghr_v0.5.4_linux_amd64.zip
+            wget -c https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
+            unzip ghr_v0.12.2_linux_amd64.tar.gz
             cp ./ghr /usr/local/bin
       - run:
           name: Prepare QR code for this build
@@ -42,4 +42,4 @@ jobs:
           name: Deploy
           command: |
             ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME \
-            -r $CIRCLE_PROJECT_REPONAME build-$CIRCLE_BRANCH-`date %Y-+%b-%d` deploy/
+            -r $CIRCLE_PROJECT_REPONAME build-$CIRCLE_BRANCH-`date +%Y-%m%b-%d` deploy/
