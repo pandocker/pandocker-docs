@@ -21,16 +21,16 @@ jobs:
           command: |
             make initdir
             pip3 install qrcode
-            qr https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/build-`date +%b-%d-%Y`-`git rev-parse --short HEAD`/Pandocker-Docs-`git rev-parse --short HEAD`.pdf > images/QRcode.png
+            qr https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/build-$CIRCLE_BRANCH-`date %Y-+%b-%d`/Pandocker-Docs-`git rev-parse --short HEAD`.pdf > images/QRcode.png
       - run:
           name: Make HTML
-          command: make initdir html
+          command: make initdir html BRANCH=$CIRCLE_BRANCH
       - run:
           name: Make PDF
-          command: make initdir pdf
+          command: make initdir pdf BRANCH=$CIRCLE_BRANCH
       - run:
           name: Make DOCX
-          command: make initdir docx
+          command: make initdir docx BRANCH=$CIRCLE_BRANCH
       - run:
           name: Deploy preparation
           command: |
@@ -41,4 +41,5 @@ jobs:
       - run:
           name: Deploy
           command: |
-            ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME build-`date +%b-%d-%Y`-`git rev-parse --short HEAD` deploy/
+            ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME \
+            -r $CIRCLE_PROJECT_REPONAME build-$CIRCLE_BRANCH-`date %Y-+%b-%d` deploy/
