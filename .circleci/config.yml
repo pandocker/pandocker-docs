@@ -21,7 +21,12 @@ jobs:
           command: |
             make initdir
             pip3 install qrcode
-            qr https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/build-$CIRCLE_BRANCH-`date %Y-+%b-%d`/Pandocker-Docs-`git rev-parse --short HEAD`.pdf > images/QRcode.png
+            URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/
+            DATE=`date %Y-+%b-%d`
+            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE
+            SHORT_HASH=${CIRCLECI_SHA1:0:7}
+            echo $URL/$BUILD/Pandocker-Docs-$SHORT_HASH.pdf
+            qr https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-`date %Y-+%b-%d`/Pandocker-Docs-${CIRCLECI_SHA1:0:7}.pdf > images/QRcode.png
       - run:
           name: Make HTML
           command: make initdir html BRANCH=$CIRCLE_BRANCH
@@ -41,5 +46,7 @@ jobs:
       - run:
           name: Deploy
           command: |
+            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE
+            SHORT_HASH=${CIRCLECI_SHA1:0:7}
             ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME \
-            -r $CIRCLE_PROJECT_REPONAME build-$CIRCLE_BRANCH-`date +%Y-%m%b-%d` deploy/
+            -r $CIRCLE_PROJECT_REPONAME $BUILD-$SHORT_HASH deploy/
