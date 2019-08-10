@@ -25,7 +25,7 @@ jobs:
             DATE=`date +%Y-%m%b-%d`
             SHORT_HASH=${CIRCLE_SHA1:0:7}
             BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
-            qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH.pdf > images/QRcode.png
+            qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf > images/QRcode.png
       - run:
           name: Make HTML
           command: |
