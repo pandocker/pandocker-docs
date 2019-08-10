@@ -129,8 +129,8 @@ Pandockerイメージは１６系・１８系ともPandocのGitHubページか�
 ダウンロード・インストールしています。Luaフィルタを使うまでは問題に気づかなかったのですが、
 ビルド済バイナリは"Cライブラリを使うLuaライブラリ"[^dynamic-link-lua]を参照しているLuaフィルタが使えません。
 Luaのみで書かれている("Pure Lua")ライブラリや、LuaとC混成ライブラリのLua部分を参照する場合は問題になりません。
-たとえば、Penlightライブラリのファイルシステム周りのモジュールはCライブラリのラッパになっていますが、`"stringx"`は
-そうではないPure Luaモジュールなので、一部のpandocker-lua-filtersコードが参照・使用しています。
+たとえば、Penlightライブラリのファイルシステム周りのモジュールはCライブラリのラッパになっていますが、`"stringx"`、
+`"tablex"`、`"pretty"`はそうではないPure Luaモジュールなので、一部のpandocker-lua-filtersコードが参照・使用しています。
 
 [^dynamic-link-lua]: 具体的には、例えばYAMLパーサライブラリ"lyaml"はlibYAMLを利用しています。
 
@@ -163,8 +163,25 @@ Pandocマニュアルにも従来のJSON系よりも速いよって書いてあ�
 **耐えられない遅さ**[^native-linux-reasonable-speed]であったのですが、
 Luaフィルタに移植したことで高速化されました。
 
-[^native-linux-reasonable-speed]: Panfluteを養護しておくと、WSLで遅いのはファイルシステムに
+[^native-linux-reasonable-speed]: Panfluteを擁護しておくと、WSLで遅いのはファイルシステムに
 *Write*アクセスしているからで、ネイティブ（またはVM） のLinux上では実用的な速さです。
+
+#### Luaフィルタのデバッグは実際大変 {-}
+
+LuaフィルタはPandocの内部インタプリタが解釈処理するのでデバッグがとてもしづらくなっています。
+IDEのプラグインでLuaに対応するものがあっても、システムにインストールされた処理系を対象にしている[^embedded-lua]
+ものがほとんどです。
+
+[^embedded-lua]: Luaといえば組み込み処理系ですが、その手の処理系ではどうやってデバッグしてるんですかね。
+
+筆者のデバッグ方法はいわゆるprintfデバッグです。標準のprintではテーブルの中身が見れないので
+筆者はよくPenLight.prettyライブラリ[^pl.pretty]を使います。
+
+[^pl.pretty]: <https://stevedonovan.github.io/Penlight/api/libraries/pl.pretty.html>
+
+また、かなりの頻度でLuaフィルタの解説ページ[^pandoc-luafilter-page]を閲覧します。これしか情報がないからですけどね。
+
+[^pandoc-luafilter-page]: <https://pandoc.org/lua-filters.html>
 
 \newpage
 
@@ -347,6 +364,7 @@ WavedromのPython版"wavedrompy"に依存します。
 #### 記法 {-}
 
 リンクにwavedromクラスをつけます。個別の段落を見つけて処理する仕様なので、前後に空行を要します。
+リンク先のファイルはJSON形式に限ります。YAMLは今のところ未対応です。
 
 ```markdown
 <!--空行-->
@@ -381,7 +399,7 @@ Div節にtableクラスを与えて、中に一つだけTableを入れます。�
 ### `docx-pagebreak-toc.lua`
 
 LaTeXコマンド`\newpage`と`\toc`をDOCX出力にも適用します。
-FORMATがdocxでないとき`\toc`が削除され、docxでもlatexでもないとき`\newpage`削除されます。
+FORMATがdocxでないとき`\toc`が削除され、docxでもlatexでもないとき`\newpage`が削除されます。
 例えば`FORMAT = html`のときは`\newpage`・`\toc`ともに削除されます。
 
 - **`DOCX出力専用`**
