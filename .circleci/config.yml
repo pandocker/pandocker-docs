@@ -28,13 +28,19 @@ jobs:
             qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf > images/QRcode.png
       - run:
           name: Make HTML
-          command: make initdir html BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
+          command: |
+            SHORT_HASH=${CIRCLE_SHA1:0:7}
+            make initdir html BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Make PDF
-          command: make initdir pdf BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
+          command: |
+            SHORT_HASH=${CIRCLE_SHA1:0:7}
+            make initdir pdf BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Make DOCX
-          command: make initdir docx BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
+          command: |
+            SHORT_HASH=${CIRCLE_SHA1:0:7}
+            make initdir docx BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Deploy preparation
           command: |
