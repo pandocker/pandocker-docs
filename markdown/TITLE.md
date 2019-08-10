@@ -335,8 +335,6 @@ Table: 変換形式一覧 {#tbl:svgconvert-formats}
 |  docx   |       PNG       |
 | その他  |       PNG       |
 
-\newpage
-
 ### `wavedrom.lua`
 
 `pandocker-wabedrom-inline`と`pandocker-bitfield-inline`の置き換えです。\
@@ -358,25 +356,24 @@ WavedromのPython版"wavedrompy"に依存します。
 
 ### `table-width.lua`
 
-pipe_tablesでも列幅指定が効くようにします。現時点でのPandoc ASTでは用意されていない
-"Tableオブジェクトのアトリビュート"を提供します。
+pipe_tablesなどでも列幅指定が効くようにします。
 
 - **`汎用`**
 - 外部ライブラリ依存：**`なし`**
 
 #### 記法 {-}
 
-Div節にtableクラスを与えて、中に一つだけTableを入れます。アトリビュートは複数つけられますが、
-いまのところ`width`だけ解釈します。
+Div節にtableクラスを与えて、中に一つだけTableを入れます。アトリビュートは自由につけられますが、
+いまのところ`width`だけ解釈します。処理すると中身のTableを返します。
 
 ```markdown
 ::: {.table witdh=[w1,w2,...]}
 
 : Caption {#tbl:table}
 
-| Header    | Row   | Table |
-|:----------|:-----:|------:|
-| Cell      | Cell  | Cell  |
+| Table | Header |  Row |
+|:------|:------:|-----:|
+| Cell  |  Cell  | Cell |
 
 :::
 ```
@@ -453,9 +450,19 @@ Div節にLANDSCAPEクラスを付与します。[`preprocess.lua`](#preprocesslu
 
 ### `tex-rowcolors-reset.lua`
 
+LaTeX出力のときの表の色付け設定を、表が出てくるたびにリセットします。`tex-rowcolors`メタデータを参照して
+リセット時の色付けルールを決めます。デフォルトではすべての表の直前に以下のコマンドを挿入します。
+
+```latex
+\rowcolors{3}{white!100!white}{table-gray!100!white!100}  
+```
+
 - **`LaTeX出力専用`**
 - 外部ライブラリ依存：**`なし`**
-
+- デフォルト値：
+```yaml
+tex-rowcolors: "\\\\rowcolors{3}{white!100!white}{table-gray!100!white!100}"
+```
 <!--# #include "appendix.md" {.unnumbered parse=false}-->
 
 # 更新履歴 {-}
