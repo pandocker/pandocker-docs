@@ -52,7 +52,7 @@ jobs:
           name: Deploy
           command: |
             DATE=`date +%Y-%m%b-%d`
-            BUILD=build-$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM-$DATE
             SHORT_HASH=${CIRCLE_SHA1:0:7}
+            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
             ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME \
             -r $CIRCLE_PROJECT_REPONAME $BUILD-$SHORT_HASH deploy/
