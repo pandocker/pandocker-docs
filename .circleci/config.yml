@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: get submodules
-          command: git submodule update --init
+          command: git submodule update --init; echo $DATE
       - run:
           name: Prepare ghr
           command: |
@@ -21,10 +21,10 @@ jobs:
           command: |
             make initdir
             pip3 install qrcode
-            export URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download
-            export DATE=`date +%Y-%m%b-%d`
-            export SHORT_HASH=${CIRCLE_SHA1:0:7}
-            export BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
+            URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download
+            DATE=`date +%Y-%m%b-%d`
+            SHORT_HASH=${CIRCLE_SHA1:0:7}
+            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
             qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf > images/QRcode.png
       - run:
           name: Make HTML
@@ -50,8 +50,8 @@ jobs:
             mv Out/*.docx deploy/
       - run:
           name: Deploy
-          #            SHORT_HASH=${CIRCLE_SHA1:0:7}
-          #            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
-          #            DATE=`date +%Y-%m%b-%d`
           command: |
+            DATE=`date +%Y-%m%b-%d`
+            SHORT_HASH=${CIRCLE_SHA1:0:7}
+            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
             ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME $BUILD deploy/
