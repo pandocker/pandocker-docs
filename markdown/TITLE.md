@@ -233,7 +233,7 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 列幅指定の合計は1.0を超えてもエラーにはなりませんが、ページから表がはみ出す可能性があります。
 列幅指定を省略した時は、Pandocがセルの内容に基づいていい感じにバランスを取ります。
 表の列数に比べて指定した列数が少ないときは`0.0`で補完します。ただしDOCX出力は「無言で削除バグ」を発症するので
-`0.01`で補完します。他の出力形式（特にバイナリになるやつ、ODTとか）は影響を確認していません
+`0.01`で補完します。他の出力形式（特にバイナリになるやつ、ODTとか）は影響を確認していません。
 
 - **`汎用`**
 - 外部Luaライブラリ依存：
@@ -245,7 +245,7 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
   - `subset_to=(y2,x2)`：部分切り出し終点(y2,x2)の指定。省略可能
   - `alignment=DDD...`：列ごとのの幅寄せの指定。L(左寄せ) / C(中央寄せ) / R(右寄せ)またはD(デフォルト)。
 省略可能（すべて`D`扱い）
-  - `width=[0,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0.01`扱い)
+  - `width=[w1,w2,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0.01`扱い)
   - `header=true|false`：最初の行をヘッダとして扱うかどうかを指定する。省略可能(`true`)
 
 #### 記法 {-}
@@ -283,6 +283,8 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 [タイトル](path/to/file){.listingtable from=y1 to=y2 type=yaml}
 <!--空行-->
 ```
+
+\newpage
 
 ### `preprocess.lua`
 
@@ -332,6 +334,8 @@ Div節にrmnoteクラスを付与して内部に自由記述します。
 :::
 ```
 
+\newpage
+
 ### `svgconvert.lua`
 
 SVG画像へのリンクを探し出して*問答無用で*PNGまたはPDFに変換します。出力形式（`-t`オプションの値）で変換するかどうかを判断します。
@@ -352,6 +356,33 @@ Table: 変換形式一覧 {#tbl:svgconvert-formats}
 |  docx   |       PNG       |
 | その他  |       PNG       |
 
+### `table-width.lua`
+
+pipe_tablesなどでも列幅指定が効くようにします。列幅指定の注意事項は[csv2table.luaの項](#csv2table.lua)と同様です。
+
+- **`汎用`**
+- 外部ライブラリ依存：**`なし`**
+- オプション：
+  - `width=[w1,w2,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0.0`扱い)
+
+\newpage
+
+#### 記法 {-}
+
+Div節にtableクラスを与えて、中に一つだけTableを入れます。いまのところ`width`だけ解釈します。
+
+```markdown
+::: {.table witdh=[w1,w2,...]}
+
+: Caption {#tbl:table}
+
+| Table | Header |  Row |
+|:------|:------:|-----:|
+| Cell  |  Cell  | Cell |
+
+:::
+```
+
 ### `wavedrom.lua`
 
 `pandocker-wabedrom-inline`と`pandocker-bitfield-inline`の置き換えです。\
@@ -370,30 +401,6 @@ WavedromのPython版"wavedrompy"に依存します。
 <!--空行-->
 [タイトル](path/to/file){.wavedrom}
 <!--空行-->
-```
-
-### `table-width.lua`
-
-pipe_tablesなどでも列幅指定が効くようにします。
-
-- **`汎用`**
-- 外部ライブラリ依存：**`なし`**
-
-#### 記法 {-}
-
-Div節にtableクラスを与えて、中に一つだけTableを入れます。アトリビュートは自由につけられますが、
-いまのところ`width`だけ解釈します。処理すると中身のTableを返します。
-
-```markdown
-::: {.table witdh=[w1,w2,...]}
-
-: Caption {#tbl:table}
-
-| Table | Header |  Row |
-|:------|:------:|-----:|
-| Cell  |  Cell  | Cell |
-
-:::
 ```
 
 ### `docx-pagebreak-toc.lua`
