@@ -23,8 +23,8 @@ jobs:
             pip3 install qrcode
             URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download
             DATE=`date +%Y-%m%b-%d`
-            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
             SHORT_HASH=${CIRCLE_SHA1:0:7}
+            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
             qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf > images/QRcode.png
       - run:
           name: Make HTML
