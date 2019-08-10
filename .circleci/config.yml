@@ -21,21 +21,20 @@ jobs:
           command: |
             make initdir
             pip3 install qrcode
-            URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/
+            URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download
             DATE=`date +%Y-%m%b-%d`
             BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE
             SHORT_HASH=${CIRCLE_SHA1:0:7}
-            echo $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf
-            qr https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-`date %Y-+%b-%d`/Pandocker-Docs-${CIRCLE_SHA1:0:7}.pdf > images/QRcode.png
+            qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf > images/QRcode.png
       - run:
           name: Make HTML
-          command: make initdir html BRANCH=$CIRCLE_BRANCH
+          command: make initdir html BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Make PDF
-          command: make initdir pdf BRANCH=$CIRCLE_BRANCH
+          command: make initdir pdf BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Make DOCX
-          command: make initdir docx BRANCH=$CIRCLE_BRANCH
+          command: make initdir docx BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Deploy preparation
           command: |
@@ -46,7 +45,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE
+            BUILD=build-$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM-$DATE
             SHORT_HASH=${CIRCLE_SHA1:0:7}
             ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME \
             -r $CIRCLE_PROJECT_REPONAME $BUILD-$SHORT_HASH deploy/
