@@ -22,7 +22,7 @@ jobs:
             make initdir
             pip3 install qrcode
             URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download/
-            DATE=`date %Y-+%b-%d`
+            DATE=`date +%Y-%m%b-%d`
             BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE
             SHORT_HASH=${CIRCLECI_SHA1:0:7}
             echo $URL/$BUILD/Pandocker-Docs-$SHORT_HASH.pdf
