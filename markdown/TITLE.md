@@ -166,6 +166,8 @@ Luaフィルタに移植したことで高速化されました。
 [^native-linux-reasonable-speed]: Panfluteを養護しておくと、WSLで遅いのはファイルシステムに
 *Write*アクセスしているからで、ネイティブ（またはVM） のLinux上では実用的な速さです。
 
+\newpage
+
 ## 移植元のPanflute系フィルタ
 
 移植元のフィルタは複数のリポジトリに分散しています。PyPIには未登録なものがほとんどです。
@@ -239,6 +241,8 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 <!--空行-->
 ```
 
+\newpage
+
 ### `listingtable.lua`
 
 任意のテキストファイルへのリンクをコードブロックとして引用します。`pandocker-listingtable-inline`フィルタの移植版です。
@@ -301,6 +305,16 @@ include: []
 - 外部ライブラリ依存：**`なし`**
 - オプション： なし
 
+#### 記法 {-}
+
+Div節にrmnoteクラスを付与して内部に自由記述します。
+
+```markdown
+::: rmnote
+<!--自由記述-->
+:::
+```
+
 ### `svgconvert.lua`
 
 SVG画像へのリンクを探し出して*問答無用で*PNGまたはPDFに変換します。出力形式（`-t`オプションの値）で変換するかどうかを判断します。
@@ -321,6 +335,8 @@ Table: 変換形式一覧 {#tbl:svgconvert-formats}
 |  docx   |       PNG       |
 | その他  |       PNG       |
 
+\newpage
+
 ### `wavedrom.lua`
 
 `pandocker-wabedrom-inline`と`pandocker-bitfield-inline`の置き換えです。\
@@ -338,6 +354,31 @@ WavedromのPython版"wavedrompy"に依存します。
 <!--空行-->
 [タイトル](path/to/file){.wavedrom}
 <!--空行-->
+```
+
+### `table-width.lua`
+
+pipe_tablesでも列幅指定が効くようにします。現時点でのPandoc ASTでは用意されていない
+"Tableオブジェクトのアトリビュート"を提供します。
+
+- **`汎用`**
+- 外部ライブラリ依存：**`なし`**
+
+#### 記法 {-}
+
+Div節にtableクラスを与えて、中に一つだけTableを入れます。アトリビュートは複数つけられますが、
+いまのところ`width`だけ解釈します。
+
+```markdown
+::: {.table witdh=[w1,w2,...]}
+
+: Caption {#tbl:table}
+
+| Header    | Row   | Table |
+|:----------|:-----:|------:|
+| Cell      | Cell  | Cell  |
+
+:::
 ```
 
 ### `docx-pagebreak-toc.lua`
