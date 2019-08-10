@@ -288,7 +288,7 @@ CSVファイルへのリンクを表に変換します。`pandocker-pantable-inl
 
 ### `preprocess.lua`
 
-原稿ファイルを連結します。GPPの置き換えです。文法が変わりますが**バックスラッシュを二重にする必要がなくなります**。
+原稿ファイルを連結します。GPPの置き換えです。文法が変わりますが、**バックスラッシュを二重にする必要がなくなります**。
 多重インクルードにも対応します。指定されたファイルの形式を自動判別し、Pandoc内部形式にマージします。
 サーチパスはPandocのオプション`--resource-path`[^resource-path]に与えられた値を利用します。
 
@@ -356,6 +356,8 @@ Table: 変換形式一覧 {#tbl:svgconvert-formats}
 |  docx   |       PNG       |
 | その他  |       PNG       |
 
+\newpage
+
 ### `table-width.lua`
 
 pipe_tablesなどでも列幅指定が効くようにします。列幅指定の注意事項は[csv2table.luaの項](#csv2table.lua)と同様です。
@@ -364,8 +366,6 @@ pipe_tablesなどでも列幅指定が効くようにします。列幅指定の
 - 外部ライブラリ依存：**`なし`**
 - オプション：
   - `width=[w1,w2,...]`：列ごとの幅指定。ページ幅に対する相対値で指定する。省略可能(全て`0.0`扱い)
-
-\newpage
 
 #### 記法 {-}
 
@@ -402,6 +402,8 @@ WavedromのPython版"wavedrompy"に依存します。
 [タイトル](path/to/file){.wavedrom}
 <!--空行-->
 ```
+
+\newpage
 
 ### `docx-pagebreak-toc.lua`
 
