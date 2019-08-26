@@ -481,7 +481,7 @@ LaTeX出力のときの表の色付け設定を、表が出てくるたびにリ
 リセット時の色付けルールを決めます。デフォルトではすべての表の直前に以下のコマンドを挿入します。
 
 ```latex
-\rowcolors{3}{white!100!white}{table-gray!100!white!100}  
+\rowcolors{3}{white!100!white}{table-gray!100!white!100}
 ```
 
 - **`LaTeX出力専用`**
