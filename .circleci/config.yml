@@ -1,12 +1,12 @@
 version: 2
+environment:
+  SHORT_HASH: $CIRCLE_SHA1:0:7
+  DATE: `date +%Y-%m%b-%d`
+  BUILD: build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
 jobs:
   build:
     docker:
       - image: k4zuki/pandocker-alpine
-    environment:
-      SHORT_HASH: $CIRCLE_SHA1:0:7
-      DATE: `date +%Y-%m%b-%d`
-      BUILD: build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
     steps:
       - checkout
       - run:
