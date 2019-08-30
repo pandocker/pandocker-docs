@@ -4,24 +4,24 @@ jobs:
     docker:
       - image: k4zuki/pandocker-alpine
     #    environment:
-    #      DATE: `date +%Y-%m%b-%d`
-    #      BUILD: build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
-    #      SHORT_HASH: $CIRCLE_SHA1:0:7
     steps:
       - checkout
       - run:
           name: 環境変数の設定
           command: |
+            echo "export DATE=`date +%Y-%m%b-%d`" >> $BASH_ENV
+            echo "export BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH" >> $BASH_ENV
+            echo "export SHORT_HASH=${CIRCLE_SHA1:0:7}" >> $BASH_ENV
             echo "export PATH=$GOPATH/bin:$PATH" >> $BASH_ENV
             echo "export GIT_SHA1=$CIRCLE_SHA1" >> $BASH_ENV
-
+            source $BASH_ENV
       - run:
           name: env variables
           command: |
-            echo $BASH_ENV
-            echo $SHORT_HASH
-            echo $DATE
-            echo $BUILD
+            echo "$BASH_ENV=" $BASH_ENV
+            echo "$SHORT_HASH=" $SHORT_HASH
+            echo "$DATE=" $DATE
+            echo "$BUILD=" $BUILD
       - run:
           name: get submodules
           command: git submodule update --init; echo $DATE
