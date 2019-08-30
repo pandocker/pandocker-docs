@@ -3,8 +3,18 @@ jobs:
   build:
     docker:
       - image: k4zuki/pandocker-alpine
+    environment:
+      SHORT_HASH: ${CIRCLE_SHA1:0:7}
+      DATE: `date +%Y-%m%b-%d`
+      BUILD: build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
     steps:
       - checkout
+      - run:
+          name: env variables
+          command: |
+            echo $SHORT_HASH
+            echo $DATE
+            echo $BUILD
       - run:
           name: get submodules
           command: git submodule update --init; echo $DATE
