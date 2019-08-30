@@ -1,12 +1,12 @@
 version: 2
 jobs:
   build:
+    docker:
+      - image: k4zuki/pandocker-alpine
     environment:
       DATE: `date +%Y-%m%b-%d`
       BUILD: build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
     #      SHORT_HASH: $CIRCLE_SHA1:0:7
-    docker:
-      - image: k4zuki/pandocker-alpine
     steps:
       - checkout
       - run:
