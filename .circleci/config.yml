@@ -5,21 +5,17 @@ jobs:
       - image: k4zuki/pandocker-alpine
     steps:
       - checkout
-      #
-      - run:
-          name: 環境変数の設定
-          command: |
-            echo "export DATE=`date +%Y-%m%b-%d`" >> $BASH_ENV
-            echo "export SHORT_HASH=${CIRCLE_SHA1:0:7}" >> $BASH_ENV
-            echo "export BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH" >> $BASH_ENV
-            source $BASH_ENV
       - run:
           name: env variables
           command: |
+            echo "export DATE=`date +%Y-%m%b-%d`" >> $BASH_ENV
+            echo "export SHORT_HASH=${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            source $BASH_ENV
+            echo "export BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH" >> $BASH_ENV
+            source $BASH_ENV
             echo "SHORT_HASH=" $SHORT_HASH
             echo "DATE=" $DATE
             echo "BUILD=" $BUILD
-      #
       - run:
           name: get submodules
           command: git submodule update --init; echo $DATE
@@ -37,25 +33,19 @@ jobs:
             make initdir
             pip3 install qrcode
             URL=https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases/download
-            DATE=`date +%Y-%m%b-%d`
-            SHORT_HASH=${CIRCLE_SHA1:0:7}
-            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
             qr $URL/$BUILD/Pandocker-Docs-$CIRCLE_BRANCH-$SHORT_HASH.pdf > images/QRcode.png
       - run:
           name: Make HTML
           command: |
-            #            SHORT_HASH=${CIRCLE_SHA1:0:7}
-                     make initdir html BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
+            make initdir html BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Make PDF
           command: |
-            #            SHORT_HASH=${CIRCLE_SHA1:0:7}
-                     make initdir pdf BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
+            make initdir pdf BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Make DOCX
           command: |
-            #            SHORT_HASH=${CIRCLE_SHA1:0:7}
-                     make initdir docx BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
+            make initdir docx BRANCH=$CIRCLE_BRANCH HASH=$SHORT_HASH
       - run:
           name: Deploy preparation
           command: |
@@ -66,7 +56,4 @@ jobs:
       - run:
           name: Deploy
           command: |
-            #            DATE=`date +%Y-%m%b-%d`
-            #            SHORT_HASH=${CIRCLE_SHA1:0:7}
-            #            BUILD=build-$CIRCLE_BUILD_NUM-$CIRCLE_BRANCH-$DATE-$SHORT_HASH
-                     ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME $BUILD deploy/
+            ghr -replace -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME $BUILD deploy/
