@@ -3,6 +3,11 @@
 最新の出力結果は[こちら](https://github.com/pandocker/pandocker-docs/releases/latest)にあります。
 以前のバージョンは以下の通り：
 
+## バージョン５：コミケ９６版
+
+- Luaフィルタ作ってみた・pandocker-alpine復活
+- [ビルド`1a00204`](https://github.com/pandocker/pandocker-docs/releases/tag/build-166-c96-2019-08Aug-10-1a00204)
+
 ## バージョン４：コミケ９５版
 
 - Windows・DOCX特集編
