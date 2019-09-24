@@ -23,7 +23,7 @@ docx_coreprop:
   #  modified: "31-Dec-2018" # datetime DD-MMM-YYYY
   #  revision: 1230 # int < 32768
   #  subject: "SubjecT" # str
-  title: "私的Markdown-PDF変換環境を紹介する本 ５" # str
+  title: "Pandocker入門" # str
 
   content_status: "Status" # ignored?
   identifier: "ID" # ignored?
