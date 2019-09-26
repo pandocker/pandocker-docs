@@ -9,7 +9,7 @@ publisher: キンコーズオンラインで印刷製本 秋葉原店で受取�
 docrevision: "**$1.0$**"
 front: images/markdown-logo-1664x1024.png
 # download from: https://github.com/dcurtis/markdown-mark
-verbcolored: false
+verbcolored: true
 rmnote: true
 secnumdepth: 3
 

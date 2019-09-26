@@ -7,7 +7,11 @@
 # はじめに {-}
 
 このドキュメントは、Pandocベースのドキュメントコンパイラ*Pandocker*をできるだけ細かく・詳しく・網羅的に
-解説する本です。Pandocの国内"エンジニア"界隈で知名度が上がってきたことと、シリーズ化してきて
+解説する本です。Pandocの国内"エンジニア"界隈での知名度が上がってきたことで、Pandoc系ドキュメントコンパイラ[^not-a-lie]
+とか言っておけば食いつきがいいかもなどという妥協と、シリーズ化して差分しか掲載せずにいると売れ行きが良くないため、
+周辺情報をまとめた「総集編２」を出します。
+
+[^not-a-lie]: 嘘はついてない。いいね？
 
 ## 読者さんが持ってるといいかもしれない知識 {-}
 
@@ -42,7 +46,7 @@ Word出力専用フィルタの解説でちょっと出てきますが、筆者�
 
 #### jgm's diff tool {-}
 
-Word・PowerPoint・ODT（OpenOfficeのファイル形式）・XMLの差分をみるときに使えるツールが
+- Word・PowerPoint・ODT（OpenOfficeのファイル形式）・XMLの差分をみるときに使えるツールが
 Pandocのソースツリーに入っています。実体は３０行程度のシェルスクリプトのようです。
 筆者は使ったことないですが、さわってみると面白いかもしれません。
 
@@ -53,7 +57,8 @@ PDF出力のエンジンに\XeLaTeX を使います。テンプレートを全�
 ### WSL {-}
 
 Windows Subsystem for LinuxことWSLは、Windows上で*Pandocker*を動作させるために必要です。
-読者諸氏は全員Windows10ユーザとみなして解説します。時期的にも７は対象外です。８は筆者が持ってないので対象外です。
+読者諸氏は全員Windows10・Mac・Linuxユーザとみなして解説します。時期的にも７は対象外です。
+８は筆者が持ってないので対象外です。
 
 ### Docker {-}
 
@@ -62,22 +67,40 @@ Dockerfileを全文掲載するかもしれません。一行ずつ追いかけ�
 
 #### Docker (on Ubuntu) in WSL {-}
 
-WSLに入れるディストリビューションはDebian系とします。
+- WSLに入れるディストリビューションはDebian系とします。
 
 # What is Pandoc?
-## jgm
+
+Pandocは、本家によると「マークアップフォーマットを別のフォーマットに変換する際のスイスアーミーナイフ的存在」です。
+If you need to convert files from one markup format into another, pandoc is your swiss-army knife.
+Pandoc can convert between the following formats:
+
+## jgm曰く
+
 ## Haskell
+
 ## Convert to/from AST tree
+
 ### List of Inputs
+
 #### Markdown Parsers
+
 #### Pandoc's Markdown
+
 ### List of Outputs
+
 #### HTML
-##### Not CSS typesetting (yet)
+
+- Not CSS typesetting (yet)
+
 #### PDF engines
-##### XeLaTeX
+
+- XeLaTeX
+
 #### Word
-##### 2010
+
+- 2010
+
 ### Extensions
 
 # Syntax
@@ -114,44 +137,80 @@ WSLに入れるディストリビューションはDebian系とします。
 ## Extensions by filters
 ### Common behavior
 #### Cross reference
-##### pandoc-crossref
+
+- pandoc-crossref
+
 #### CSV to table
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Listing
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Preprocess
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Block comment
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### SVG to PNG/PDF at runtime
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Table width
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### AAFigure
-##### pandocker-pandoc-filters
+
+- pandocker-pandoc-filters
+
 #### svgbob
-##### pandoc-svgbob-filter
+
+- pandoc-svgbob-filter
+
 #### blockdiag
-##### pandoc-blockdiag-filter
+
+- pandoc-blockdiag-filter
+
 #### SVG to PNG/PDF
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 ### HTML only behavior
 ### LaTeX only behavior
 #### Landscape
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Table coloring
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Pagebreak
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 ### Word only behavior
 #### Table of Contents
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Forced Page break
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Unnumbered headings
-##### pandocker-lua-filters
+
+- pandocker-lua-filters
+
 #### Centering Image
-##### pandoc-docx-utils-py
+
+- pandoc-docx-utils-py
+
 ### Post processing
 #### docx-core-property-writer
 
@@ -181,11 +240,15 @@ WSLに入れるディストリビューションはDebian系とします。
 #### pandoc's official latex image
 ### Ubuntu
 #### 16.04
-##### Base image
-##### Extending image
+
+- Base image
+- Extending image
+
 #### 18.04
-##### Base image
-##### Extending image
+
+- Base image
+- Extending image
+
 ## Installation
 ### Mac
 ### Linux
