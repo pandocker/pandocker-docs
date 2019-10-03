@@ -129,6 +129,7 @@ $ pandoc --list-extensions[=FORMAT]
 ##### **`markdown`** {-}
 
 - Pandocの全拡張機能を使える派生フォーマットです。一部の非標準拡張（`emoji`など）は追加する必要があります。
+- この本の対象フォーマットです。
 
 ##### **`markdown_strict`** {-}
 
@@ -151,8 +152,8 @@ $ pandoc --list-extensions[=FORMAT]
 - 拡張フラグ`pipe_tables`, `raw_html`, `markdown_attribute`, `mmd_link_attributes`,\
 `tex_math_double_backslash`, `intraword_underscores`, `mmd_title_block`, `footnotes`,\
 `definition_lists`, `all_symbols_escapable`, `implicit_header_references`, `auto_identifiers`,\
-`mmd_header_identifiers`, `shortcut_reference_links`, `implicit_figures`, `superscript`, `subscript`,\
-`backtick_code_blocks`, `spaced_reference_links`, `raw_attribute`
+`mmd_header_identifiers`, `shortcut_reference_links`, `implicit_figures`, `superscript`,\
+`subscript`, `backtick_code_blocks`, `spaced_reference_links`, `raw_attribute`
 がセットされています。
 
 ##### **`markdown_phpextra`** {-}
@@ -161,10 +162,6 @@ $ pandoc --list-extensions[=FORMAT]
 - 拡張フラグ`footnotes`, `pipe_tables`, `raw_html`, `markdown_attribute`, `fenced_code_blocks`,\
 `definition_lists`, `intraword_underscores`, `header_attributes`, `link_attributes`,\
 `abbreviations`, `shortcut_reference_links`, `spaced_reference_links`がセットされています。
-
-#### Pandoc's Markdown
-
-この本では、**数あるMarkdownの派生の中で現状もっとも高機能**なPandoc's Markdown について述べます。
 
 ### List of Outputs
 
