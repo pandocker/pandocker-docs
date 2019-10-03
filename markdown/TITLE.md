@@ -11,8 +11,9 @@
 とか言っておけば食いつきがいいかもなどという妥協と、シリーズ化して差分しか掲載せずにいると売れ行きが良くないため、
 周辺情報をまとめた「総集編２」を出します。
 
-[^strict-engineer-definition]: ちなみに筆者は「エンジニア」の*\underline{定義}*原理主義者です。
-[^not-a-lie]: この表現は嘘ではない。いいね？
+[^strict-engineer-definition]: ちなみに筆者は「エンジニア」の[*定義*]{.underline}に敏感です。\
+ITエンジニアを指してエンジニアと呼称する場面に遭遇すると「は？（威圧）」ってなります。
+[^not-a-lie]: この表現に嘘はない。いいね？
 
 ## 読者さんが持ってるといいかもしれない知識 {-}
 
@@ -51,30 +52,32 @@
 
 # What is Pandoc?
 
-Pandocは、本家によると「マークアップフォーマット変換の必要があるときに、スイスアーミーナイフにな（ってくれ）るもの」です。
+Pandocは、本家によると***「マークアップフォーマット変換の必要があるときに、スイスアーミーナイフにな（ってくれ）るもの」***です。
 
 > If you need to convert files from one markup format into another, pandoc is your swiss-army knife.
 
 ## jgm（John MacFarlane）氏曰く
 
-「Pandocを媒介にしてHaskellを広めたい
+> **「Pandocを媒介にしてHaskellを広めたい」**（ちょっと大胆な意訳）
+>
+> > "I like to think of pandoc as a virus that spreads Haskell.\
+> > (<https://github.com/jgm/pandoc/issues/1278#issuecomment-42502343>)
 
-> "I like to think of pandoc as a virus that spreads Haskell.
->> <https://github.com/jgm/pandoc/issues/1278#issuecomment-42502343>
-
-## Haskell
+などとのたまっていますが、筆者には手が出せません。
 
 ## Convert to/from AST tree
 
-### List of Inputs
+### List of Inputs {#sec:list-of-inputs}
 
-Pandocが受け付ける入力フォーマットは`--list-input-formats`で取得できます。
+Pandocが受け付ける入力フォーマットは`--list-input-formats`で取得できます。これらは
+`--from/-f`オプションに与えるパラメータです。
 
 Listing: 入力フォーマット一覧（`*`は筆者による） {#lst:list-input-formats}
 
 ```bash
 $ pandoc --list-input-formats
 
+# 出力結果
 commonmark *
 creole
 docbook
@@ -110,9 +113,58 @@ vimwiki
 #### Markdown Parsers
 
 [@lst:list-input-formats]の通り、入力フォーマットは多岐にわたりますが、この本ではMarkdown
-の派生フォーマット（リスト内`*`マーク）にのみ注目します。
+の派生フォーマット（リスト内`*`マーク）に注目します。さらに面白いのが、この基本モードに加えてさらなる
+拡張を有効または無効にできる点です[^markdown-extentions]。たとえば`markdown_strict`ではHTML記述以外の表を無視しますが、
+`markdown_strict+pipe_tables`とすると、Pandocは`pipe_table`文法で書かれた表をパースします。あるいは
+`+east_asian_line_breaks`を明示しないと改行ごとに空白が挿入されてしまいます。この機能をくわしく知りたいときは、
+```shell
+$ pandoc --list-extensions[=FORMAT]
+```
+で各入力フォーマットの拡張の初期ステータス一覧が得られます。
+
+[^markdown-extentions]: <https://pandoc.org/MANUAL.html#extensions>
+
+以下が各派生モードの大まかな説明です。
+
+##### **`markdown`** {-}
+
+- Pandocの全拡張機能を使える派生フォーマットです。一部の非標準拡張（`emoji`など）は追加する必要があります。
+
+##### **`markdown_strict`** {-}
+
+- 最初の（最古の）Markdown実装の互換モードです。
+- 拡張フラグ`raw_html`, `shortcut_reference_links`, `spaced_reference_links`がセットされています。
+
+##### **`gfm`/`commonmark`** {-}
+
+- 読者諸氏にもおなじみのGitHub Flavored Markdown派生です。現在はCommonmarkを継承しています。
+`pipe_table`、`emoji`などが使えます。
+- 拡張フラグ`pipe_tables`, `raw_html`, `fenced_code_blocks`, `auto_identifiers`,\
+`gfm_auto_identifiers`, `backtick_code_blocks`, `autolink_bare_uris`,\
+`space_in_atx_header`, `intraword_underscores`, `strikeout`, `task_lists`, `emoji`,\
+`shortcut_reference_links`, `angle_brackets_escapable`, `lists_without_preceding_blankline`
+がセットされています。
+
+##### **`markdown_mmd`** {-}
+
+- MultiMarkdown互換モードです。筆者はよく知りません。
+- 拡張フラグ`pipe_tables`, `raw_html`, `markdown_attribute`, `mmd_link_attributes`,\
+`tex_math_double_backslash`, `intraword_underscores`, `mmd_title_block`, `footnotes`,\
+`definition_lists`, `all_symbols_escapable`, `implicit_header_references`, `auto_identifiers`,\
+`mmd_header_identifiers`, `shortcut_reference_links`, `implicit_figures`, `superscript`, `subscript`,\
+`backtick_code_blocks`, `spaced_reference_links`, `raw_attribute`
+がセットされています。
+
+##### **`markdown_phpextra`** {-}
+
+- PHP言語で拡張された派生フォーマット"PHP Markdown Extra"の互換モードです。筆者はよく知りません。
+- 拡張フラグ`footnotes`, `pipe_tables`, `raw_html`, `markdown_attribute`, `fenced_code_blocks`,\
+`definition_lists`, `intraword_underscores`, `header_attributes`, `link_attributes`,\
+`abbreviations`, `shortcut_reference_links`, `spaced_reference_links`がセットされています。
 
 #### Pandoc's Markdown
+
+この本では、**数あるMarkdownの派生の中で現状もっとも高機能**なPandoc's Markdown について述べます。
 
 ### List of Outputs
 
@@ -132,9 +184,9 @@ vimwiki
 
 # Syntax
 ## Text
-### Italic
-### Bold
-### Bold Italic
+### Italic, Bold, Bold Italic
+### Superscript, Subscript, Strikeout
+### Underline
 ## Image link
 ## File Link
 ## Footnotes
@@ -151,7 +203,6 @@ vimwiki
 ### grid_tables
 ## Div
 ## Span
-### Underline
 ## Equations
 ## Metadata
 
@@ -305,4 +356,7 @@ vimwiki
 #### For pandocker-lua-filters
 
 # Postface
+
+- 書いててまとまりがなくて困ってる
+
 ## References
