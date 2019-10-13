@@ -7,75 +7,87 @@
 # はじめに {-}
 
 このドキュメントは、Pandocベースのドキュメントコンパイラ*Pandocker*をできるだけ細かく・詳しく・網羅的に
-解説する本です。Pandocの国内"エンジニア"[^strict-engineer-definition] 界隈での知名度が上がってきたことで、Pandoc系ドキュメントコンパイラ[^not-a-lie]
-とか言っておけば食いつきがいいかもなどという妥協と、シリーズ化して差分しか掲載せずにいると売れ行きが良くないため、
-周辺情報をまとめた「総集編２」を出します。
+解説する本です。Pandocの国内"エンジニア"[^strict-engineer-definition] 界隈での知名度が上がってきたことで、
+Pandoc系ドキュメントコンパイラ[^not-a-lie]とか言っておけば食いつきがいいかもなどという妥協と、
+シリーズ化して差分しか掲載せずにいると売れ行きが良くないため、周辺情報をまとめた「総集編２」を出します。
 
 [^strict-engineer-definition]: ちなみに筆者は「エンジニア」の[*定義*]{.underline}に敏感です。\
-ITエンジニアを指してエンジニアと呼称する場面に遭遇すると「は？（威圧）」ってなります。
+ITエンジニアを指してエンジニアと呼称する場面に遭遇すると「は？（威圧）」ってなります。*ここではあえて話を合わせてあります。*
 [^not-a-lie]: この表現に嘘はない。いいね？
 
-## 読者さんが持ってるといいかもしれない知識
+## 読者さんが持ってるといいかもしれない知識 {-}
 
 もし、この本の読者さんに以下に挙げるような知識がちょっとずつでもあれば、理解が早まると思います。
 
-### &spades; Shell
+### Shell {-}
 
 - 途中で基本的なシェルスクリプトの例がちょびっとだけでてきます。ややこしい構文は使いません。
 
-### &spades; Makefile
+### akefile {-}
 
 - コンパイラの仕組みの根幹をなすアプリケーションです。後ほど解説します。
   枯れているので情報量が多いです。特殊な構文は使いませんし、筆者はよく知りません。
 
-### &spades; Python
+### Python {-}
 
 - Pythonスクリプトというかパッケージの話題が出てきます。２系でも３系でも通じます
   （が、この本を読む頃には２系が完全にEOLですね）。
 
-### &spades; Haskell
+### Haskell {-}
 
 - Pandocのソースを読むときにとても役に立ちます（が、筆者はHaskellの知識が全くありませんし文中にも出てきません）。
 
-### &spades; Lua
+### Lua {-}
 
 - 筆者の自作Luaフィルタのソース全文を載せるかもしれません。紙面の都合で載せないかもしれません。
 
-### &spades; Open Office XML (ooxml/openxml)
+### Open Office XML (ooxml/openxml) {-}
 
 - Open Office XMLはWord・Excel・PowerPointファイルの内部言語です。
 Word出力専用フィルタの解説でちょっと出てきますが、筆者もごく一部しかわかりません。
 
-#### &diams; jgm's diff tool
+#### jgm's diff tool {-}
 
 - Word・PowerPoint・ODT（OpenOfficeのファイル形式）・XMLの差分をみるときに使えるツールが
 Pandocのソースツリーに入っています。実体は３０行程度のシェルスクリプトのようです。
-筆者は使ったことないですが、さわってみると面白いかもしれません。
+筆者は使ったことがないですが、さわってみると面白いかもしれません。
 
-### &spades; (Xe)LaTeX
+### (Xe)LaTeX {-}
 
 - PDF出力のエンジンに\XeLaTeX を使います。テンプレートを全文掲載するかもしれません。
 
-### &spades; WSL
+### WSL （Windows Subsystem for Linux） {-}
 
 - Windows Subsystem for LinuxことWSLは、Windows上で*Pandocker*を動作させるために必要です。
 読者諸氏は全員Windows10・Mac・Linuxユーザとみなして解説します。時期的にも７は対象外です。
-８は筆者が持ってないので対象外です。
+8.xは筆者が持ってないので対象外です。
 
-### &spades; Docker
+### Docker {-}
 
 - *Pandocker*の実体はDockerイメージです。イメージの依存関係とか設計？思想的なことを解説します。
 Dockerfileを全文掲載するかもしれません。一行ずつ追いかけながら解説するかもしれません。
 
-#### &diams; Docker (on Ubuntu) in WSL
+#### Docker (on Ubuntu) in WSL {-}
 
 - WSLに入れるディストリビューションはDebian系とします。
 
 # What is Pandoc?
 
-Pandocは、本家によると***「マークアップフォーマット変換の必要があるときに、スイスアーミーナイフにな（ってくれ）るもの」***です。
+Pandocは結局何者なのでしょうか。本家によると、
+***「マークアップフォーマット変換の必要があるときに、スイスアーミーナイフにな（ってくれ）るもの」***らしいです。
 
+> （<https://pandoc.org/>より抜粋）
+>
 > If you need to convert files from one markup format into another, pandoc is your swiss-army knife.
+
+Pandocはたくさんの便利なMarkdown拡張文法を理解します。（中略）もし厳密なMarkdown文法のみを使いたければ、これらの
+拡張機能はすべて無効にできます。
+
+> Pandoc understands a number of useful markdown syntax extensions, including document metadata (title, author, date);
+> footnotes; tables; definition lists; superscript and subscript; strikeout; enhanced ordered lists
+> (start number and numbering style are significant); running example lists; delimited code blocks with syntax
+> highlighting; smart quotes, dashes, and ellipses; markdown inside HTML blocks; and inline LaTeX. If strict markdown
+> compatibility is desired, all of these extensions can be turned off.
 
 ## jgm（John MacFarlane）氏曰く
 
@@ -88,16 +100,20 @@ Pandocは、本家によると***「マークアップフォーマット変換�
 
 ## Convert to/from AST tree
 
+Pandocのフォーマット変換は3段階に分かれています（[@fig:pandoc-conversion-diagram]）。最初のReaderが入力元のフォーマットを
+中間形式（AST：Abstract Syntax Tree）に変換し、最後のWriterが中間形式から出力先フォーマットに再変換します。
+後述するフィルタ（[@sec:pandocs-filters ]）はReaderが変換したASTに対する処理を行って、再びASTに戻します。
+
+[Conversion diagram](data/ast-tree.bob){.svgbob #fig:pandoc-conversion-diagram }
+
 ### List of Inputs {#sec:list-of-inputs}
 
 Pandocが受け付ける入力フォーマットは`--list-input-formats`で取得できます。これらは
-`--from/-f`オプションに与えるパラメータです。
-
-\newpage
+`--from/-f`オプションに与えるパラメータです。これによってReaderを指定します。
 
 Listing: 入力フォーマット一覧（`*`は筆者による） {#lst:list-input-formats}
 
-```bash
+``` bash
 $ pandoc --list-input-formats
 
 # 出力結果
@@ -133,27 +149,29 @@ twiki
 vimwiki
 ```
 
-#### Markdown&#9012;Parsers
+#### Markdown方言への対応
 
 [@lst:list-input-formats]の通り、入力フォーマットは多岐にわたりますが、この本ではMarkdown
-の派生フォーマット（リスト内`*`マーク）に注目します。さらに面白いのが、この基本モードに加えてさらなる
-拡張を有効または無効にできる点です[^markdown-extentions]。たとえば`markdown_strict`ではHTML記述以外の表を無視しますが、
-`markdown_strict+pipe_tables`とすると、Pandocは`pipe_table`文法で書かれた表をパースします。あるいは
-`+east_asian_line_breaks`を明示しないと改行ごとに空白が挿入されてしまいます。この機能をくわしく知りたいときは、
+の派生フォーマット（いわゆる方言、リスト内`*`マーク）に注目します。
 
-\newpage
+Pandocは細かい機能を継ぎ足しすることでフォーマットごとの互換性を保っています。
+また、フォーマットごとにデフォルトで決められたものに加えて、さらなる
+拡張を有効または無効にできるように設計されています。[^markdown-extentions]。たとえば`markdown_strict`では
+HTML記述以外の表を表として解釈しませんが、**`markdown_strict+pipe_tables`**とすると、
+Pandocは`pipe_table`文法で書かれた表をパースします。あるいは`+east_asian_line_breaks`を明示しないと、
+改行ごとに空白が挿入されてしまいます。この機能をくわしく知るには、`--list-extentions`オプションをつけてPandocを実行します。
 
-```shell
+[^markdown-extentions]: <https://pandoc.org/MANUAL.html#extensions>
+
+``` shell
 $ pandoc --list-extensions
 ```
 
-で拡張名一覧が得られます。さらに`=[FORMAT]`を追加して`FORMAT`（[@lst:list-input-formats]から選択）を指定すると、
-各`FORMAT`でどの拡張がデフォルトで有効になっているかを調べられます。`markdown`の例を[@lst:markdown-extension-defaults]に
+さらに`=[FORMAT]`を追加して`FORMAT`（[@lst:list-input-formats]から選択）を指定すると、
+各`FORMAT`でどの拡張がデフォルトで有効になっているかを表示します。`markdown`の例を[@lst:markdown-extension-defaults]に
 示します。
 
 [`markdown`フォーマットのデフォルト拡張一覧](data/markdown-extension-defaults.txt){.listingtable #lst:markdown-extension-defaults}
-
-[^markdown-extentions]: <https://pandoc.org/MANUAL.html#extensions>
 
 以下が各派生モードの大まかな説明です。
 
