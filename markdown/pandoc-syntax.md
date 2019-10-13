@@ -10,10 +10,10 @@
 
 ### Superscript, Subscript, Strikeout
 
-^上付き文字（superscript; <sup></sup>）^、~下付き文字（subscript; <sub></sub>）~、~~打ち消し線（strikeout）~~ は
-ハット（`^`）またはチルダ（`~`）を1〜2個並べて単語をはさみます。上記の例ならば`^上付き文字（superscript; <sup></sup>）^`、
-`~下付き文字（subscript; <sub></sub>）~`、`~~打ち消し線（strikeout）~~` となります。それぞれ`+superscript`・`+subscript`・`+strikeout`
-拡張を有効にする必要があります。上付き文字・下付き文字は、代替としてHTMLの`<sup>`タグ・`<sub>`タグが使えます。
+^上付き文字^（superscript; `<sup></sup>`）、 ~下付き文字~（subscript; `<sub></sub>`）、 ~~打ち消し線~~（strikeout）は
+ハット（`^`）またはチルダ（`~`）を1〜2個並べて単語をはさみます。上記の例ならば`^上付き文字^`、\
+`~下付き文字~`、`~~打ち消し線~~` となります。それぞれ`+superscript`・`+subscript`・`+strikeout`拡張が
+有効になっている必要があります。上付き文字・下付き文字は、代替としてHTMLの`<sup>`タグ・`<sub>`タグが使えます。
 
 ### Underline
 
@@ -38,6 +38,6 @@ HTML系のフォーマットはCSSを対応させれば使えるようになる�
 ## Span
 ## 数式
 
-数式は大別して2種類考えられます -
+数式は大別して2種類あります。
 
 ## Metadata
