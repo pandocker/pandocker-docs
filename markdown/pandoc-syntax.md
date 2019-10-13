@@ -10,12 +10,16 @@
 
 ### Superscript, Subscript, Strikeout
 
-^上付き文字（superscript; <sup></sup>）^、~下付き文字（subscript; <sub></sub>）~、~~打ち消し線（strikeout）~~ はハット（`^`）またはチルダ（`~`）を1〜2個並べて単語をはさみます。
-上記の例ならば`^上付き文字（superscript; <sup></sup>）^`、`~下付き文字（subscript; <sub></sub>）~`、
-`~~打ち消し線（strikeout）~~` となります。上付き文字・下付き文字は、代替としてHTMLの`<sup>`タグ・`<sub>`タグが使えます。
-それぞれ`+superscript`・`+subscript`・`+strikeout` 拡張を有効にする必要があります。
+^上付き文字（superscript; <sup></sup>）^、~下付き文字（subscript; <sub></sub>）~、~~打ち消し線（strikeout）~~ は
+ハット（`^`）またはチルダ（`~`）を1〜2個並べて単語をはさみます。上記の例ならば`^上付き文字（superscript; <sup></sup>）^`、
+`~下付き文字（subscript; <sub></sub>）~`、`~~打ち消し線（strikeout）~~` となります。それぞれ`+superscript`・`+subscript`・`+strikeout`
+拡張を有効にする必要があります。上付き文字・下付き文字は、代替としてHTMLの`<sup>`タグ・`<sub>`タグが使えます。
 
 ### Underline
+
+[下線]{.underline}はDOCX、ODTなどの一部出力フォーマットだけが対応しています。PDF出力（LaTeX経由）は未対応です。
+HTML系のフォーマットはCSSを対応させれば使えるようになると思います。
+
 ## Image link
 ## File Link
 ## Footnotes
