@@ -1,4 +1,4 @@
-# Pandocの「フィルタ」について
+# Pandocの「フィルタ」について {#sec:pandocs-filters }
 
 Pandoc単体ではできないことでも、「フィルタ」を通すことで機能を拡張できます。
 
