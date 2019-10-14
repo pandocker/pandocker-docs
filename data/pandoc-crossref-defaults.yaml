@@ -1,0 +1,71 @@
+---
+autoEqnLabels: False
+autoSectionLabels: False
+ccsDelim: ','
+ccsLabelSep: '---'
+ccsTemplate: $$i$$$$ccsLabelSep$$$$t$$
+chapDelim: '.'
+chapters: False
+chaptersDepth: 1
+codeBlockCaptions: False
+cref: False
+crossrefYaml: 'pandoc-crossref.yaml'
+eqnLabels: arabic
+eqnPrefix:
+  - 'eq.'
+  - 'eqns.'
+eqnPrefixTemplate: $$p$$ $$i$$
+figLabels: arabic
+figPrefix:
+  - 'fig.'
+  - 'figs.'
+figPrefixTemplate: $$p$$ $$i$$
+figureTemplate: $$figureTitle$$ $$i$$$$titleDelim$$ $$t$$
+figureTitle: Figure
+lastDelim: ','
+linkReferences: False
+listingTemplate: $$listingTitle$$ $$i$$$$titleDelim$$ $$t$$
+listingTitle: Listing
+listings: False
+lofTitle: |
+  List of Figures
+  ===============
+lolTitle: |
+  List of Listings
+  ================
+lotTitle: |
+  List of Tables
+  ==============
+lstLabels: arabic
+lstPrefix:
+  - 'lst.'
+  - 'lsts.'
+lstPrefixTemplate: $$p$$ $$i$$
+nameInLink: False
+numberSections: False
+pairDelim: ','
+rangeDelim: '\-'
+refDelim: ','
+refIndexTemplate: $$i$$$$suf$$
+secHeaderTemplate: $$i$$$$secHeaderDelim$$$$t$$
+secLabels: arabic
+secPrefix:
+  - 'sec.'
+  - 'secs.'
+secPrefixTemplate: $$p$$ $$i$$
+sectionsDepth: 0
+subfigGrid: False
+subfigLabels: alpha a
+subfigureChildTemplate: $$i$$
+subfigureRefIndexTemplate: '$$i$$$$suf$$ ($$s$$)'
+subfigureTemplate: '$$figureTitle$$ $$i$$$$titleDelim$$ $$t$$. $$ccs$$'
+tableEqns: False
+tableTemplate: $$tableTitle$$ $$i$$$$titleDelim$$ $$t$$
+tableTitle: Table
+tblLabels: arabic
+tblPrefix:
+  - 'tbl.'
+  - 'tbls.'
+tblPrefixTemplate: $$p$$ $$i$$
+titleDelim: ':'
+---
