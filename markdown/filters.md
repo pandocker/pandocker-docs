@@ -11,7 +11,9 @@ Pandoc単体ではできないことでも、「フィルタ」を通すこと�
 ### Common behavior
 #### Cross reference
 
-- pandoc-crossref
+- pandoc-crossref(<https://lierdakil.github.io/pandoc-crossref>)
+
+[デフォルト値一覧](data/pandoc-crossref-defaults.yaml){.listingtable type=yaml}
 
 #### CSV to table
 
@@ -58,6 +60,11 @@ Pandoc単体ではできないことでも、「フィルタ」を通すこと�
 #### Landscape
 
 - pandocker-lua-filters
+```markdown
+::: LANDSCAPE
+
+:::
+```
 
 #### Table coloring
 
@@ -66,19 +73,40 @@ Pandoc単体ではできないことでも、「フィルタ」を通すこと�
 #### Pagebreak
 
 - pandocker-lua-filters
+```markdown
+<!--blank-->
+\newpage
+<!--blank-->
+```
 
 ### Word only behavior
 #### Table of Contents
 
 - pandocker-lua-filters
+```markdown
+<!--blank-->
+\toc
+<!--blank-->
+```
 
 #### Forced Page break
 
 - pandocker-lua-filters
+```markdown
+<!--blank-->
+\newpage
+<!--blank-->
+```
 
 #### Unnumbered headings
 
 - pandocker-lua-filters
+```markdown
+# Unnumbered Heading 1 {-}
+## Unnumbered Heading 2 {-}
+### Unnumbered Heading 3 {-}
+#### Unnumbered Heading 4 {-}
+```
 
 #### Centering Image
 
