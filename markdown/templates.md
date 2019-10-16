@@ -27,21 +27,31 @@
 > - dsAttribute, annotations such as @override and __declspec(...).
 > （後略）
 
+```shell
+$ docker run --rm -it -v $PWD:/workdir k4zuki/pandocker-alpine
+$ pandoc -o reference.docx --print-default-data-file reference.docx
+$ pandoc -o custom-reference.docx --highlight-style=kate reference.docx
+```
+
 ```python
 import pprint
 import docx
 
-d = docx.Document("ref.docx")
+d = docx.Document("custom-reference.docx")
 pprint.pprint(sorted([s.name for s in d.styles if "Tok" in s.name ]))
-['AnnotationTok',
+['AlertTok',
+ 'AnnotationTok',
  'AttributeTok',
  'BaseNTok',
  'BuiltInTok',
  'CharTok',
  'CommentTok',
+ 'CommentVarTok',
+ 'ConstantTok',
  'ControlFlowTok',
  'DataTypeTok',
  'DecValTok',
+ 'DocumentationTok',
  'ErrorTok',
  'ExtensionTok',
  'FloatTok',
