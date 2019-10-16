@@ -27,5 +27,41 @@
 > - dsAttribute, annotations such as @override and __declspec(...).
 > （後略）
 
+```python
+import pprint
+import docx
+
+d = docx.Document("ref.docx")
+pprint.pprint(sorted([s.name for s in d.styles if "Tok" in s.name ]))
+['AnnotationTok',
+ 'AttributeTok',
+ 'BaseNTok',
+ 'BuiltInTok',
+ 'CharTok',
+ 'CommentTok',
+ 'ControlFlowTok',
+ 'DataTypeTok',
+ 'DecValTok',
+ 'ErrorTok',
+ 'ExtensionTok',
+ 'FloatTok',
+ 'FunctionTok',
+ 'ImportTok',
+ 'InformationTok',
+ 'KeywordTok',
+ 'NormalTok',
+ 'OperatorTok',
+ 'OtherTok',
+ 'PreprocessorTok',
+ 'RegionMarkerTok',
+ 'SpecialCharTok',
+ 'SpecialStringTok',
+ 'StringTok',
+ 'VariableTok',
+ 'VerbatimStringTok',
+ 'WarningTok']
+
+```
+
 ### PostProcess
 #### python-docx
