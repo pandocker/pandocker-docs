@@ -6,7 +6,8 @@
 ### Italic, Bold, Bold Italic
 
 *斜体（Italic; Emphasis）*、**太字（Bold; Strong Emphasis）**、***太字斜体（Bild Italic）*** はアスタリスク（`*`）を1〜3個並べて
-単語をはさみます。上記の例ならば`*斜体（Italic; Emphasis）*`、`**太字（Bold; Strong Emphasis）**`、`***太字斜体（Bild Italic）***`です。
+単語をはさみます。上記の例ならば`*斜体（Italic; Emphasis）*`、`**太字（Bold; Strong Emphasis）**`、
+`***太字斜体（Bild Italic）***`です。
 
 ### Superscript, Subscript, Strikeout
 
