@@ -15,6 +15,11 @@ Pandoc系ドキュメントコンパイラ[^not-a-lie]とか言っておけば�
 ITエンジニアを指してエンジニアと呼称する場面に遭遇すると「は？（威圧）」ってなります。*ここではあえて話を合わせてあります。*
 [^not-a-lie]: この表現に嘘はない。いいね？
 
+この本で対象にするPandocのバージョンは**2.7.3**です。この本が出る頃には本家で
+**2.8**が発表されているかもしれません[^quite-many-milestone-issues]が。
+
+[^quite-many-milestone-issues]: 思ったよりもこなすべきIssueの数が多いので間に合うかもしれません。
+
 ## 読者さんが持ってるといいかもしれない知識 {-}
 
 もし、この本の読者さんに以下に挙げるような知識がちょっとずつでもあれば、理解が早まると思います。
@@ -23,7 +28,7 @@ ITエンジニアを指してエンジニアと呼称する場面に遭遇する
 
 - 途中で基本的なシェルスクリプトの例がちょびっとだけでてきます。ややこしい構文は使いません。
 
-### akefile {-}
+### Makefile {-}
 
 - コンパイラの仕組みの根幹をなすアプリケーションです。後ほど解説します。
   枯れているので情報量が多いです。特殊な構文は使いませんし、筆者はよく知りません。
@@ -156,10 +161,10 @@ vimwiki
 
 Pandocは細かい機能を継ぎ足しすることでフォーマットごとの互換性を保っています。
 また、フォーマットごとにデフォルトで決められたものに加えて、さらなる
-拡張を有効または無効にできるように設計されています。[^markdown-extentions]。たとえば`markdown_strict`では
+拡張を有効または無効にできるように設計されています[^markdown-extentions]。たとえば`markdown_strict`では、
 HTML記述以外の表を表として解釈しませんが、**`markdown_strict+pipe_tables`**とすると、
 Pandocは`pipe_table`文法で書かれた表をパースします。あるいは`+east_asian_line_breaks`を明示しないと、
-改行ごとに空白が挿入されてしまいます。この機能をくわしく知るには、`--list-extentions`オプションをつけてPandocを実行します。
+改行ごとに空白が挿入されてしまいます。これらの拡張の一覧を表示させるには、`--list-extentions`オプションをつけてPandocを実行します。
 
 [^markdown-extentions]: <https://pandoc.org/MANUAL.html#extensions>
 
@@ -167,13 +172,13 @@ Pandocは`pipe_table`文法で書かれた表をパースします。あるい�
 $ pandoc --list-extensions
 ```
 
-さらに`=[FORMAT]`を追加して`FORMAT`（[@lst:list-input-formats]から選択）を指定すると、
+さらに`=[FORMAT]`を追加して`FORMAT` （[@lst:list-input-formats]から選択）を指定すると、
 各`FORMAT`でどの拡張がデフォルトで有効になっているかを表示します。`markdown`の例を[@lst:markdown-extension-defaults]に
 示します。
 
 [`markdown`フォーマットのデフォルト拡張一覧](data/markdown-extension-defaults.txt){.listingtable #lst:markdown-extension-defaults}
 
-以下が各派生モードの大まかな説明です。
+以下が各派生モードの大まかな説明です。<https://pandoc.org/MANUAL.html#markdown-variants>を要約しています。
 
 ##### **`markdown`** {-}
 
@@ -213,6 +218,10 @@ $ pandoc --list-extensions
 `abbreviations`, `shortcut_reference_links`, `spaced_reference_links`がセットされています。
 
 ### List of Outputs
+
+Pandocが出力可能なフォーマットは[@sec:list-of-inputs]と同様に`pandoc --list-output-formats`で得られます。
+
+[出力フォーマット一覧](data/pandoc-output-formats.txt){.listingtable #lst:list-output-formats}
 
 #### HTML
 
