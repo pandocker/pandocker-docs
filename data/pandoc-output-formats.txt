@@ -15,7 +15,7 @@ epub
 epub2
 epub3
 fb2
-gfm
+gfm *
 haddock
 html
 html4
