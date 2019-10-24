@@ -10,7 +10,11 @@
 ### Paragraph and Table styles
 ### source code token styles \*Tok
 
-> <https://docs.kde.org/stable5/en/applications/katepart/highlight.html#kate-highlight-default-styles>
+<https://docs.kde.org/stable5/en/applications/katepart/highlight.html#kate-highlight-default-styles>より
+
+---
+
+> （前略）
 >
 > Default Styles were already explained, as a short summary: Default styles are predefined font and color styles.
 >
@@ -26,6 +30,7 @@
 > - dsExtension, common extensions, such as Qt classes and functions/macros in C++ and Python.
 > - dsPreprocessor, preprocessor statements or macro definitions.
 > - dsAttribute, annotations such as @override and __declspec(...).
+>
 > （後略）
 
 ```shell
