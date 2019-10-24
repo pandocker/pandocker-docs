@@ -19,6 +19,7 @@ ITエンジニアを指してエンジニアと呼称する場面に遭遇する
 **2.8**が発表されているかもしれません[^quite-many-milestone-issues]が。
 
 [^quite-many-milestone-issues]: 思ったよりもこなすべきIssueの数が多いので間に合うかもしれません。
+これらのIssueは<https://github.com/jgm/pandoc/milestone/7>にまとめられています。
 
 ## 読者さんが持ってるといいかもしれない知識 {-}
 
@@ -154,10 +155,10 @@ twiki
 vimwiki
 ```
 
-#### Markdown方言への対応
+#### Markdown方言への対応 {#sec:markdown-variants}
 
 [@lst:list-input-formats]の通り、入力フォーマットは多岐にわたりますが、この本ではMarkdown
-の派生フォーマット（いわゆる方言、リスト内`*`マーク）に注目します。
+の派生フォーマット（いわゆる方言、リスト内 `*` マーク）に注目します。
 
 Pandocは細かい機能を継ぎ足しすることでフォーマットごとの互換性を保っています。
 また、フォーマットごとにデフォルトで決められたものに加えて、さらなる
@@ -176,6 +177,8 @@ $ pandoc --list-extensions
 各`FORMAT`でどの拡張がデフォルトで有効になっているかを表示します。`markdown`の例を[@lst:markdown-extension-defaults]に
 示します。
 
+\newpage
+
 [`markdown`フォーマットのデフォルト拡張一覧](data/markdown-extension-defaults.txt){.listingtable #lst:markdown-extension-defaults}
 
 以下が各派生モードの大まかな説明です。<https://pandoc.org/MANUAL.html#markdown-variants>を要約しています。
@@ -189,6 +192,8 @@ $ pandoc --list-extensions
 
 - 最初の（最古の）Markdown実装の互換モードです。
 - 拡張フラグ`raw_html`, `shortcut_reference_links`, `spaced_reference_links`がセットされています。
+
+\newpage
 
 ##### **`gfm`/`commonmark`** {-}
 
@@ -220,6 +225,7 @@ $ pandoc --list-extensions
 ### List of Outputs
 
 Pandocが出力可能なフォーマットは[@sec:list-of-inputs]と同様に`pandoc --list-output-formats`で得られます。
+[@sec:markdown-variants]で説明した拡張を有効・無効にする機能は、出力の際にも適用されます。
 
 [出力フォーマット一覧](data/pandoc-output-formats.txt){.listingtable #lst:list-output-formats}
 
