@@ -6,6 +6,7 @@
 #### verbcolored
 #### secnumdepth
 ## Word
+### Cover page
 ### Paragraph and Table styles
 ### source code token styles \*Tok
 
