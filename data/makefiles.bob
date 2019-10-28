@@ -1,0 +1,38 @@
+                                                                ""
+    "system/Makefile.in"
+    +-----------------------------+    -.
+    |                             |\    |
+    |                             |_+   +> "Define parameters"
+    | "PANDOC_OPTS=..."             |   |
+    | "TARGET=..."                  |   |
+    | "CONFIG=..."                  |   |
+    |                               |   |
+    |                               |   |
+    |_______________________________|  -'
+                        |
+                        |
+    "user/Makefile"     V "include"
+    +-----------------------------+    -.
+    |                             |\    |
+    |                             |_+   +> "Overrides/adds parameters"
+    | "PANDOC_OPTS=..."             |   |
+    | "#TARGET=..."                 |   |
+    | "#CONFIG=..."                 |   |
+    |                               |   |
+    |                               |   |
+    |_______________________________|  -'
+
+                        ^ "include"
+                        |
+    "system/Makefile"   |
+    +-----------------------------+    -.
+    |                             |\    |
+    | "html:"                     |_+   +> "Use them"
+    |     "pandoc $(PANDOC_OPTS)..."|   |
+    | "docx:"                       |   |
+    |     "pandoc ..."              |   |
+    | "tex:"                        |   |
+    |     "pandoc ..."              |   |
+    |_______________________________|  -'
+
+""

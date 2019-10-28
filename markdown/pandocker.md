@@ -17,8 +17,10 @@ Dockerイメージなので同一入力・同一出力が保証されます。
 コンパイルの全体を管理するのはMakefile群です。変数定義`Makefile.in`・システム用`Makefile`・
 ユーザ用`Makefile`の3種類に分けてあります。
 
-`Makefile.in`で定義された各変数、たとえばPandocに与えるオプションなど、をユーザ用Makefileが上書きし
+`Makefile.in`で定義された各変数、たとえばDOCXテンプレートのファイル名など、をユーザ用Makefileが上書きし
 （なくてもいいんですよ！）、システム用Makefileがそれらを使ってコンパイルします。
+
+[Makefile](data/makefiles.bob){.svgbob}
 
 ### System config
 #### Makefile.in
