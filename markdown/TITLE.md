@@ -229,6 +229,8 @@ Pandocが出力可能なフォーマットは[@sec:list-of-inputs]と同様に`p
 
 [出力フォーマット一覧](data/pandoc-output-formats.txt){.listingtable #lst:list-output-formats}
 
+*Pandocker*ではHTML・DOCX・PDFに出力できます。
+
 #### HTML
 
 - Not CSS typesetting (yet)

@@ -3,7 +3,7 @@
     +-----------------------------+    -.
     |                             |\    |
     |                             |_+   +> "Define parameters"
-    | "PANDOC_OPTS=..."             |   |
+    | "PANFLAGS=..."                |   |
     | "TARGET=..."                  |   |
     | "CONFIG=..."                  |   |
     |                               |   |
@@ -15,8 +15,8 @@
     +-----------------------------+    -.
     |                             |\    |
     |                             |_+   +> "Overrides/adds parameters"
-    | "PANDOC_OPTS=..."             |   |
-    | "#TARGET=..."                 |   |
+    | "DATE=..."                    |   |
+    | "TARGET=$(DATE)..."           |   |
     | "#CONFIG=..."                 |   |
     |                               |   |
     |                               |   |
@@ -28,11 +28,11 @@
     +-----------------------------+    -.
     |                             |\    |
     | "html:"                     |_+   +> "Use them"
-    |     "pandoc $(PANDOC_OPTS)..."|   |
+    |     "pandoc $(PANFLAGS)..."   |   |
     | "docx:"                       |   |
-    |     "pandoc ..."              |   |
+    |     "pandoc $(DOCX_OPTS)..."  |   |
     | "tex:"                        |   |
-    |     "pandoc ..."              |   |
+    |     "pandoc $(PDF_OPTS)..."   |   |
     |_______________________________|  -'
 
 ""
