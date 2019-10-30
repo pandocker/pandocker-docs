@@ -6,11 +6,11 @@
 
 *Pandocker*はGNU Make、TeXLive、Pandoc、フィルタ類、テンプレート類を一つのDockerイメージ上にパッケージしたものです。
 
-Makeの仕組みによってPandocのオプションやフィルタの適用順を考えずに済みます。TeXLiveが予めインストール済みの
+Makeの仕組みによってPandocのオプションやフィルタの適用順を覚えておく必要がなくなります。TeXLiveが予めインストール済みの
 イメージなのでLaTeX周りの悩みがなくなります。HTML/DOCXテンプレートも用意されています。もちろんカスタムテンプレートを
 適用することも、それらを常時使うようにイメージを拡張することもできます。
 
-Dockerイメージなので同一入力・同一出力が保証されます。
+Pandoc・フィルタ・テンプレートがインストール済のDockerイメージなので同一入力・同一出力が担保されます。
 これによってユーザは`docker run`が動作するかどうかだけを気にすればよくなります。
 
 ### Make
@@ -18,8 +18,8 @@ Dockerイメージなので同一入力・同一出力が保証されます。
 コンパイルの全体を管理するのはMakefile群です。変数定義`Makefile.in`・システム用`Makefile`・
 ユーザ用`Makefile`の3種類に分けてあります。
 
-`Makefile.in`で定義された各変数、たとえばDOCXテンプレートのファイル名など、をユーザ用Makefileが上書きし、
-システム用Makefileがそれらを使ってターゲットにします。
+ユーザMakefileはMakefile.inをインクルードし、必要なら自ファイル内で上書きし、最後にシステムMakefileをインクルードすることで
+3ファイルを連結しながらプロジェクト固有の設定も反映させます。
 
 [Makefile](data/makefiles.bob){.svgbob}
 
@@ -48,11 +48,11 @@ Dockerイメージなので同一入力・同一出力が保証されます。
 
 #### Makefile
 
-[user/Makefile](./Makefile){.listingtable type=makefile}
+[user/Makefile](./Makefile){.listingtable type=makefile #lst:user-makefile}
 
 #### config.yaml
 
-[user/config.yaml](./markdown/config.yaml){.listingtable type=yaml}
+[user/config.yaml](./markdown/config.yaml){.listingtable type=yaml #lst:user-config-yaml}
 
 ## Docker Images
 ### Alpine
