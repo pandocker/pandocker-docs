@@ -95,16 +95,17 @@ Pandocはたくさんの便利なMarkdown拡張文法を理解します。（中
 > highlighting; smart quotes, dashes, and ellipses; markdown inside HTML blocks; and inline LaTeX. If strict markdown
 > compatibility is desired, all of these extensions can be turned off.
 
-## jgm（John MacFarlane）氏曰く
+## John MacFarlane（jgm）氏曰く
 
 > **「Pandocを媒介にしてHaskellを広めたい」**（ちょっと大胆な意訳）
 >
 > > "I like to think of pandoc as a virus that spreads Haskell.\
 > > (<https://github.com/jgm/pandoc/issues/1278#issuecomment-42502343>)
 
-などとのたまっていますが、筆者には手が出せません。
+などとのたまっていますが、筆者には手が出せません。ちなみに"jgm"とはMacFarlen氏のハンドルネームです。
+このあともよく登場する名前なので覚えておいてください。
 
-## Convert to/from AST tree
+## Convert to/from AST tree {#sec:convert-to-from-ast-tree}
 
 Pandocのフォーマット変換は3段階に分かれています（[@fig:pandoc-conversion-diagram]）。最初のReaderが入力元のフォーマットを
 中間形式（AST：Abstract Syntax Tree）に変換し、最後のWriterが中間形式から出力先フォーマットに再変換します。
@@ -233,17 +234,20 @@ Pandocが出力可能なフォーマットは[@sec:list-of-inputs]と同様に`p
 
 #### HTML
 
-- Not CSS typesetting (yet)
+*Pandocker*内でのHTML出力は、いちおうGitHub風CSSを利用していますが、あくまでtypoなどの
+校正のために用意されているものです。最近の流行であるCSS組版などは全く考えられていません。
 
 #### PDF engines
 
-- XeLaTeX
+*Pandocker*の中心的出力形式です。いったんLaTeXファイルに出力してからPDFに変換します。
+Pandocのデフォルト設定はPDFLaTeXでCJKフォントを持っていない（空白になる）ので、TeXエンジンには
+XeLaTeXを採用しています。
 
-#### Word
+#### Microsoft(R) Word(R)
 
-- 2010
-
-### Extensions
+筆者としてはあまり近づきたくないが、世の中の需要はそれなりにあるのでDOCX出力もできるようにしてあります。
+カスタムテンプレートも用意してありますが、会社のテンプレを使うなどの需要にも対応できるようになっています。
+出力のファイル形式はWord2010に準拠しています。これは（いまのところ）Pandocの仕様です。
 
 # #include "pandoc-syntax.md"
 # #include "filters.md"
@@ -254,5 +258,7 @@ Pandocが出力可能なフォーマットは[@sec:list-of-inputs]と同様に`p
 # Postface
 
 - 書いててまとまりがなくて困ってる
+- ゼルダをやってエンディングで懐か死した
+- COD MWのFALは当たらない子だけど武器レベル55あたりで3点バーストのパークをつけるとだいぶ強くなるよ
 
 ## References
