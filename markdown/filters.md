@@ -44,51 +44,69 @@ jgmのおすすめはLuaフィルタです。PandocがLuaインタプリタ（�
 
 ## Extensions by filters
 ### Common behavior
+
+出力の形式にかかわらず適用されるフィルタ群です。
+
 #### Cross reference
 
-- pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>)
+- pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>、`--filter=pandoc-crossref`)
+
+章・節タイトル、図と表、コードリスト、数式に相互参照機能を実装するフィルタです。
+作者はPandocの開発にも関わっていて、とくにDOCX周りで色々貢献しています。
 
 [デフォルト値一覧](data/pandoc-crossref-defaults.yaml){.listingtable type=yaml}
 
+図・表・コードリストの一覧（Table of Tables、Table of Figures、Table of Listings）を生成するTeXコマンドも用意されています。
+
 #### CSV to table
 
-- pandocker-lua-filters
+- pandocker-lua-filters (`--lua-filter=csv2table.lua`)
+
+CSVファイルをPandocの表に変換するLuaフィルタです。CSVファイルへのURLリンクに`table`クラス属性がついたものに対し
+発動します。
 
 #### Listing
 
-- pandocker-lua-filters
+- pandocker-lua-filters (`--lua-filter=listingtable.lua`)
+
+任意のテキストファイルをソースコードの引用に変換するフィルタです。テキストファイルへのURLリンクに`listing`
+クラス属性がついたものに対し発動します。
 
 #### Preprocess
 
-- pandocker-lua-filters
+- pandocker-lua-filters (`--lua-filter=preprocess.lua`)
+
+任意のテキストファイルを原稿ファイルとして取り込むフィルタです。任意レベルの見出しが
+
+1. `#include`
+1. `<空白文字>`
+1. `"<取り込みたいファイル名>"`
+
+という順番になっている場合に発動します。
 
 #### Block comment
 
-- pandocker-lua-filters
+- pandocker-lua-filters (`--lua-filter=removable-note.lua`)
 
 #### SVG to PNG/PDF at runtime
 
-- pandocker-lua-filters
+- pandocker-lua-filters (`--lua-filter=svgconvert.lua`)
 
 #### Table width
 
-- pandocker-lua-filters
+- pandocker-lua-filters (`--lua-filter=table-width.lua`)
 
 #### AAFigure
 
-- pandocker-pandoc-filters
+- pandocker-pandoc-filters (`--filter=pandocker-filters`)
 
 #### svgbob
 
-- pandoc-svgbob-filter
+- pandoc-svgbob-filter (`--filter=pandoc-svgbob-filter`)
 
 #### blockdiag
 
-- pandoc-blockdiag-filter
-
-#### SVG to PNG/PDF
-
-- pandocker-lua-filters
+- pandoc-blockdiag-filter (`--filter=pandoc-blockdiag-filters`)
 
 ### HTML only behavior
 ### LaTeX only behavior
