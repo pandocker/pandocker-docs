@@ -92,9 +92,15 @@ CSVファイルをPandocの表に変換するLuaフィルタです。CSVファ�
 
 - pandocker-lua-filters (`--lua-filter=svgconvert.lua`)
 
+SVG画像へのリンクを見つけると、出力形式に応じてPDFかPNGに変換するフィルタです。HTML・HTML５が指定されていると
+SVGのまま何もしません。
+
 #### Table width
 
 - pandocker-lua-filters (`--lua-filter=table-width.lua`)
+
+表の列幅をページ幅からの割合で指定できるようにするフィルタです。`table`クラス属性と`width`属性がつけられているdiv節の中に
+表が一つだけ置かれている場合に、divの中の表に対して作用します。
 
 #### AAFigure
 
