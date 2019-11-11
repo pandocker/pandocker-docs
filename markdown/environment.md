@@ -22,9 +22,26 @@ VSCodeは使ったことがありません。
 実行・デバッグ環境として便利だったからです。その後会社と同じIDEのほうが利便性が高いのと、
 十分高機能なMarkdownプラグインが見つかったことで、２年くらい使っています。最近はプラグインも一つ作りました。
 
+ここから先の記述はすべてPyCharmの英語版を対象にします。そもそも日本語版があるのかはわかりませんが、適宜読み替えてください。
+
+### プラグイン
+
+Markdownの簡単なシンタックスハイライトとレンダリングの確認程度なら、ビルトインのMarkdownプラグインで十分です。
+しかしながら、筆者にはこだわりがあるので、*Markdown Navigator*というプラグインの有料版を使っています。
+
+>
+> <https://plugins.jetbrains.com/plugin/7896-markdown-navigator>
+>
+
 ### External Tools
 
+External Toolsにコマンドと引数を登録すると、右クリックメニューから実行することができます。
+たとえばコマンドに`docker`、引数に`run -it pandocker-alpine ...`などと入力しておくと、Pandockerを右クリックから呼び出せる、
+という具合です。
+
 ### Live Templates
+
+Live TemplateはVSCodeでいうところのスニペット機能です。
 
 #### For Pandoc's markdown
 
