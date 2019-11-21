@@ -79,5 +79,40 @@ pprint.pprint(sorted([s.name for s in d.styles if "Tok" in s.name ]))
 
 ```
 
+:::{custom-style="Source Code"}
+[Verbatim Char]{custom-style="Verbatim Char"}\
+[AlertTok]{custom-style="AlertTok"}\
+[AnnotationTok]{custom-style="AnnotationTok"}\
+[AttributeTok]{custom-style="AttributeTok"}\
+[BaseNTok]{custom-style="BaseNTok"}\
+[BuiltinTok]{custom-style="BuiltinTok"}\
+[CharTok]{custom-style="CharTok"}\
+[CommentTok]{custom-style="CommentTok"}\
+[CommentVarTok]{custom-style="CommentVarTok"}\
+[ConstantTok]{custom-style="ConstantTok"}\
+[ControlFlowTok]{custom-style="ControlFlowTok"}\
+[DataTypeTok]{custom-style="DataTypeTok"}\
+[DecValTok]{custom-style="DecValTok"}\
+[DocumentationTok]{custom-style="DocumentationTok"}\
+[ErrorTok]{custom-style="ErrorTok"}\
+[ExtensionTok]{custom-style="ExtensionTok"}\
+[FloatTok]{custom-style="FloatTok"}\
+[FunctionTok]{custom-style="FunctionTok"}\
+[ImportTok]{custom-style="ImportTok"}\
+[InformationTok]{custom-style="InformationTok"}\
+[KeywordTok]{custom-style="KeywordTok"}\
+[NormalTok]{custom-style="NormalTok"}\
+[OperatorTok]{custom-style="OperatorTok"}\
+[OtherTok]{custom-style="OtherTok"}\
+[PreprocessorTok]{custom-style="PreprocessorTok"}\
+[RegionMarkerTok]{custom-style="RegionMarkerTok"}\
+[SpecialCharTok]{custom-style="SpecialCharTok"}\
+[SpecialStringTok]{custom-style="SpecialStringTok"}\
+[StringTok]{custom-style="StringTok"}\
+[VariableTok]{custom-style="VariableTok"}\
+[VerbatimStringTok]{custom-style="VerbatimStringTok"}\
+[WarningTok]{custom-style="WarningTok"}\
+:::
+
 ### PostProcess
 #### python-docx
