@@ -22,22 +22,70 @@
 HTML系のフォーマットはCSSを対応させれば使えるようになると思います。
 
 ## Image link
+
 ## File Link
+
+Lorem ipsum
+
 ## Footnotes
+
+Lorem ipsum
+
 ## Heading
+
+Lorem ipsum
+
 ### Unnumbered
+
+Lorem ipsum
+
 ## Bullet lists
+
+Lorem ipsum
+
 ### Ordered
+
+Lorem ipsum
+
 ### Unordered
+
+Lorem ipsum
+
 ### Task lists
+
+Lorem ipsum
+
 ## Inline HTML
+
+Lorem ipsum
+
 ## Inline LaTeX
+
+Lorem ipsum
+
 ## Table
+
+Lorem ipsum
+
 ### pipe_tables
+
+Lorem ipsum
+
 ### grid_tables
+
+Lorem ipsum
+
 ## Div
+
+Lorem ipsum
+
 ## Span
+
+Lorem ipsum
+
 ## 数式
+
+Lorem ipsum
 
 数式は大別して2種類あります。
 

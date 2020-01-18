@@ -2,9 +2,9 @@
 ## HTML
 ## LaTeX
 ### metadata
-#### front
-#### verbcolored
-#### secnumdepth
+##### front
+##### verbcolored
+##### secnumdepth
 ## Word
 ### Cover page
 ### Paragraph and Table styles
@@ -115,4 +115,4 @@ pprint.pprint(sorted([s.name for s in d.styles if "Tok" in s.name ]))
 :::
 
 ### PostProcess
-#### python-docx
+##### python-docx

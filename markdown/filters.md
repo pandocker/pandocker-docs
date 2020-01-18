@@ -47,7 +47,7 @@ jgmのおすすめはLuaフィルタです。PandocがLuaインタプリタ（�
 
 出力の形式にかかわらず適用されるフィルタ群です。
 
-#### Cross reference
+##### Cross reference
 
 - pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>、`--filter=pandoc-crossref`)
 
@@ -58,21 +58,21 @@ jgmのおすすめはLuaフィルタです。PandocがLuaインタプリタ（�
 
 図・表・コードリストの一覧（Table of Tables、Table of Figures、Table of Listings）を生成するTeXコマンドも用意されています。
 
-#### CSV to table
+##### CSV to table
 
 - pandocker-lua-filters (`--lua-filter=csv2table.lua`)
 
 CSVファイルをPandocの表に変換するLuaフィルタです。CSVファイルへのURLリンクに`table`クラス属性がついたものに対し
 発動します。
 
-#### Listing
+##### Listing
 
 - pandocker-lua-filters (`--lua-filter=listingtable.lua`)
 
 任意のテキストファイルをソースコードの引用に変換するフィルタです。テキストファイルへのURLリンクに`listing`
 クラス属性がついたものに対し発動します。
 
-#### Preprocess
+##### Preprocess
 
 - pandocker-lua-filters (`--lua-filter=preprocess.lua`)
 
@@ -84,39 +84,39 @@ CSVファイルをPandocの表に変換するLuaフィルタです。CSVファ�
 
 という順番になっている場合に発動します。
 
-#### Block comment
+##### Block comment
 
 - pandocker-lua-filters (`--lua-filter=removable-note.lua`)
 
-#### SVG to PNG/PDF at runtime
+##### SVG to PNG/PDF at runtime
 
 - pandocker-lua-filters (`--lua-filter=svgconvert.lua`)
 
 SVG画像へのリンクを見つけると、出力形式に応じてPDFかPNGに変換するフィルタです。HTML・HTML５が指定されていると
 SVGのまま何もしません。
 
-#### Table width
+##### Table width
 
 - pandocker-lua-filters (`--lua-filter=table-width.lua`)
 
 表の列幅をページ幅からの割合で指定できるようにするフィルタです。`table`クラス属性と`width`属性がつけられているdiv節の中に
 表が一つだけ置かれている場合に、divの中の表に対して作用します。
 
-#### AAFigure
+##### AAFigure
 
 - pandocker-pandoc-filters (`--filter=pandocker-filters`)
 
-#### svgbob
+##### svgbob
 
 - pandoc-svgbob-filter (`--filter=pandoc-svgbob-filter`)
 
-#### blockdiag
+##### blockdiag
 
 - pandoc-blockdiag-filter (`--filter=pandoc-blockdiag-filters`)
 
 ### HTML only behavior
 ### LaTeX only behavior
-#### Landscape
+##### Landscape
 
 - pandocker-lua-filters
 ```markdown
@@ -125,11 +125,11 @@ SVGのまま何もしません。
 :::
 ```
 
-#### Table coloring
+##### Table coloring
 
 - pandocker-lua-filters
 
-#### Pagebreak
+##### Pagebreak
 
 - pandocker-lua-filters
 ```markdown
@@ -139,7 +139,7 @@ SVGのまま何もしません。
 ```
 
 ### Word only behavior
-#### Table of Contents
+##### Table of Contents
 
 - pandocker-lua-filters
 ```markdown
@@ -148,7 +148,7 @@ SVGのまま何もしません。
 <!--blank-->
 ```
 
-#### Forced Page break
+##### Forced Page break
 
 - pandocker-lua-filters
 ```markdown
@@ -157,7 +157,7 @@ SVGのまま何もしません。
 <!--blank-->
 ```
 
-#### Unnumbered headings
+##### Unnumbered headings
 
 - pandocker-lua-filters
 ```markdown
@@ -167,9 +167,9 @@ SVGのまま何もしません。
 #### Unnumbered Heading 4 {-}
 ```
 
-#### Centering Image
+##### Centering Image
 
 - pandocker-lua-filters
 
 ### Post processing
-#### docx-core-property-writer
+##### docx-core-property-writer

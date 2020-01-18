@@ -2,7 +2,32 @@
 
 \newpage
 
-\toc
+::: {.rmnote}
+
+```{=openxml}
+<w:tbl 
+xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:tblPr>
+    <w:tblW w:type="auto" w:w="0"/>
+    <w:tblLook w:firstColumn="1" w:firstRow="1"
+               w:lastColumn="0" w:lastRow="0" w:noHBand="0"
+               w:noVBand="1" w:val="04A0"/>
+  </w:tblPr>
+  <w:tblGrid>
+    <w:gridCol w:w="1"/>
+  </w:tblGrid>
+  <w:tr>
+    <w:tc>
+      <w:tcPr>
+        <w:tcW w:type="dxa" w:w="1"/>
+      </w:tcPr>
+      <w:p/>
+    </w:tc>
+  </w:tr>
+</w:tbl>
+```
+
+:::
 
 # はじめに {-}
 
@@ -52,7 +77,7 @@ ITエンジニアを指してエンジニアと呼称する場面に遭遇する
 - Open Office XMLはWord・Excel・PowerPointファイルの内部言語です。
 Word出力専用フィルタの解説でちょっと出てきますが、筆者もごく一部しかわかりません。
 
-#### jgm's diff tool {-}
+##### jgm's diff tool {-}
 
 - Word・PowerPoint・ODT（OpenOfficeのファイル形式）・XMLの差分をみるときに使えるツールが
 Pandocのソースツリーに入っています。実体は３０行程度のシェルスクリプトのようです。
@@ -73,9 +98,11 @@ Pandocのソースツリーに入っています。実体は３０行程度の�
 - *Pandocker*の実体はDockerイメージです。イメージの依存関係とか設計？思想的なことを解説します。
 Dockerfileを全文掲載するかもしれません。一行ずつ追いかけながら解説するかもしれません。
 
-#### Docker (on Ubuntu) in WSL {-}
+##### Docker (on Ubuntu) in WSL {-}
 
 - WSLに入れるディストリビューションはDebian系とします。
+
+\toc
 
 # What is Pandoc?
 
@@ -156,7 +183,7 @@ twiki
 vimwiki
 ```
 
-#### Markdown方言への対応 {#sec:markdown-variants}
+##### Markdown方言への対応 {#sec:markdown-variants}
 
 [@lst:list-input-formats]の通り、入力フォーマットは多岐にわたりますが、この本ではMarkdown
 の派生フォーマット（いわゆる方言、リスト内 `*` マーク）に注目します。
@@ -226,24 +253,24 @@ $ pandoc --list-extensions
 ### List of Outputs
 
 Pandocが出力可能なフォーマットは[@sec:list-of-inputs]と同様に`pandoc --list-output-formats`で得られます。
-[@sec:markdown-variants]で説明した拡張を有効・無効にする機能は、出力の際にも適用されます。
+[@sec:list-of-inputs]で説明した拡張を有効・無効にする機能は、出力の際にも適用されます。
 
 [出力フォーマット一覧](data/pandoc-output-formats.txt){.listingtable #lst:list-output-formats}
 
 *Pandocker*ではHTML・DOCX・PDFに出力できます。
 
-#### HTML
+##### HTML
 
 *Pandocker*内でのHTML出力は、いちおうGitHub風CSSを利用していますが、あくまでtypoなどの
 校正のために用意されているものです。最近の流行であるCSS組版などは全く考えられていません。
 
-#### PDF engines
+##### PDF engines
 
 *Pandocker*の中心的出力形式です。いったんLaTeXファイルに出力してからPDFに変換します。
 Pandocのデフォルト設定はPDFLaTeXでCJKフォントを持っていない（和文はすべて空白になる）ので、TeXエンジンには
 XeLaTeXを採用しています。
 
-#### Microsoft(R) Word(R)
+##### Microsoft(R) Word(R)
 
 筆者としてはあまり近づきたくないが、世の中の需要はそれなりにあるのでDOCX出力もできるようにしてあります。
 *Pandocker*内にカスタムテンプレートを用意してありますが、会社のテンプレを使うなどの需要にも対応できるようになっています。

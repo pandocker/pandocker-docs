@@ -43,8 +43,8 @@ External Toolsにコマンドと引数を登録すると、右クリックメニ
 
 Live TemplateはVSCodeでいうところのスニペット機能です。
 
-#### For Pandoc's markdown
+##### For Pandoc's markdown
 
-#### For pandoc-crossref
+##### For pandoc-crossref
 
-#### For pandocker-lua-filters
+##### For pandocker-lua-filters

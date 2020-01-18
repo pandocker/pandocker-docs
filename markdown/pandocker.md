@@ -26,19 +26,19 @@ Pandoc・フィルタ・テンプレートがインストール済のDockerイ�
 \newpage
 
 ### System config
-#### Makefile.in
+##### Makefile.in
 
 [system/Makefile.in](/usr/var/pandoc_misc/system/Makefile.in){.listingtable type=makefile}
 
 \newpage
 
-#### Makefile
+##### Makefile
 
 [system/Makefile](/usr/var/pandoc_misc/system/Makefile){.listingtable type=makefile}
 
 \newpage
 
-#### config.yaml
+##### config.yaml
 
 [system/config.yaml](/usr/var/pandoc_misc/system/config.yaml){.listingtable type=yaml}
 
@@ -46,25 +46,25 @@ Pandoc・フィルタ・テンプレートがインストール済のDockerイ�
 
 ### Project's config
 
-#### Makefile
+##### Makefile
 
 [user/Makefile](./Makefile){.listingtable type=makefile #lst:user-makefile}
 
-#### config.yaml
+##### config.yaml
 
 [user/config.yaml](./markdown/config.yaml){.listingtable type=yaml #lst:user-config-yaml}
 
 ## Docker Images
 ### Alpine
-#### 3.10
-#### pandoc's official latex image
+##### 3.10
+##### pandoc's official latex image
 ### Ubuntu
-#### 16.04
+##### 16.04
 
 - Base image
 - Extending image
 
-#### 18.04
+##### 18.04
 
 - Base image
 - Extending image
