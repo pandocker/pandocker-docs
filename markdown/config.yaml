@@ -1,6 +1,6 @@
 ---
 title: "Pandocker入門"
-abstract: "「私的Markdown-PDF変換環境を紹介するシリーズ」 Vol.６（総集編２）"
+subtitle: "「私的Markdown-PDF変換環境を紹介するシリーズ」 Vol.６（総集編２）"
 circle: KY技研
 author: "@_K4ZUKI_"
 comiket: C97
@@ -38,7 +38,7 @@ numbered-bullets:
 image-div-style: "Image Caption"
 
 docx_coreprop:
-  author: "@_K4ZUKI_" # str
+  #  author: @_K4ZUKI_ # str
   #  category: "Category" # str
   #  comments: "Comment" # str
   #  keywords: "Keyword1 Keyword2" # str
@@ -47,14 +47,16 @@ docx_coreprop:
   #  modified: "31-Dec-2018" # datetime DD-MMM-YYYY
   #  revision: 1230 # int < 32768
   #  subject: "SubjecT" # str
-  title: "Pandocker入門" # str
+  #  title: "Pandocker入門" # str
 
-  content_status: "Status" # ignored?
-  identifier: "ID" # ignored?
-  language: "Japanese" # ignored?
-  version: "Version" # ignored?
+  #  content_status: "Status" # ignored?
+  #  identifier: "ID" # ignored?
+  #  language: "Japanese" # ignored?
+  #  version: "Version" # ignored?
 
   table:
+    table-alignment: center
+    vertical-alignment: center
     "Normal Table": "Centered"
   paragraph:
     "Normal": "Body Text"
