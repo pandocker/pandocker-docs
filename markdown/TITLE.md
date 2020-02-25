@@ -40,11 +40,16 @@ Pandoc系ドキュメントコンパイラ[^not-a-lie]とか言っておけば�
 ITエンジニアを指してエンジニアと呼称する場面に遭遇すると「は？（威圧）」ってなります。*ここではあえて話を合わせてあります。*
 [^not-a-lie]: この表現に嘘はない。いいね？
 
-この本で対象にするPandocのバージョンは**2.7.3**です。この本が出る頃には本家で
+この本で対象にするPandocのバージョンは~~**2.7.3**~~**2.9.1.1**です。2.7.3で書こうと思っていたのですが、
+冬コミの直前に2.8がリリースされたので、バージョンアップしました。その後、その後あれよあれよと新しいバージョン
+がリリースされて現在は2.9.1.1です。
+
+<!--この本が出る頃には本家で
 **2.8**が発表されているかもしれません[^quite-many-milestone-issues]が。
 
 [^quite-many-milestone-issues]: 思ったよりもこなすべきIssueの数が多いので間に合うかもしれません。
 これらのIssueは<https://github.com/jgm/pandoc/milestone/7>にまとめられています。
+-->
 
 ## 読者さんが持ってるといいかもしれない知識 {-}
 
@@ -138,7 +143,7 @@ Pandocのフォーマット変換は3段階に分かれています（[@fig:pand
 中間形式（AST：Abstract Syntax Tree）に変換し、最後のWriterが中間形式から出力先フォーマットに再変換します。
 後述するフィルタ（[@sec:pandocs-filters ]）はReaderが変換したASTに対する処理を行って、再びASTに戻します。
 
-[Conversion diagram](data/ast-tree.bob){.svgbob #fig:pandoc-conversion-diagram }
+[Conversion diagram](data/ast-tree.bob){.svgbob #fig:pandoc-conversion-diagram}
 
 ### List of Inputs {#sec:list-of-inputs}
 
@@ -148,18 +153,20 @@ Pandocが受け付ける入力フォーマットは`--list-input-formats`で取�
 Listing: 入力フォーマット一覧（`*`は筆者による） {#lst:list-input-formats}
 
 ``` bash
-$ pandoc --list-input-formats
+$ pandoc --list-input-formats | sort
 
 # 出力結果
 commonmark *
 creole
 docbook
 docx
+dokuwiki
 epub
 fb2
 gfm
 haddock
 html
+ipynb
 jats
 json
 latex
@@ -292,6 +299,6 @@ XeLaTeXを採用しています。
 - ゴーストリコンが終わらない
 - 会社がKSﾍﾟﾙｽｷｰを使うのをやめると言い出して快適になった
   - Docker周りの障害が一つ回復した
-  - もう一つはpipのバージョンアップ待ち(<https://github.com/pypa/pip/pull/6427>)
+  - ~~もう一つはpipのバージョンアップ待ち(<https://github.com/pypa/pip/pull/6427>)~~ &rarr; リリースしたで！（<https://github.com/pypa/pip/issues/7531>）
 
 ## References
