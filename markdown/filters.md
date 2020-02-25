@@ -31,8 +31,8 @@ Haskell系フィルタの代表例は`pandoc-crossref`[^pandoc-crossref-url]で�
 
 ### 筆者の自作フィルタは一部を除きLuaフィルタに置き換え済み
 
-筆者が今までに作ったPandable系フィルタはほぼ全てLuaフィルタに置き換わっています。一部Pythonライブラリを直接扱うものは
-そのまま使っています。
+筆者が今までに作ったPandable系フィルタはほぼ全てLuaフィルタに置き換わっています。一部Pythonライブラリを直接扱うものと、
+PandocのLua APIで実現できないものはそのまま使っています。
 
 ## Lua made
 
@@ -42,6 +42,10 @@ jgmのおすすめはLuaフィルタです。PandocがLuaインタプリタ（�
 
 ### Speed
 
+Pythonのフィルタはそんなに速くありません。Luaフィルタはオーバーヘッドが少ない（？）のでそれに比べると
+十分速いです。Python系[^pantable-url]と同等の機能をLuaで実装したところ１０倍速く^[pantable使用で5分かかっていたものが30秒に]
+なりました。あまりいいベンチマークではないですが、参考まで。
+
 ## Extensions by filters
 ### Common behavior
 
@@ -49,9 +53,11 @@ jgmのおすすめはLuaフィルタです。PandocがLuaインタプリタ（�
 
 ##### Cross reference
 
-- pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>、`--filter=pandoc-crossref`)
+- pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>、
+  `--filter=pandoc-crossref`)
 
-章・節タイトル、図と表、コードリスト、数式に相互参照機能を実装するフィルタです。
+章・節タイトル、図と表、コードリスト、数式に相互参照機能を実装するフィルタです。図をタイル状に並べて小番号をつける機能もあります
+が、DOCX出力ではちょっと工夫が必要です。
 作者はPandocの開発にも関わっていて、とくにDOCX周りで色々貢献しています。
 
 [デフォルト値一覧](data/pandoc-crossref-defaults.yaml){.listingtable type=yaml}
@@ -94,13 +100,14 @@ CSVファイルをPandocの表に変換するLuaフィルタです。CSVファ�
 
 SVG画像へのリンクを見つけると、出力形式に応じてPDFかPNGに変換するフィルタです。HTML・HTML５が指定されていると
 SVGのまま何もしません。
+変換のためにrsvg-convertを呼び出すので、あらかじめインストールされている必要があります。
 
 ##### Table width
 
 - pandocker-lua-filters (`--lua-filter=table-width.lua`)
 
-表の列幅をページ幅からの割合で指定できるようにするフィルタです。`table`クラス属性と`width`属性がつけられているdiv節の中に
-表が一つだけ置かれている場合に、divの中の表に対して作用します。
+表の列幅をページ幅からの割合で指定できるようにするフィルタです。`table`クラス属性がつけられているdiv節の中に
+表が一つだけ置かれている場合に、divの中の表に対して作用します。オプションとして`width`と`noheader`が用意されています。
 
 ##### AAFigure
 
