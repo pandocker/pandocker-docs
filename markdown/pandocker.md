@@ -25,34 +25,36 @@ Pandoc・フィルタ・テンプレートがインストール済のDockerイ�
 
 \newpage
 
+::: LANDSCAPE
+
 ### System config
-##### Makefile.in
+#### Makefile.in
 
 [system/Makefile.in](/usr/var/pandoc_misc/system/Makefile.in){.listingtable type=makefile}
 
 \newpage
 
-##### Makefile
+#### Makefile
 
 [system/Makefile](/usr/var/pandoc_misc/system/Makefile){.listingtable type=makefile}
 
-\newpage
-
-##### config.yaml
+#### config.yaml
 
 [system/config.yaml](/usr/var/pandoc_misc/system/config.yaml){.listingtable type=yaml}
 
-\newpage
+### YAML metadata
 
 ### Project's config
 
-##### Makefile
+#### Makefile
 
 [user/Makefile](./Makefile){.listingtable type=makefile #lst:user-makefile}
 
-##### config.yaml
+#### config.yaml
 
 [user/config.yaml](./markdown/config.yaml){.listingtable type=yaml #lst:user-config-yaml}
+
+:::
 
 ## Docker Images
 ### Alpine
