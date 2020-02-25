@@ -54,11 +54,16 @@ docx_coreprop:
   #  language: "Japanese" # ignored?
   #  version: "Version" # ignored?
 
+  read-only-recommended: true
+  table-alignment-in-page: center
+  table-cell-vertical-alignment: center
+  disable-table-autofit: true
+  word2010compatible: false
   table:
-    table-alignment: center
-    vertical-alignment: center
     "Normal Table": "Centered"
   paragraph:
     "Normal": "Body Text"
     "First Paragraph": "Body Text"
+  character:
+    "NormalTok": "Verbatim Char"
 ...
