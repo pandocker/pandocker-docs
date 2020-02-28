@@ -51,10 +51,9 @@ Pythonのフィルタはそんなに速くありません。Luaフィルタは�
 
 出力の形式にかかわらず適用されるフィルタ群です。
 
-##### Cross reference
+### [*Cross reference*]{.underline} {-}
 
-- pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>、
-  `--filter=pandoc-crossref`)
+- pandoc-crossref (<https://lierdakil.github.io/pandoc-crossref>、`--filter=pandoc-crossref`)
 
 章・節タイトル、図と表、コードリスト、数式に相互参照機能を実装するフィルタです。図をタイル状に並べて小番号をつける機能もあります
 が、DOCX出力ではちょっと工夫が必要です。
@@ -64,21 +63,21 @@ Pythonのフィルタはそんなに速くありません。Luaフィルタは�
 
 図・表・コードリストの一覧（Table of Tables、Table of Figures、Table of Listings）を生成するTeXコマンドも用意されています。
 
-##### CSV to table
+### [*CSV to table*]{.underline} {-}
 
 - pandocker-lua-filters (`--lua-filter=csv2table.lua`)
 
 CSVファイルをPandocの表に変換するLuaフィルタです。CSVファイルへのURLリンクに`table`クラス属性がついたものに対し
-発動します。
+発動します。 `header`、`width`、`alignment`、`subset_from`、`subset_to`、`nocaption`オプション属性を持ちます。
 
-##### Listing
+### [*Listing*]{.underline} {-}
 
 - pandocker-lua-filters (`--lua-filter=listingtable.lua`)
 
 任意のテキストファイルをソースコードの引用に変換するフィルタです。テキストファイルへのURLリンクに`listing`
-クラス属性がついたものに対し発動します。
+クラス属性がついたものに対し発動します。`from`、`startFrom`、`to`、`type`、`numbers`、`nocaption`オプション属性を持ちます。
 
-##### Preprocess
+### [*Preprocess*]{.underline} {-}
 
 - pandocker-lua-filters (`--lua-filter=preprocess.lua`)
 
@@ -88,13 +87,14 @@ CSVファイルをPandocの表に変換するLuaフィルタです。CSVファ�
 1. `<空白文字>`
 1. `"<取り込みたいファイル名>"`
 
-という順番になっている場合に発動します。
+という順番になっている場合に発動します。取り込みたいファイルが見つからない場合はエラーメッセージを吐きますが、
+エラーは出しません。
 
-##### Block comment
+### [*Block comment*]{.underline} {-}
 
 - pandocker-lua-filters (`--lua-filter=removable-note.lua`)
 
-##### SVG to PNG/PDF at runtime
+### [*SVG to PNG/PDF at runtime*]{.underline} {-}
 
 - pandocker-lua-filters (`--lua-filter=svgconvert.lua`)
 
@@ -102,28 +102,30 @@ SVG画像へのリンクを見つけると、出力形式に応じてPDFかPNG�
 SVGのまま何もしません。
 変換のためにrsvg-convertを呼び出すので、あらかじめインストールされている必要があります。
 
-##### Table width
+### [*Table width*]{.underline} {-}
 
 - pandocker-lua-filters (`--lua-filter=table-width.lua`)
 
 表の列幅をページ幅からの割合で指定できるようにするフィルタです。`table`クラス属性がつけられているdiv節の中に
 表が一つだけ置かれている場合に、divの中の表に対して作用します。オプションとして`width`と`noheader`が用意されています。
 
-##### AAFigure
+### [*AAFigure*]{.underline} {-}
 
 - pandocker-pandoc-filters (`--filter=pandocker-filters`)
 
-##### svgbob
+### [*svgbob*]{.underline} {-}
 
 - pandoc-svgbob-filter (`--filter=pandoc-svgbob-filter`)
 
-##### blockdiag
+### [*blockdiag*]{.underline} {-}
 
 - pandoc-blockdiag-filter (`--filter=pandoc-blockdiag-filters`)
 
 ### HTML only behavior
+
 ### LaTeX only behavior
-##### Landscape
+
+#### Landscape
 
 - pandocker-lua-filters
 ```markdown
